@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethan Smith</title>
+    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="light-mode"> <!-- Default to light mode -->
+    <!-- Updated Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <h1 class="logo"><a href="#home">Ethan Smith</a></h1>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Me</a></li>
+                <li><a href="#writings">My Writings</a></li>
+                <li><a href="#projects">Projects & Slideshows</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="toggle-buttons">
+                <!-- Dark Mode and Mute Button -->
+                <button id="muteToggleBtn" class="btn-toggle"><i class="fas fa-volume-up"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero-section">
+        <div class="container">
+            <h2>Hello, I'm Ethan Smith <span class="wave">👋</span></h2>
+            <p>Student | Creator | Goaltender</p>
+            <a href="#about" class="btn">Learn More About Me</a>
+        </div>
+    </header>
+
+    <!-- About Me Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About Me</h2>
+            <p>I'm a student currently attending Valley Catholic High School as a 9th grader. I love doing 3D Design with CAD, Coding Web Applications, and writing stories and essays in English class.</p>
+        </div>
+    </section>
+
+    <!-- Writings Section -->
+    <section id="writings" class="writings-section">
+        <div class="container">
+            <h2>Synchroni Athina</h2>
+            <p>Get ready to explore and view the beauties of a futuristic city, named Synchroni Athina.</p>
+            <a href="https://docs.google.com/document/d/16ung4rdKcEPzwBxI5gYoPEr33admnsaSNUGns_anwnU/edit?usp=sharing" class="btn">Read Synchroni Athina</a>
+        </div>
+        <div class="container">
+            <h2>8th Grade Capstone</h2>
+            <p>Want to learn a little bit more about knee injuries and brace making? Learn more about that by reading my research paper.</p>
+            <a href="https://docs.google.com/document/d/1h9UuAL4oO77IY_BF4Bcv1-kBqkjjNzwHYOSsKVz8fkg/edit?usp=sharing" class="btn">Read 8th Grade Capstone</a>
+        </div>
+    </section>
+
+    <!-- Hockey Videos Section -->
+    <section id="hockey-videos" class="hockey-videos-section">
+    <div class="container">
+        <h2>Hockey Videos</h2>
+        <p>Check out my hockey highlights and games in the videos below!</p>
+
+        <!-- Videos Container -->
+        <div class="video-grid">
+            <!-- Video 1 -->
+            <div class="video-item">
+                <video controls class="video-player" id="video1">
+                    <source src="videos/video1.mov" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-item">
+                <video controls class="video-player" id="video2">
+                    <source src="videos/video2.MP4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="video-item">
+                <video controls class="video-player" id="video3">
+                    <source src="videos/video3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+</section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2>Contact Me</h2>
+            <form id="contactForm">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Ethan Smith. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="https://www.youtube.com/@EthanSmith_Hockey"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/ethan.smith_72/"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+(function() {
+    emailjs.init("zPsW3iaY9Y-7AqjuV"); // Replace with your actual EmailJS user ID
+})();
+
+// Form submission event for the contact form
+document.getElementById('contactForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    emailjs.sendForm('service_w20yrcp', 'template_1hcq7qq', this)
+        .then(function(response) {
+            alert('Your message has been sent successfully!', response.status, response.text);
+            document.getElementById('contactForm').reset();
+        }, function(error) {
+            alert('Failed to send your message. Please try again later.', error);
+        });
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetElement = document.querySelector(this.getAttribute('href'));
+
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Video Mute/Unmute Toggle
+const muteToggleBtn = document.getElementById('muteToggleBtn');
+const videoPlayers = document.querySelectorAll('.video-player');
+muteToggleBtn.addEventListener('click', function() {
+    videoPlayers.forEach(video => {
+        video.muted = !video.muted;
+    });
+    const icon = this.querySelector('i');
+    icon.classList.toggle('fa-volume-up');
+    icon.classList.toggle('fa-volume-mute');
+});
+
+// Function to handle video size expansion and contraction
+function handleVideoSize(video) {
+    // Add event listener for play
+    video.addEventListener('play', function() {
+        expandVideo(video);
+    });
+
+    // Add event listener for pause
+    video.addEventListener('pause', function() {
+        resetVideoSize(video);
+    });
+
+    // Add event listener for when video ends
+    video.addEventListener('ended', function() {
+        resetVideoSize(video);
+    });
+}
+
+// Function to expand the video to full screen
+function expandVideo(video) {
+    video.classList.add('expanded-video');
+
+    // Prevent video from interacting with other page elements while expanded
+    document.body.classList.add('no-scroll');
+}
+
+// Function to reset video size back to normal
+function resetVideoSize(video) {
+    video.classList.remove('expanded-video');
+
+    // Allow normal scrolling again
+    document.body.classList.remove('no-scroll');
+}
+
+// Apply the function to all video players
+const videoPlayersAll = document.querySelectorAll('.video-player');
+videoPlayersAll.forEach(handleVideoSize);
+
+// Add navbar color change on scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', function() {
+    if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+    </script>
+</body>
+</html>
