@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethan Smith</title>
+    <title>Ethan - Developmental</title>
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,9 @@
         <div class="container">
             <h2>Hello, I'm Ethan Smith <span class="wave">👋</span></h2>
             <p>Student | Creator | Goaltender</p>
-            <a href="#about" class="btn">Learn More About Me</a>
+            <a href="#about" class="btn">
+                <i class="fas fa-info-circle"></i> Learn More About Me
+            </a>
         </div>
     </header>
 
@@ -54,12 +56,16 @@
         <div class="container">
             <h2>Synchroni Athina</h2>
             <p>Get ready to explore and view the beauties of a futuristic city, named Synchroni Athina.</p>
-            <a href="https://docs.google.com/document/d/16ung4rdKcEPzwBxI5gYoPEr33admnsaSNUGns_anwnU/edit?usp=sharing" class="btn">Read Synchroni Athina</a>
+            <a href="https://docs.google.com/document/d/16ung4rdKcEPzwBxI5gYoPEr33admnsaSNUGns_anwnU/edit?usp=sharing" class="btn">
+                <i class="fa-solid fa-scroll"></i> Read Synchroni Athina
+            </a>
         </div>
         <div class="container">
             <h2>8th Grade Capstone</h2>
             <p>Want to learn a little bit more about knee injuries and brace making? Learn more about that by reading my research paper.</p>
-            <a href="https://docs.google.com/document/d/1h9UuAL4oO77IY_BF4Bcv1-kBqkjjNzwHYOSsKVz8fkg/edit?usp=sharing" class="btn">Read 8th Grade Capstone</a>
+            <a href="https://docs.google.com/document/d/1h9UuAL4oO77IY_BF4Bcv1-kBqkjjNzwHYOSsKVz8fkg/edit?usp=sharing" class="btn">
+                <i class="fa-solid fa-scroll"></i> Read 8th Grade Capstone
+            </a>
         </div>
     </section>
 
@@ -106,7 +112,9 @@
                 <input type="text" name="name" placeholder="Your Name" required>
                 <input type="email" name="email" placeholder="Your Email" required>
                 <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
-                <button type="submit" class="btn">Send Message</button>
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
             </form>
         </div>
     </section>
@@ -115,26 +123,45 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2024 Ethan Smith. All rights reserved.</p>
+    
+            <!-- Social Icons -->
             <div class="social-icons">
-                <a href="https://www.youtube.com/@EthanSmith_Hockey"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/ethan.smith_72/"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.youtube.com/@EthanSmith_Hockey" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/ethan.smith_72/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+    
+            <!-- Sources Section -->
+            <!--<div class="sources-section">
+                <h3>Sources</h3>
+                <div class="sources-images">
+                    <a href="https://www.livebarn.com/" target="_blank">
+                        <img src="https://i.postimg.cc/15qvXRL6/unnamed-removebg-preview.png" alt="Source 1" class="source-image">
+                    </a>
+                    <a href="https://www.digitalocean.com/" target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/1024px-DigitalOcean_logo.svg.png" alt="Source 2" class="source-image">
+                    </a>
+                    <a href="https://code.visualstudio.com/" target="_blank">
+                        <img src="https://seekvectors.com/files/download/Visual%20Studio%20Code-01.png" alt="Source 3" class="source-image">
+                    </a>
+                </div>
             </div>
         </div>
-    </footer>
+    </footer> -->
+    
 
     <!-- JavaScript -->
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
         // Initialize EmailJS
 (function() {
-    emailjs.init("zPsW3iaY9Y-7AqjuV"); // Replace with your actual EmailJS user ID
+    emailjs.init("31O7qMWoDFs0of_gr"); // Replace with your actual EmailJS user ID
 })();
 
 // Form submission event for the contact form
 document.getElementById('contactForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    emailjs.sendForm('service_w20yrcp', 'template_1hcq7qq', this)
+    emailjs.sendForm('service_c2ufaj8', 'template_5bdudv6', this)
         .then(function(response) {
             alert('Your message has been sent successfully!', response.status, response.text);
             document.getElementById('contactForm').reset();
