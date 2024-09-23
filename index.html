@@ -31,9 +31,14 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About Me</a></li>
                 <li><a href="#writings">My Writings</a></li>
-                <li><a href="#projects">Projects & Slideshows</a></li>
+                <li><a href="#hockey-videos">Hockey Videos</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <!-- <li><a href="workout.html">Hockey Drills</a></li> -->
             </ul>
+
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
             <div class="toggle-buttons">
                 <!-- Dark Mode and Mute Button -->
                 <button id="muteToggleBtn" class="btn-toggle"><i class="fas fa-volume-up"></i></button>
@@ -252,6 +257,24 @@ window.addEventListener('scroll', function() {
         navbar.classList.remove('scrolled');
     }
 });
+
+// JavaScript for Hamburger Menu Toggle
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+const navLinks = document.querySelectorAll('.nav-menu li a');
+
+// Toggle the hamburger menu when clicked
+hamburger.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+});
+
+// Close the mobile menu when a link is clicked
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+    });
+});
+
 
     </script>
 </body>
