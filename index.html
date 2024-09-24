@@ -33,6 +33,14 @@
                 <li><a href="#writings">My Writings</a></li>
                 <li><a href="#hockey-videos">Hockey Videos</a></li>
                 <li><a href="#contact">Contact</a></li>
+                 <!-- Before Login: Show Login/Signup Button -->
+    <li><a href="#" id="auth-toggle-btn" class="btn-auth">Login/Sign Up</a></li>
+
+    <!-- After Login: Show Welcome message -->
+    <li id="user-welcome" class="user-welcome" style="display: none;">
+        <a href="#" id="welcome-user">Welcome, <span id="user-name"></span></a>
+    </li>
+</ul>
                 <!-- <li><a href="workout.html">Hockey Drills</a></li> -->
             </ul>
 
@@ -45,6 +53,50 @@
             </div>
         </div>
     </nav>
+
+    <!-- Modal for Sign Up / Login -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="auth-container">
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="auth-form">
+                    <h3>Sign Up</h3>
+                    <input type="text" id="signup-name" placeholder="Name" required>
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <button type="submit">Sign Up</button>
+                </form>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <h3>Login</h3>
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Log In</button>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div id="user-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close-modal" id="close-user-modal">&times;</span>
+                <h2>Update Your Information</h2>
+                <form id="user-update-form">
+                    <div class="form-group">
+                        <input type="text" id="update-name" name="name" placeholder="New Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="update-email" name="email" placeholder="New Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="update-password" name="password" placeholder="New Password" required>
+                    </div>
+                    <button type="submit" class="btn">Update</button>
+                </form>
+            </div>
+        </div>
 
     <!-- Hero Section -->
     <header id="home" class="hero-section">
@@ -83,36 +135,43 @@
         </div>
     </section>
 
+   
+   
+
+
     <!-- Hockey Videos Section -->
-    <section id="hockey-videos" class="hockey-videos-section">
+   <!-- Hockey Videos Section -->
+   <section id="hockey-videos" class="hockey-videos-section">
     <div class="container">
         <h2>Hockey Videos</h2>
         <p>Check out my hockey highlights and games in the videos below!</p>
 
-        <!-- Videos Container -->
         <div class="video-grid">
             <!-- Video 1 -->
             <div class="video-item">
                 <video controls class="video-player" id="video1">
                     <source src="video1.mov" type="video/mp4">
-                    Your browser does not support the video tag.
                 </video>
+                <!-- Download Button for Video 1 -->
+                <button class="download-btn" data-video="video1.mov">Download Video 1</button>
             </div>
 
             <!-- Video 2 -->
             <div class="video-item">
                 <video controls class="video-player" id="video2">
                     <source src="video2.MP4" type="video/mp4">
-                    Your browser does not support the video tag.
                 </video>
+                <!-- Download Button for Video 2 -->
+                <button class="download-btn" data-video="video2.MP4">Download Video 2</button>
             </div>
 
             <!-- Video 3 -->
             <div class="video-item">
                 <video controls class="video-player" id="video3">
                     <source src="video3.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
                 </video>
+                <!-- Download Button for Video 3 -->
+                <button class="download-btn" data-video="video3.mp4">Download Video 3</button>
             </div>
         </div>
     </div>
@@ -165,117 +224,244 @@
 
     <!-- JavaScript -->
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        // Initialize EmailJS
-(function() {
-    emailjs.init("31O7qMWoDFs0of_gr"); // Replace with your actual EmailJS user ID
-})();
+<script>
+    // Initialize EmailJS
+    (function() {
+        emailjs.init("31O7qMWoDFs0of_gr"); // Replace with your actual EmailJS user ID
+    })();
 
-// Form submission event for the contact form
-document.getElementById('contactForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    // Form submission event for the contact form
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    emailjs.sendForm('service_c2ufaj8', 'template_5bdudv6', this)
-        .then(function(response) {
-            alert('Your message has been sent successfully!', response.status, response.text);
-            document.getElementById('contactForm').reset();
-        }, function(error) {
-            alert('Failed to send your message. Please try again later.', error);
-        });
-});
-
-// Smooth scrolling for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetElement = document.querySelector(this.getAttribute('href'));
-
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth'
+        emailjs.sendForm('service_c2ufaj8', 'template_5bdudv6', this)
+            .then(function(response) {
+                alert('Your message has been sent successfully!', response.status, response.text);
+                document.getElementById('contactForm').reset();
+            }, function(error) {
+                alert('Failed to send your message. Please try again later.', error);
             });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetElement = document.querySelector(this.getAttribute('href'));
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Video Mute/Unmute Toggle
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const videoPlayers = document.querySelectorAll('.video-player');
+    muteToggleBtn.addEventListener('click', function() {
+        videoPlayers.forEach(video => {
+            video.muted = !video.muted;
+        });
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-volume-up');
+        icon.classList.toggle('fa-volume-mute');
+    });
+
+    // Function to handle video size expansion and contraction
+    function handleVideoSize(video) {
+        // Add event listener for play
+        video.addEventListener('play', function() {
+            expandVideo(video);
+        });
+
+        // Add event listener for pause
+        video.addEventListener('pause', function() {
+            resetVideoSize(video);
+        });
+
+        // Add event listener for when video ends
+        video.addEventListener('ended', function() {
+            resetVideoSize(video);
+        });
+    }
+
+    // Function to expand the video to full screen
+    function expandVideo(video) {
+        video.classList.add('expanded-video');
+        // Prevent video from interacting with other page elements while expanded
+        document.body.classList.add('no-scroll');
+    }
+
+    // Function to reset video size back to normal
+    function resetVideoSize(video) {
+        video.classList.remove('expanded-video');
+        // Allow normal scrolling again
+        document.body.classList.remove('no-scroll');
+    }
+
+    // Apply the function to all video players
+    const videoPlayersAll = document.querySelectorAll('.video-player');
+    videoPlayersAll.forEach(handleVideoSize);
+
+    // Add navbar color change on scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
         }
     });
-});
 
-// Video Mute/Unmute Toggle
-const muteToggleBtn = document.getElementById('muteToggleBtn');
-const videoPlayers = document.querySelectorAll('.video-player');
-muteToggleBtn.addEventListener('click', function() {
-    videoPlayers.forEach(video => {
-        video.muted = !video.muted;
-    });
-    const icon = this.querySelector('i');
-    icon.classList.toggle('fa-volume-up');
-    icon.classList.toggle('fa-volume-mute');
-});
+    // JavaScript for Hamburger Menu Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-menu li a');
 
-// Function to handle video size expansion and contraction
-function handleVideoSize(video) {
-    // Add event listener for play
-    video.addEventListener('play', function() {
-        expandVideo(video);
+    // Toggle the hamburger menu when clicked
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
     });
 
-    // Add event listener for pause
-    video.addEventListener('pause', function() {
-        resetVideoSize(video);
+    // Close the mobile menu when a link is clicked
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+        });
     });
 
-    // Add event listener for when video ends
-    video.addEventListener('ended', function() {
-        resetVideoSize(video);
+    // Mock storage for storing users (you can use localStorage or a server in real scenarios)
+    let users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : [];
+    let isLoggedIn = false;
+
+    // Modal element and auth button
+    const authModal = document.getElementById('auth-modal');
+    const authToggleBtn = document.getElementById('auth-toggle-btn');
+    const closeModalBtn = document.querySelector('.close-btn');
+    const downloadButtons = document.querySelectorAll('.download-btn'); // All download buttons
+
+    // Show the modal when the button is clicked
+    authToggleBtn.addEventListener('click', function() {
+        authModal.style.display = 'flex';
     });
-}
 
-// Function to expand the video to full screen
-function expandVideo(video) {
-    video.classList.add('expanded-video');
+    // Close the modal when the close button is clicked
+    closeModalBtn.addEventListener('click', function() {
+        authModal.style.display = 'none';
+    });
 
-    // Prevent video from interacting with other page elements while expanded
-    document.body.classList.add('no-scroll');
-}
+    // Close the modal if user clicks outside of it
+    window.addEventListener('click', function(event) {
+        if (event.target === authModal) {
+            authModal.style.display = 'none';
+        }
+    });
 
-// Function to reset video size back to normal
-function resetVideoSize(video) {
-    video.classList.remove('expanded-video');
-
-    // Allow normal scrolling again
-    document.body.classList.remove('no-scroll');
-}
-
-// Apply the function to all video players
-const videoPlayersAll = document.querySelectorAll('.video-player');
-videoPlayersAll.forEach(handleVideoSize);
-
-// Add navbar color change on scroll
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', function() {
-    if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
+    // Show or hide download buttons based on login status
+    function toggleDownloadButtons(show) {
+        downloadButtons.forEach(button => {
+            button.style.display = show ? 'block' : 'none';
+        });
     }
-});
 
-// JavaScript for Hamburger Menu Toggle
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-const navLinks = document.querySelectorAll('.nav-menu li a');
+    // Sign Up Form Handling
+    document.getElementById('signup-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
 
-// Toggle the hamburger menu when clicked
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
-
-// Close the mobile menu when a link is clicked
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        // Check if user already exists
+        const userExists = users.some(user => user.email === email);
+        if (userExists) {
+            alert('User already exists with this email.');
+        } else {
+            // Save user in the "JSON" (localStorage here)
+            users.push({ name, email, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Sign up successful! You can now log in.');
+        }
     });
-});
 
+    // Login Form Handling
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
 
-    </script>
+        // Check if the user exists and password matches
+        const user = users.find(user => user.email === email && user.password === password);
+        if (user) {
+            isLoggedIn = true;  // Mark user as logged in
+            alert(`Welcome back, ${user.name}!`);
+            toggleDownloadButtons(true); // Show the download buttons when logged in
+
+            // Set the user's name in the welcome message and display it
+            document.getElementById('user-name').textContent = user.name; // Set name
+            document.getElementById('user-welcome').style.display = 'block'; // Show welcome message
+            document.getElementById('auth-toggle-btn').style.display = 'none'; // Hide login/signup button
+
+            authModal.style.display = 'none'; // Hide the modal after login
+        } else {
+            alert('Invalid email or password. Please try again.');
+        }
+    });
+
+    // Close user modal
+    document.getElementById('close-user-modal').addEventListener('click', function() {
+        document.getElementById('user-modal').style.display = 'none'; // Hide the modal when close button is clicked
+    });
+
+    // Ensure download buttons are hidden by default
+    toggleDownloadButtons(false);
+
+    // Download Button Handlers for each video
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            if (isLoggedIn) {
+                const videoSource = button.getAttribute('data-video');
+                alert(`Starting download for ${videoSource}`);
+                // Here you can trigger the actual download of the video
+                const link = document.createElement('a');
+                link.href = videoSource;
+                link.download = videoSource;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("You need to log in to download videos.");
+            }
+        });
+    });
+
+    const modal = document.getElementById("user-modal");
+    const closeModal = document.getElementById("close-user-modal");
+    const loginButton = document.getElementById("login-button"); // Change this to your actual login button ID
+
+    // Show modal when login button is clicked
+    loginButton.onclick = function() {
+        modal.style.display = "flex"; // Use 'flex' for centering
+        setTimeout(() => modal.querySelector('.modal-content').classList.add('show'), 10); // Add animation
+    }
+
+    // Close modal when close button is clicked
+    closeModal.onclick = function() {
+        modal.querySelector('.modal-content').classList.remove('show');
+        setTimeout(() => modal.style.display = "none", 300); // Wait for animation to finish
+    }
+
+    // Close modal if clicked outside the modal content
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal.onclick();
+        }
+    }
+</script>
+
+    
+    
 </body>
 </html>
+
