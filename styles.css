@@ -452,21 +452,6 @@ body {
     z-index: 9999; /* Ensure the video is on top of all other elements */
 }
 
- /* General Reset */
- * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-}
-
-body {
-    line-height: 1.6;
-    color: #333;
-    background-color: #f9f9f9;
-    padding-bottom: 60px;
-}
-
 /* Container for Hockey Drills */
 .drills-container {
     max-width: 1200px;
@@ -519,18 +504,23 @@ h1 {
 
 
 .download-btn {
-    display: none; /* Initially hidden */
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+    background: #f4c542;
+    color: #333;
+    padding: 0.6rem 1.3rem; /* Adjusted padding */
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: background 0.3s, transform 0.3s;
     cursor: pointer;
+    display: inline-block;
+    margin-top: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem; /* Adjusted font size */
 }
 
 .download-btn:hover {
-    background-color: #555;
+    background: #e0b029;
+    transform: scale(1.05);
 }
 
 /* Modal Styles */
@@ -647,9 +637,7 @@ h1 {
 .auth-form {
     margin: 20px 0;
     padding: 10px;
-    background-color: #f9f9f9;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .auth-form h3 {
@@ -678,3 +666,270 @@ h1 {
     background-color: #555;
 }
 
+.inspiration-section h2 {
+    font-size: 2.5rem;
+    color: #343a40;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.inspiration-section p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+/* Media Grid */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
+}
+
+/* Media Item Styling */
+.media-item {
+    position: relative;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.media-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Video and Image Styling */
+.media-item img,
+.media-item video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.media-item:hover img,
+.media-item:hover video {
+    transform: scale(1.05);
+}
+
+/* Download Button Styling */
+.download-btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.download-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.download-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+}
+
+/* Smooth Animations */
+.inspiration-section {
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Media Item Animations */
+@keyframes mediaFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.media-item {
+    animation: mediaFadeIn 0.6s ease-in-out;
+}
+
+/* Responsive Media Grid */
+@media (max-width: 768px) {
+    .media-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Additional Custom Effects */
+.inspiration-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background-color: #007bff;
+    border-radius: 5px;
+    margin-top: -50px;
+    box-shadow: 0px 10px 20px rgba(0, 123, 255, 0.3);
+}
+
+/* Floating Effect */
+.media-item:hover::after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 10px;
+    background: rgba(0, 123, 255, 0.2);
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+}
+
+/* Download Button Animation */
+.download-btn {
+    animation: slideUp 0.7s ease-in-out;
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Writings Section */
+.writings-sector {
+    background: #ecf0f1;
+    padding: 60px 20px;
+    text-align: center;
+    border-top: 4px solid #3498db;
+}
+
+.bio-header {
+    margin-bottom: 30px;
+}
+
+.bio-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.bio-subtitle {
+    font-size: 20px;
+    color: #f4c542;
+    margin-bottom: 20px;
+}
+
+.bio-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.bio-image {
+    flex: 1;
+    margin: 0 20px;
+    max-width: 300px;
+}
+
+.profile-image {
+    width: 100%;
+    border-radius: 50%;
+    border: 5px solid #f4c542;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-image:hover {
+    transform: scale(1.05);
+}
+
+.bio-text {
+    flex: 2;
+    max-width: 600px;
+    text-align: left;
+    padding: 20px;
+}
+
+.bio-paragraph {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: justify;
+}
+
+.bio-paragraph:first-letter {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.bio-paragraph span {
+    color: #e67e22;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .bio-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .bio-text {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .bio-paragraph {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .bio-title {
+        font-size: 36px;
+    }
+
+    .bio-subtitle {
+        font-size: 18px;
+    }
+
+    .bio-paragraph {
+        font-size: 16px;
+    }
+}
