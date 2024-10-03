@@ -88,6 +88,16 @@
 
     <!-- Hero Section -->
     <header id="home" class="hero-section">
+
+        <div class="neon-line" style="left: 10%;"></div>
+<div class="neon-line" style="left: 20%;"></div>
+<div class="neon-line" style="left: 30%;"></div>
+<div class="neon-line" style="left: 40%;"></div>
+<div class="neon-line" style="right: 20%;"></div>
+<div class="neon-line" style="right: 30%;"></div>
+<div class="neon-line" style="right: 40%;"></div>
+
+    
         <div class="container">
             <h2>Hello, I'm Ethan Smith <span class="wave">👋</span></h2>
             <p>Student | Creator | Goaltender</p>
@@ -493,6 +503,17 @@ window.onclick = function(event) {
         closeModal.onclick();
     }
 };
+
+// Add an event listener to wait for the DOM content to load
+document.addEventListener('DOMContentLoaded', () => {
+    // Select the hero section element
+    const heroSection = document.querySelector('.hero-section');
+
+    // Add the class 'show-content' after a small delay to trigger the animation
+    setTimeout(() => {
+        heroSection.classList.add('show-content');
+    }, 200); // You can adjust the delay time if needed
+});
 
 
 </script>
