@@ -1,2 +1,8 @@
+# Enable RewriteEngine
 RewriteEngine On
-RewriteRule ^index\.html$ /home [R=301,L]
+
+# If the requested file or directory does not exist,
+# Rewrite to the "about" folder and point to any default file inside it (e.g., index.html)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^about/?$ about/about-me.html [L]
