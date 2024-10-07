@@ -516,6 +516,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 200); // You can adjust the delay time if needed
 });
 
+if (window.location.pathname.endsWith("index.html")) {
+    window.location.href = window.location.origin + "/home";
+}
 
 </script>
 
