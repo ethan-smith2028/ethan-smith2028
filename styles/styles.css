@@ -986,3 +986,174 @@ h1 {
         font-size: 16px;
     }
 }
+
+/* Newsletter Section Styles */
+.newsletter-section {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: #fff;
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.newsletter-section h2 {
+    margin-bottom: 15px;
+}
+
+.newsletter-section p {
+    margin-bottom: 25px;
+}
+
+.newsletter-section form {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.newsletter-section input[type="email"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.newsletter-section button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f4c542;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.newsletter-section button:hover {
+    background-color: #e0b029;
+}
+
+#response-message {
+    margin-top: 15px;
+    font-size: 1.2rem;
+}
+
+
+
+.profile-container {
+    max-width: 1200px;
+    margin: 120px auto 80px; /* Adjust the top margin as needed */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    flex: 1;
+}
+
+.profile-picture img {
+    width: 200px;
+    border-radius: 8px;
+}
+
+.player-info {
+    flex: 2;
+    padding-left: 20px;
+}
+
+.player-info h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+.player-info h2 {
+    margin-top: 5px;
+    color: #888;
+}
+
+.player-details {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.player-details li {
+    margin-bottom: 5px;
+}
+
+/* Stats Section */
+.stats-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.season-stats, .career-stats {
+    flex: 1;
+    margin-right: 10px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.stats-section table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.stats-section table th, .stats-section table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Game Log Section */
+.game-log {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.game-log h3 {
+    margin-top: 0;
+}
+
+.game-log table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.game-log table th, .game-log table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats-section {
+        flex-direction: column;
+    }
+
+    .season-stats, .career-stats {
+        margin-bottom: 10px;
+    }
+}
