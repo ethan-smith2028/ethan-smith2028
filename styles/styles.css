@@ -1157,3 +1157,42 @@ h1 {
         margin-bottom: 10px;
     }
 }
+
+/* Layout for the entire matchup section */
+.matchup {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between each element */
+    font-family: Arial, sans-serif;
+}
+
+/* Individual team styling */
+.team {
+    text-align: center;
+}
+
+.team-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.team-logo {
+    width: 50px;
+    height: auto;
+    margin: 4px 0;
+}
+
+.team-odds {
+    font-size: 16px;
+    color: #888;
+    margin: 0;
+}
+
+/* "@" separator styling */
+.versus {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
