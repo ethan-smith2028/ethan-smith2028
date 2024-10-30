@@ -66,9 +66,9 @@
                         <th>SV%</th>
                     </tr>
                     <tr>
+                        <td>5</td>
                         <td>4</td>
-                        <td>4</td>
-                        <td>0</td>
+                        <td>1</td>
                         <td id="gaa"></td>
                         <td id="sv%"></td>
                     </tr>
@@ -86,9 +86,9 @@
                         <th>SV%</th>
                     </tr>
                     <tr>
+                        <td>5</td>
                         <td>4</td>
-                        <td>4</td>
-                        <td>0</td>
+                        <td>1</td>
                         <td>0</td>
                         <td id="gaa1"></td>
                         <td id="sv%1"></td>
@@ -99,7 +99,7 @@
 
         <!-- Game Log Section -->
         <div class="game-log">
-            <h3>Last 5 Games</h3>
+            <h3>Season Game Logs</h3>
             <table>
                 <tr>
                     <th>Date</th>
@@ -108,43 +108,113 @@
                     <th>SA</th>
                     <th>GA</th>
                     <th>SV%</th>
-                    <th>PIM</th>
+                    <th>MIN</th>
                 </tr>
                 <tr>
-                    <td>Oct 21, 2024</td>
-                    <td>vs Everett</td>
+                    <td>Oct 20, 2024</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">Everett</p>
+                                <img src="everett-logo (1).png" alt="Rangers" class="team-logo">     
+                            </div>
+                            <div class="versus">vs</div>
+                            <div class="team">
+                                <p class="team-name">Rangers</p>
+                                <img src="rangers-logo (1).png" alt="Toronto Logo" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
                     <td>W</td>
                     <td class="sa">24</td>
                     <td class="ga">1</td>
                     <td class="sv"></td>
-                    <td>0</td>
+                    <td>97:00</td>
+                </tr>
+                <tr>
+                    <td>Oct 13, 2024</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">Rangers</p>
+                                <img src="rangers-logo (1).png" alt="Rangers" class="team-logo">     
+                            </div>
+                            <div class="versus">vs</div>
+                            <div class="team">
+                                <p class="team-name">Wenatchee</p>
+                                <img src="wenatchee-logo.png" alt="Toronto Logo" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
+                    <td>L</td>
+                    <td class="sa">26</td>
+                    <td class="ga">3</td>
+                    <td class="sv"></td>
+                    <td>112:00</td>
                 </tr>
                 <tr>
                     <td>Oct 5, 2024</td>
-                    <td>@ Tri-Cities</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">Rangers</p>
+                                <img src="rangers-logo (1).png" alt="Rangers" class="team-logo">     
+                            </div>
+                            <div class="versus">@</div>
+                            <div class="team">
+                                <p class="team-name">Americans</p>
+                                <img src="tri-cities-logo (1).png" alt="Toronto Logo" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
                     <td>W</td>
                     <td class="sa">43</td>
                     <td class="ga">2</td>
                     <td class="sv"></td>
-                    <td>0</td>
+                    <td>85:00</td>
                 </tr>
+                
                 <tr>
                     <td>Sept 28, 2024</td>
-                    <td>vs Wenatchee</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">Wenatchee</p>
+                                <img src="wenatchee-logo.png" alt="Rangers" class="team-logo">     
+                            </div>
+                            <div class="versus">vs</div>
+                            <div class="team">
+                                <p class="team-name">Rangers</p>
+                                <img src="rangers-logo (1).png" alt="Toronto Logo" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
                     <td>W</td>
                     <td class="sa">21</td>
                     <td class="ga">1</td>
                     <td class="sv"></td>
-                    <td>0</td>
+                    <td>98:00</td>
                 </tr>
                 <tr>
                     <td>Sept 21, 2024</td>
-                    <td>vs Tacoma</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">Rockets</p>
+                                <img src="tacoma-logo.png" alt="Rangers" class="team-logo">     
+                            </div>
+                            <div class="versus">vs</div>
+                            <div class="team">
+                                <p class="team-name">Rangers</p>
+                                <img src="rangers-logo (1).png" alt="Toronto Logo" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
                     <td>W</td>
                     <td class="sa">23</td>
                     <td class="ga">1</td>
                     <td class="sv"></td>
-                    <td>0</td>
+                    <td>76:00</td>
                 </tr>
             </table>
         </div>
@@ -154,11 +224,11 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Season stats calculation
             const seasonStats = {
-                gamesPlayed: 4,
+                gamesPlayed: 5,
                 wins: 4,
-                losses: 0,
-                shotsAgainst: 111,
-                goalsAgainst: 5,
+                losses: 1,
+                shotsAgainst: 137,
+                goalsAgainst: 8,
             };
 
             const calculateSavePercentage = (shotsAgainst, goalsAgainst) => {
