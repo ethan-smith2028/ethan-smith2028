@@ -1,0 +1,64 @@
+{
+    "games": [
+        {
+            "date": "Nov 24, 2024",
+            "awayTeam": { "name": "Jr. Mets", "logo": "pics/junior-mets (1).png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "W",
+            "shotsAgainst": 36,
+            "goalsAgainst": 2,
+            "savePercentage": "",
+            "minutesPlayed": "52:47"
+        },
+        {
+            "date": "Nov 23, 2024",
+            "awayTeam": { "name": "Jr. Mets", "logo": "pics/junior-mets (1).png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "L",
+            "shotsAgainst": 39,
+            "goalsAgainst": 5,
+            "savePercentage": "",
+            "minutesPlayed": "72:28"
+        },
+        {
+            "date": "Nov 2, 2024",
+            "awayTeam": { "name": "Bend", "logo": "pics/rapids-logo.png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "W",
+            "shotsAgainst": 16,
+            "goalsAgainst": 1,
+            "savePercentage": "",
+            "minutesPlayed": "57:29"
+        },
+        {
+            "date": "Oct 20, 2024",
+            "awayTeam": { "name": "Everett", "logo": "pics/everett-logo (1).png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "W",
+            "shotsAgainst": 24,
+            "goalsAgainst": 1,
+            "savePercentage": "",
+            "minutesPlayed": "97:00"
+        },
+        {
+            "date": "Oct 13, 2024",
+            "awayTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "homeTeam": { "name": "Wenatchee", "logo": "pics/wenatchee-logo.png" },
+            "decision": "L",
+            "shotsAgainst": 26,
+            "goalsAgainst": 3,
+            "savePercentage": "",
+            "minutesPlayed": "112:00"
+        },
+        {
+            "date": "Oct 5, 2024",
+            "awayTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "homeTeam": { "name": "Americans", "logo": "pics/tri-cities-logo (1).png" },
+            "decision": "W",
+            "shotsAgainst": 43,
+            "goalsAgainst": 2,
+            "savePercentage": "",
+            "minutesPlayed": "85:00"
+        }
+    ]
+}
