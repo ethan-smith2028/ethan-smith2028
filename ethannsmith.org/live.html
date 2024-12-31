@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IceVision - Live</title>
+    <link rel="icon" href="icevision-white.png" id="favicon">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+        .video-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        video#backgroundVideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .scoreboard {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            border-bottom: 2px solid #666;
+            padding: 5px 10px;
+            z-index: 1;
+        }
+        .team-section {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: space-around;
+        }
+        .team-logo {
+            width: 50px;
+            height: 50px;
+        }
+        .team-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #da1c25;
+        }
+        .shots {
+            font-size: 12px;
+            color: #da1c25;
+        }
+        .center-section {
+            flex: 0.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .period {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .admin-panel {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            background: rgba(34, 34, 34, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            z-index: 2;
+        }
+        .control-section {
+            margin-bottom: 15px;
+        }
+        .control-section input {
+            width: calc(100% - 30px);
+            padding: 5px;
+            margin: 5px 0;
+        }
+        .control-section button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .control-section button:hover {
+            background: #218838;
+        }
+        .logo {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            z-index: 1;
+        }
+        .end-live-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            z-index: 3;
+        }
+        /* Goal Animation */
+        .goal-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
+            animation: goalEffect 2s ease-out forwards;
+            display: none;
+        }
+
+        @keyframes goalEffect {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .admin-video-container {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: 150px;
+            border: 2px solid #fff;
+            z-index: 2;
+        }
+        video#adminVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video id="backgroundVideo" autoplay muted playsinline></video>
+
+        <div class="scoreboard">
+            <div class="team-section">
+                <img src="" alt="Team 1" class="team-logo" id="team1Logo">
+                <div class="team-name" id="team1Name">Team 1</div>
+                <div class="score" id="team1Score">0</div>
+                <div class="shots">Shots: <span id="team1Shots">0</span></div>
+            </div>
+            <div class="center-section">
+                <div class="period" id="period">Period: 1</div>
+            </div>
+            <div class="team-section">
+                <div class="team-name" id="team2Name">Team 2</div>
+                <div class="score" id="team2Score">0</div>
+                <div class="shots">Shots: <span id="team2Shots">0</span></div>
+                <img src="" alt="Team 2" class="team-logo" id="team2Logo">
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Only Visible if Not Live View) -->
+    <div class="admin-panel" id="adminPanel">
+        <h3>Admin Controls</h3>
+        <div class="control-section">
+            <div><strong>Period</strong></div>
+            <button data-action="changePeriod" data-delta="-1">-</button>
+            <span id="periodDisplay">1</span>
+            <button data-action="changePeriod" data-delta="1">+</button>
+        </div>
+        
+        <div class="control-section">
+            <div><strong>Scores</strong></div>
+            <div>
+                Team 1: <span id="team1ScoreDisplay">0</span><br>
+                <button data-action="updateScore" data-team="team1" data-delta="-1">-</button>
+                <button data-action="updateScore" data-team="team1" data-delta="1">+</button>
+            </div>
+            <div>
+                Team 2: <span id="team2ScoreDisplay">0</span><br>
+                <button data-action="updateScore" data-team="team2" data-delta="-1">-</button>
+                <button data-action="updateScore" data-team="team2" data-delta="1">+</button>
+            </div>
+        </div>
+        
+        <div class="control-section">
+            <div><strong>Shots</strong></div>
+            <div>
+                Team 1: <span id="team1ShotsDisplay">0</span><br>
+                <button data-action="updateShots" data-team="team1" data-delta="-1">-</button>
+                <button data-action="updateShots" data-team="team1" data-delta="1">+</button>
+            </div>
+            <div>
+                Team 2: <span id="team2ShotsDisplay">0</span><br>
+                <button data-action="updateShots" data-team="team2" data-delta="-1">-</button>
+                <button data-action="updateShots" data-team="team2" data-delta="1">+</button>
+            </div>
+        </div>
+
+        <!-- Goal Buttons -->
+        <div class="control-section">
+            <button id="team1GoalButton">Team 1 Goal</button>
+            <button id="team2GoalButton">Team 2 Goal</button>
+        </div>
+
+        <div class="control-section">
+            <div><strong>Live Game Link</strong></div>
+            <span id="liveLinkDisplay">http://example.com/live?gameId=123&live=true</span>
+            <button id="copyLinkButton">Copy Link</button>
+        </div>
+
+        <div class="control-section">
+            <button id="endLiveButton">End Live Stream</button>
+        </div>
+    </div>
+
+    <div class="end-live-message" id="endLiveMessage" style="display: none;">
+        The live stream has ended.
+    </div>
+
+    <!-- Goal Animation Display -->
+    <div class="goal-animation" id="goalAnimation"></div>
+
+    <!-- Admin Camera (Hidden on live view) -->
+    <div class="admin-video-container" id="adminVideoContainer">
+        <video id="adminVideo" autoplay muted></video>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const gameId = params.get("gameId");
+            const isLive = params.get("live");
+
+            if (!gameId) {
+                alert("Missing game ID. Please set up the game first.");
+                window.location.href = "setup.html";
+                return;
+            }
+
+            // Fetch game data from localStorage
+            const gameData = JSON.parse(localStorage.getItem(gameId));
+
+            if (!gameData) {
+                alert("Game data not found. Please set up the game first.");
+                window.location.href = "setup.html";
+                return;
+            }
+
+            // Initialize the live view with data from localStorage
+            updateLiveView(gameData);
+
+            // Hide admin panel and camera if it's a live view
+            if (isLive === "true") {
+                document.getElementById("adminPanel").style.display = "none";
+                document.getElementById("adminVideoContainer").style.display = "none";
+            }
+
+            // Live link copy functionality with &live=true
+            let liveLink = window.location.href;
+
+            if (!liveLink.includes("live=true")) {
+                liveLink += (liveLink.includes('?') ? '&' : '?') + 'live=true';
+            }
+
+            const liveLinkDisplay = document.getElementById("liveLinkDisplay");
+            liveLinkDisplay.textContent = liveLink;
+
+            document.getElementById("copyLinkButton").addEventListener("click", function () {
+                navigator.clipboard.writeText(liveLink);
+                alert("Live link copied to clipboard!");
+            });
+
+            // Update Live Stream when the end button is pressed
+            document.getElementById("endLiveButton").addEventListener("click", function () {
+                localStorage.removeItem(gameId);
+                window.location.href = "setup.html";
+            });
+
+            // Listen for admin changes and update live view in real-time
+            const controlButtons = document.querySelectorAll('[data-action]');
+            controlButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const action = this.dataset.action;
+                    const delta = parseInt(this.dataset.delta);
+                    const team = this.dataset.team;
+                    
+                    if (action === "updateScore") {
+                        if (team === "team1") {
+                            gameData.team1Score += delta;
+                        } else if (team === "team2") {
+                            gameData.team2Score += delta;
+                        }
+                    } else if (action === "updateShots") {
+                        if (team === "team1") {
+                            gameData.team1Shots += delta;
+                        } else if (team === "team2") {
+                            gameData.team2Shots += delta;
+                        }
+                    } else if (action === "changePeriod") {
+                        gameData.period += delta;
+                    }
+
+                    // Update localStorage and live view immediately
+                    localStorage.setItem(gameId, JSON.stringify(gameData));
+                    updateLiveView(gameData);
+                });
+            });
+
+            // Goal Animation functionality
+            document.getElementById("team1GoalButton").addEventListener("click", function () {
+                showGoalAnimation(gameData.team1Name);
+            });
+
+            document.getElementById("team2GoalButton").addEventListener("click", function () {
+                showGoalAnimation(gameData.team2Name);
+            });
+
+            // Admin video feed (camera)
+            const adminVideo = document.getElementById("adminVideo");
+
+            // Access the user's webcam
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    adminVideo.srcObject = stream;
+
+                    // Set admin video as background
+                    const backgroundVideo = document.getElementById("backgroundVideo");
+                    backgroundVideo.srcObject = stream;
+                })
+                .catch(error => {
+                    console.error("Error accessing webcam:", error);
+                });
+        });
+
+        // Function to show the goal animation
+        function showGoalAnimation(teamName) {
+            const goalAnimation = document.getElementById("goalAnimation");
+            goalAnimation.textContent = `${teamName} Goal!`;
+            goalAnimation.style.display = 'block';
+
+            setTimeout(() => {
+                goalAnimation.style.display = 'none';
+            }, 2000);
+        }
+
+        // Function to update live view from localStorage
+        function updateLiveView(gameData) {
+            document.getElementById("team1Name").textContent = gameData.team1Name;
+            document.getElementById("team2Name").textContent = gameData.team2Name;
+            document.getElementById("team1Logo").src = gameData.team1Logo;
+            document.getElementById("team2Logo").src = gameData.team2Logo;
+            document.getElementById("team1Score").textContent = gameData.team1Score;
+            document.getElementById("team2Score").textContent = gameData.team2Score;
+            document.getElementById("team1Shots").textContent = gameData.team1Shots;
+            document.getElementById("team2Shots").textContent = gameData.team2Shots;
+            document.getElementById("period").textContent = "Period: " + gameData.period;
+            document.getElementById("team1ScoreDisplay").textContent = gameData.team1Score;
+            document.getElementById("team2ScoreDisplay").textContent = gameData.team2Score;
+            document.getElementById("team1ShotsDisplay").textContent = gameData.team1Shots;
+            document.getElementById("team2ShotsDisplay").textContent = gameData.team2Shots;
+        }
+    </script>
+</body>
+</html>

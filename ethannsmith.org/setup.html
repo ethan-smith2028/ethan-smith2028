@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IceVision - Game Setup</title>
+    <link rel="icon" href="icevision-white.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #218838;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Game Setup</h1>
+
+    <div class="form-container">
+        <div class="error-message" id="errorMessage"></div>
+        <form id="gameSetupForm">
+            <input type="text" id="team1Name" placeholder="Team 1 Name" required>
+            <input type="text" id="team2Name" placeholder="Team 2 Name" required>
+            <input type="url" id="team1Logo" placeholder="Team 1 Logo URL" required>
+            <input type="url" id="team2Logo" placeholder="Team 2 Logo URL" required>
+            <button type="submit">Create Game</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if gameId exists in URL
+            const params = new URLSearchParams(window.location.search);
+            const gameId = params.get('gameId');
+            const errorMessageElement = document.getElementById('errorMessage');
+            
+            // If gameId is not in URL, we can allow the user to create a new game
+            if (!gameId) {
+                console.log("No gameId in the URL. You can create a new game.");
+                errorMessageElement.textContent = "No game ID found. Create a new game.";
+            } else {
+                // If there is a gameId, fetch its data from localStorage if exists
+                const existingGameData = localStorage.getItem(gameId);
+                if (existingGameData) {
+                    const gameData = JSON.parse(existingGameData);
+                    console.log("Game found:", gameData);
+                    document.getElementById('team1Name').value = gameData.team1Name;
+                    document.getElementById('team2Name').value = gameData.team2Name;
+                    document.getElementById('team1Logo').value = gameData.team1Logo;
+                    document.getElementById('team2Logo').value = gameData.team2Logo;
+                } else {
+                    errorMessageElement.textContent = `Game with ID ${gameId} not found.`;
+                }
+            }
+
+            // Handle form submission for creating a new game
+            const gameSetupForm = document.getElementById('gameSetupForm');
+            gameSetupForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const team1Name = document.getElementById('team1Name').value;
+                const team2Name = document.getElementById('team2Name').value;
+                const team1Logo = document.getElementById('team1Logo').value;
+                const team2Logo = document.getElementById('team2Logo').value;
+
+                if (!team1Name || !team2Name || !team1Logo || !team2Logo) {
+                    errorMessageElement.textContent = "Please fill in all fields.";
+                    return;
+                }
+
+                // Generate a new unique gameId (could be based on timestamp or UUID)
+                const newGameId = 'game-' + new Date().getTime();
+                
+                const gameData = {
+                    gameId: newGameId,
+                    team1Name: team1Name,
+                    team2Name: team2Name,
+                    team1Logo: team1Logo,
+                    team2Logo: team2Logo,
+                    team1Score: 0,
+                    team2Score: 0,
+                    team1Shots: 0,
+                    team2Shots: 0,
+                    period: 1,
+                };
+
+                // Save to localStorage
+                localStorage.setItem(newGameId, JSON.stringify(gameData));
+
+                // Redirect to the live page with the new gameId
+                window.location.href = `live.html?gameId=${newGameId}`;
+            });
+        });
+    </script>
+</body>
+</html>
