@@ -1,6 +1,16 @@
 {
     "games": [
         {
+            "date": "Jan 26, 2025",
+            "awayTeam": { "name": "Jr. Americans", "logo": "pics/away_jersey_placeholder.svg" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "L",
+            "shotsAgainst": 38,
+            "goalsAgainst": 8,
+            "savePercentage": "",
+            "minutesPlayed": "45:00"
+        },
+        {
             "date": "Jan 4, 2025",
             "awayTeam": { "name": "Jr. Generals", "logo": "pics/away_jersey_placeholder.svg" },
             "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
