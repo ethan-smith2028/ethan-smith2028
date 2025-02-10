@@ -1,5 +1,26 @@
 {
     "games": [
+
+        {
+            "date": "Feb 8, 2025",
+            "awayTeam": { "name": "Jr. Thunderbirds", "logo": "pics/t-birds (1).png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "W",
+            "shotsAgainst": 32,
+            "goalsAgainst": 2,
+            "savePercentage": "",
+            "minutesPlayed": "45:00"
+        },
+         {
+            "date": "Feb 2, 2025",
+            "awayTeam": { "name": "Jr. Mets", "logo": "pics/junior-mets (1).png" },
+            "homeTeam": { "name": "Rangers", "logo": "pics/rangers-logo (1).png" },
+            "decision": "L",
+            "shotsAgainst": 35,
+            "goalsAgainst": 3,
+            "savePercentage": "",
+            "minutesPlayed": "45:00"
+        },
         {
             "date": "Jan 26, 2025",
             "awayTeam": { "name": "Jr. Americans", "logo": "pics/away_jersey_placeholder.svg" },
