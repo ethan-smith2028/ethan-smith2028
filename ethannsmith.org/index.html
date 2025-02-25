@@ -23,6 +23,11 @@
 </head>
 
 <body class="light-mode"> <!-- Default to light mode -->
+    <!-- Maintenance Banner -->
+<div class="maintenance-banner">
+    <p>🚧 Site Under Maintenance | We're revamping and improving. Check back soon! 🚧</p>
+</div>
+
     <!-- Updated Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
@@ -34,15 +39,6 @@
                 <li><a href="#hockey-videos">Hockey Videos</a></li>
                 <li><a href="player-profile.html">Player Profile</a></li>
                 <li><a href="#contact">Contact</a></li>
-                 <!-- Before Login: Show Login/Signup Button -->
-    <li><a href="#" id="auth-toggle-btn" class="btn-auth">Login/Sign Up</a></li>
-
-    <!-- After Login: Show Welcome message -->
-    <li id="user-welcome" class="user-welcome" style="display: none;">
-        <a href="setup.html" id="welcome-user">Welcome, <span id="user-name"></span></a>
-    </li>
-</ul>
-            </ul>
 
             <div class="hamburger">
                 <i class="fas fa-bars"></i>
@@ -53,152 +49,23 @@
             </div>
         </div>
     </nav>
-
-    <!-- Modal for Sign Up / Login -->
-    <div id="auth-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div id="auth-container">
-                <!-- Sign Up Form -->
-                <form id="signup-form" class="auth-form">
-                    <h3>Sign Up</h3>
-                    <input type="text" id="signup-name" placeholder="Name" required>
-                    <input type="email" id="signup-email" placeholder="Email" required>
-                    <input type="password" id="signup-password" placeholder="Password" required>
-                    <button type="submit">Sign Up</button>
-                </form>
-
-                <!-- Login Form -->
-                <form id="login-form" class="auth-form">
-                    <h3>Login</h3>
-                    <input type="email" id="login-email" placeholder="Email" required>
-                    <input type="password" id="login-password" placeholder="Password" required>
-                    <button type="submit">Log In</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-admin-modal" class="close-btn">&times;</span>
-            <h2>Admin Panel</h2>
-            <h3>Registered Users:</h3>
-            <ul id="user-list"></ul>
-            <h3>Newsletter Subscribers:</h3>
-            <ul id="newsletter-subscribers"></ul>
-        </div>
-    </div>
+    
 
     <!-- Hero Section -->
     <header id="home" class="hero-section">
-
-        
-<div class="neon-line" style="left: 20%;"></div>
-<div class="neon-line" style="left: 30%;"></div>
-<div class="neon-line" style="right: 20%;"></div>
-<div class="neon-line" style="right: 30%;"></div>
 
 
     
         <div class="container">
             <h2>Hello, I'm Ethan Smith <span class="wave">👋</span></h2>
             <p>Student | Creator | Goaltender</p>
-            <a href="about/about-me.html" class="btn">
-                <i class="fas fa-info-circle"></i> Learn More About Me
+            <a href="#comingsoon" class="btn">
+                <i class="fas fa-info-circle"></i> Coming Soon
             </a>
         </div>
     </header>
 
-    <!-- About Me Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2>About Me</h2>
-            <p>I'm a student currently attending Valley Catholic High School as a 9th grader. I love doing 3D Design with CAD, Coding Web Applications, and writing stories and essays in English class.</p>
-        </div>
-    </section>
-
-    <!-- Writings Section -->
-    <section id="writings" class="writings-section">
-        <div class="container">
-            <h2>Synchroni Athina</h2>
-            <p>Get ready to explore and view the beauties of a futuristic city, named Synchroni Athina.</p>
-            <a href="https://docs.google.com/document/d/16ung4rdKcEPzwBxI5gYoPEr33admnsaSNUGns_anwnU/edit?usp=sharing" class="btn">
-                <i class="fa-solid fa-scroll"></i> Read Synchroni Athina
-            </a>
-        </div>
-        <div class="container">
-            <h2>8th Grade Capstone</h2>
-            <p>Want to learn a little bit more about knee injuries and brace making? Learn more about that by reading my research paper.</p>
-            <a href="https://docs.google.com/document/d/1h9UuAL4oO77IY_BF4Bcv1-kBqkjjNzwHYOSsKVz8fkg/edit?usp=sharing" class="btn">
-                <i class="fa-solid fa-scroll"></i> Read 8th Grade Capstone
-            </a>
-        </div>
-    </section>
-
-   
-   
-
-
-    <!-- Hockey Videos Section -->
-   <!-- Hockey Videos Section -->
-   <section id="hockey-videos" class="hockey-videos-section">
-    <div class="container">
-        <h2>Hockey Videos</h2>
-        <p>Check out my hockey highlights and games in the videos below!</p>
-
-        <div class="video-grid">
-            <!-- Video 1 -->
-            <div class="video-item">
-                <video controls class="video-player" id="video1">
-                    <source src="video1.mov" type="video/mp4">
-                </video>
-                <!-- Download Button for Video 1 -->
-                <button class="download-btn" data-video="video1.mov">Download Video 1</button>
-            </div>
-
-            <!-- Video 2 -->
-            <div class="video-item">
-                <video controls class="video-player" id="video2">
-                    <source src="video2.MP4" type="video/mp4">
-                </video>
-                <!-- Download Button for Video 2 -->
-                <button class="download-btn" data-video="video2.MP4">Download Video 2</button>
-            </div>
-
-            <!-- Video 3 -->
-            <div class="video-item">
-                <video controls class="video-player" id="video3">
-                    <source src="video3.mp4" type="video/mp4">
-                </video>
-
-                <!-- Video 4 -->
-                <div class="video-item">
-                <video controls class="video-player" id="video4">
-                    <source src="video4.mov" type="video/mp4">
-                </video>
-                
-                <!-- Download Button for Video 3 -->
-                <button class="download-btn" data-video="video3.mp4">Download Video 3</button>
-            </div>
-        </div>
-    </div>
-</section>
- 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2>Contact Me</h2>
-            <form id="contactForm">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
-                <button type="submit" class="btn">
-                    <i class="fas fa-paper-plane"></i> Send Message
-                </button>
-            </form>
-        </div>
-    </section>
+  
     
     <!-- Footer -->
     <footer class="footer">
