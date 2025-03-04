@@ -21,6 +21,69 @@ body {
     color: var(--text-light);
 }
 
+/* Ensure smooth scrolling on iOS */
+html, body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+}
+
+/* Fix text rendering issues on iOS */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Make hover effects touch-friendly */
+@media (hover: hover) {
+    .social-icons a[href*="instagram.com"] i:hover {
+        color: #e4405f; /* Instagram color */
+        transition: color 0.3s ease-in-out;
+    }
+}
+
+/* Footer responsiveness fixes */
+.footer-top,
+.footer-middle {
+    flex-wrap: wrap;
+}
+
+.footer-top {
+    flex-direction: column;
+    text-align: center;
+}
+
+.footer-middle {
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Fix iOS viewport issues */
+@media screen and (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        padding: 0 1rem;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 /* Techy Maintenance Banner Styles */
 .maintenance-banner {
     background: #111; /* Dark background for a techy look */
@@ -59,31 +122,101 @@ body {
 
 
 /* ======= NAVBAR ======= */
+/* Navbar Styling */
 .navbar {
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 1rem 2rem;
     background: rgba(10, 10, 15, 0.85);
     backdrop-filter: blur(12px);
     transition: 0.3s;
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.navbar.scrolled {
-    background: rgba(10, 10, 15, 0.95);
-    box-shadow: 0 4px 12px var(--shadow-light);
-}
-
+/* Nav container */
 .nav-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    width: 100%;
+    justify-content: space-between;
     max-width: 1300px;
     margin: 0 auto;
-    padding: 0 2rem;
 }
+
+/* Logo and Hamburger in the same row */
+.nav-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Logo */
+.logo a {
+    text-decoration: none;
+    color: var(--accent-color);
+    font-weight: 800;
+    font-size: 2rem;
+    transition: 0.3s;
+}
+
+/* Default Nav Menu */
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+/* Hide Hamburger by Default */
+.hamburger {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #fff;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .hamburger {
+        display: block; /* Show hamburger */
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 15, 0.95);
+        flex-direction: column;
+        text-align: center;
+        gap: 0;
+        height: 0;
+        overflow: hidden;
+        transition: height 0.4s ease-in-out;
+        display: none;
+    }
+
+    .nav-menu.active {
+        display: flex;
+        height: auto;
+        padding: 1rem 0;
+    }
+
+    .nav-menu li {
+        padding: 15px 0;
+    }
+
+    .nav-menu li a {
+        font-size: 1.2rem;
+        display: block;
+        width: 100%;
+    }
+}
+
+
 
 /* Logo */
 .logo a {
@@ -177,6 +310,7 @@ body {
     border: none;
     display: inline-block;
     margin-top: 2rem;
+    text-decoration: none;
 }
 
 .btn:hover {
@@ -287,6 +421,189 @@ body {
 .btn-toggle:hover {
     color: var(--accent-color);
 }
+
+.about-section {
+    padding: 50px 0;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ff2e4d;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.about-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.about-text {
+    flex: 2;
+    max-width: 600px;
+    padding: 20px;
+    text-align: left;
+}
+
+.about-image {
+    flex: 1;
+    max-width: 320px;
+    text-align: center;
+
+}
+
+.hockey-section {
+    padding: 50px 0;
+    text-align: center;
+}
+
+.video-gallery {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.video-item {
+    max-width: 480px;
+}
+
+.video-player {
+    width: 100%;
+    height: 270px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    background-color: #121212;
+    color: #f5f5f5;
+    padding: 50px 0;
+    font-size: 14px;
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Footer Top Section */
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 20px;
+}
+
+.footer-logo img {
+    width: 120px;
+}
+
+.footer-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.footer-nav ul li a {
+    color: #f5f5f5;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-nav ul li a:hover {
+    color: #b3001b;
+}
+
+/* Footer Middle Section */
+.footer-middle {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 30px 0;
+}
+
+.contact-info, .social-icons, .contact-form {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 20px;
+}
+
+.contact-info h3,
+.social-icons h3,
+.contact-form h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #b3001b;
+}
+
+.contact-info p {
+    margin: 5px 0;
+}
+
+.contact-info a {
+    color: #f5f5f5;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    color: #ff2e4d;
+    transition: 0.3s;
+}
+
+/* Social Icons */
+.social-icons a {
+    font-size: 20px;
+    color: #f5f5f5;
+    margin-right: 10px;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #b3001b;
+}
+
+
+
+/* Contact Form */
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 5px;
+    background: #1e1e1e;
+    color: #fff;
+}
+
+.contact-form button {
+    background: #b3001b;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.contact-form button:hover {
+    background: #ff2e4d;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 
 /* Bio Section */
 .bio-header {
@@ -409,7 +726,7 @@ body {
     max-width: 1200px;
     margin: 120px auto 80px; /* Adjust the top margin as needed */
     padding: 20px;
-    background-color: white;
+    background-color: black;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
 }
@@ -443,7 +760,7 @@ body {
 
 .player-info h2 {
     margin-top: 5px;
-    color: #888;
+    color: #ddd;
 }
 
 .player-details {
@@ -459,7 +776,7 @@ body {
 /* General Layout */
 .stats-section,
 .game-log {
-    background-color: #f9f9f9;
+    background-color: black;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -515,7 +832,7 @@ table td {
     font-size: 18px;
     font-weight: bold;
     margin: 0;
-    color: #333;
+    color: white;
 }
 
 .team-logo {
@@ -527,7 +844,7 @@ table td {
 .versus {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: white;
 }
 
 /* Responsive Design */
