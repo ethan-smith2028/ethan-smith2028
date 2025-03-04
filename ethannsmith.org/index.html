@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ethan Smith</title>
-    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
+    <link rel="icon" type="image/x-icon" href="pics/es(white).png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
@@ -20,35 +20,78 @@
 
         gtag('config', 'G-CGT8KVV8YF'); // Replace 'G-XXXXXXXXXX' with your Google Analytics Measurement ID
     </script>
+
+<script>
+    function checkScreenSize() {
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            window.location.href = "unavilible.html";
+        }
+    }
+
+    // Run on page load
+    document.addEventListener("DOMContentLoaded", checkScreenSize);
+
+    // Also check on window resize (optional, ensures if they resize the window, they get redirected)
+    window.addEventListener("resize", checkScreenSize);
+</script>
+
+
 </head>
 
 <body class="light-mode"> <!-- Default to light mode -->
-    <!-- Maintenance Banner -->
+    <!-- Maintenance Banner 
 <div class="maintenance-banner">
     <p>🚧 Site Under Maintenance | We're revamping and improving. Check back soon! 🚧</p>
-</div>
+</div>  -->
 
-    <!-- Updated Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="container nav-container">
+<nav class="navbar" id="navbar">
+    <div class="container nav-container">
+        <div class="nav-header">
             <h1 class="logo"><a href="#home">Ethan Smith</a></h1>
-            <ul class="nav-menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="about/about-me.html">About Me</a></li>
-                <li><a href="#writings">My Writings</a></li>
-                <li><a href="#hockey-videos">Hockey Videos</a></li>
-                <li><a href="player-profile.html">Player Profile</a></li>
-                <li><a href="#contact">Contact</a></li>
 
-            <div class="hamburger">
+            <!-- Hamburger Menu Button -->
+            <div class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
-            <div class="toggle-buttons">
-                <!-- Dark Mode and Mute Button -->
-                <button id="muteToggleBtn" class="btn-toggle"><i class="fas fa-volume-up"></i></button>
-            </div>
         </div>
-    </nav>
+
+        <!-- Navigation Menu -->
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about-me">About Me</a></li>
+            <li><a href="#hockey-videos">Hockey Videos</a></li>
+            <li><a href="player-profile.html">Player Profile</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="toggle-buttons">
+            <button id="muteToggleBtn" class="btn-toggle"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
+</nav>
+
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.getElementById("hamburger");
+    const navMenu = document.getElementById("nav-menu");
+
+    // Toggle menu open/close
+    hamburger.addEventListener("click", function () {
+        navMenu.classList.toggle("active");
+    });
+
+    // Close menu when a link is clicked
+    document.querySelectorAll(".nav-menu li a").forEach(link => {
+        link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+        });
+    });
+});
+
+    </script>
+    
     
 
     <!-- Hero Section -->
@@ -59,42 +102,147 @@
         <div class="container">
             <h2>Hello, I'm Ethan Smith <span class="wave">👋</span></h2>
             <p>Student | Creator | Goaltender</p>
-            <a href="#comingsoon" class="btn">
-                <i class="fas fa-info-circle"></i> Coming Soon
+            <a href="#about-me" class="btn">
+                <i class="fas fa-info-circle"></i> Learn About Me
             </a>
         </div>
     </header>
 
-  
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Ethan Smith. All rights reserved.</p>
-    
-            <!-- Social Icons -->
+<!-- About Me Section -->
+<section id="about-me" class="about-section">
+    <div class="container">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p class="bio-paragraph">
+                    Hey, I'm <span>Ethan Smith</span>! A passionate goaltender, student, and content creator. I thrive on challenges, both on and off the ice, always pushing myself to improve. Whether it's making a clutch save or diving into creative projects, I give it my all.
+                </p>
+                <p class="bio-paragraph">
+                    My journey in hockey has been an incredible ride, full of hard work, perseverance, and unforgettable moments. Explore my highlights below and join me on this exciting path.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="pics/Image 2-27-25 at 11.25 AM.jpg" alt="Ethan Smith" class="profile-image">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hockey Highlights Section -->
+<section id="hockey-videos" class="hockey-section">
+    <div class="container">
+        <h2 class="section-title">Hockey Highlights</h2>
+
+        <video id="videoPlayer" controls>
+            <source src="video1.mov" type="video/mov">
+            <source src="video2.mov" type="video/mov">
+            <source src="video3.MP4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</section>
+
+<style>
+    /* Ensure all videos have the same size */
+    #videoPlayer {
+        width: 100%;  /* Make the video fill the container width */
+        max-width: 800px;  /* Limit the maximum width */
+        height: 450px;  /* Set a fixed height */
+        object-fit: cover;  /* Maintain aspect ratio and fill the space */
+        margin: 0 auto;  /* Center the video horizontally */
+        display: block;  /* Block level to ensure it centers */
+    }
+</style>
+
+<script>
+    const videoPlayer = document.getElementById("videoPlayer");
+
+    // List of video sources (paths should match your server files)
+    const videoPlaylist = [
+        "video1.mov",
+        "video2.mov",
+        "video3.MP4"
+    ];
+
+    let currentVideoIndex = 0;
+
+    // Function to update the video source
+    function loadVideo(index) {
+        videoPlayer.src = videoPlaylist[index];  // Update the video source
+        videoPlayer.load();                      // Reload the video element
+        videoPlayer.play();                      // Play the next video
+    }
+
+    // When a video ends, load the next video
+    videoPlayer.addEventListener("ended", function() {
+        currentVideoIndex++;  // Increment the index to go to the next video
+        if (currentVideoIndex < videoPlaylist.length) {
+            loadVideo(currentVideoIndex);  // Load the next video
+        } else {
+            currentVideoIndex = 0;         // Reset to the first video once the playlist ends
+            loadVideo(currentVideoIndex);  // Restart from the first video
+        }
+    });
+
+    // Initialize the first video
+    loadVideo(currentVideoIndex);
+</script>
+
+
+
+
+
+
+<!-- Footer Section -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img src="pics/es.png" alt="Ethan Smith Logo">
+            </div>
+            <nav class="footer-nav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about-me">About Me</a></li>
+                    <li><a href="#hockey-videos">Hockey Videos</a></li>
+                    <li><a href="player-profile.html">Player Profile</a></li>
+                    <li><a href="mailto:etsmith2028@gmail.com">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="footer-middle">
+            <div class="contact-info">
+                <h3>Contact</h3>
+                <p>Email: <a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a></p>
+                <p>Phone: (971) 732 0192</p>
+                <p>Location: Hillsboro, Oregon, USA</p>
+            </div>
+
             <div class="social-icons">
+                <h3>Follow Me</h3>
                 <a href="https://www.youtube.com/@EthanSmith_Hockey" target="_blank"><i class="fa-brands fa-youtube"></i></a>
                 <a href="https://www.instagram.com/ethan.smith_72/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
             </div>
-    
-            <!-- Sources Section -->
-            <!--<div class="sources-section">
-                <h3>Sources</h3>
-                <div class="sources-images">
-                    <a href="https://www.livebarn.com/" target="_blank">
-                        <img src="https://i.postimg.cc/15qvXRL6/unnamed-removebg-preview.png" alt="Source 1" class="source-image">
-                    </a>
-                    <a href="https://www.digitalocean.com/" target="_blank">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/1024px-DigitalOcean_logo.svg.png" alt="Source 2" class="source-image">
-                    </a>
-                    <a href="https://code.visualstudio.com/" target="_blank">
-                        <img src="https://seekvectors.com/files/download/Visual%20Studio%20Code-01.png" alt="Source 3" class="source-image">
-                    </a>
-                </div>
+
+            <div class="contact-form">
+                <h3>Get in Touch</h3>
+                <form id="contactForm">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <button type="submit">Send Message</button>
+                </form>
             </div>
         </div>
-    </footer> -->
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Ethan Smith. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+
     
 
     <!-- JavaScript -->
