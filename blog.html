@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethan Smith</title>
+    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <!-- Google Analytics Tracking Code -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-CGT8KVV8YF'); // Replace 'G-XXXXXXXXXX' with your Google Analytics Measurement ID
+    </script>
+</head>
+
+<body class="light-mode"> <!-- Default to light mode -->
+    <!-- Updated Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <h1 class="logo"><a href="#home">Ethan Smith</a></h1>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="about/about-me.html">About Me</a></li>
+                <li><a href="#writings">My Writings</a></li>
+                <li><a href="#hockey-videos">Hockey Videos</a></li>
+                <li><a href="player-profile.html">Player Profile</a></li>
+                <li><a href="#contact">Contact</a></li>
+                 <!-- Before Login: Show Login/Signup Button -->
+    <li><a href="#" id="auth-toggle-btn" class="btn-auth">Login/Sign Up</a></li>
+
+    <!-- After Login: Show Welcome message -->
+    <li id="user-welcome" class="user-welcome" style="display: none;">
+        <a href="#" id="welcome-user">Welcome, <span id="user-name"></span></a>
+    </li>
+</ul>
+            </ul>
+
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="toggle-buttons">
+                <!-- Dark Mode and Mute Button -->
+                <button id="muteToggleBtn" class="btn-toggle"><i class="fas fa-volume-up"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal for Sign Up / Login -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="auth-container">
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="auth-form">
+                    <h3>Sign Up</h3>
+                    <input type="text" id="signup-name" placeholder="Name" required>
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <button type="submit">Sign Up</button>
+                </form>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <h3>Login</h3>
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Log In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-admin-modal" class="close-btn">&times;</span>
+            <h2>Admin Panel</h2>
+            <h3>Registered Users:</h3>
+            <ul id="user-list"></ul>
+            <h3>Newsletter Subscribers:</h3>
+            <ul id="newsletter-subscribers"></ul>
+        </div>
+    </div>
+
+    <header id="home" class="hero-section">      
+                <div class="container">
+                    <h2>My Blogs<span class="wave">📝</span></h2>
+                    <p>Student | Creator | Goaltender</p>
+                </div>
+            </header>
+
+<!-- Main Content -->
+<main class="blog-container">
+    <!-- Blog Card 1 -->
+    <div class="blog-card" onclick="expandBlog(this)">
+        <img src="pics/Blog Images1.png" alt="Blog Image">
+        <div class="blog-content">
+            <h2>What is the meaning of life?</h2>
+            <p class="blog-tags">
+                <span><i class="fas fa-hashtag"></i> Thoughts</span>
+                <span><i class="fas fa-hashtag"></i> Deep-Thinking</span>
+            </p>
+            <div class="blog-full-content">
+                <p>This is the full content of the blog post. Here, I will elaborate on my thoughts regarding the meaning of life...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Card 2 -->
+    <div class="blog-card" onclick="expandBlog(this)">
+        <img src="https://via.placeholder.com/600x300" alt="Blog Image">
+        <div class="blog-content">
+            <h2>The secrets of the universe</h2>
+            <p class="blog-tags">
+                <span><i class="fas fa-hashtag"></i> Universe</span>
+                <span><i class="fas fa-hashtag"></i> Mysteries</span>
+            </p>
+            <div class="blog-full-content">
+                <p>This blog will cover the most intriguing aspects of the universe and the mysteries that exist within it...</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+function expandBlog(card) {
+    // Get the data from the blog card
+    const modal = document.getElementById('blogModal');
+    const title = card.querySelector('h2').innerText;
+    const description = card.querySelector('.blog-description').innerText;
+    const fullContent = card.querySelector('.blog-full-content').innerHTML;  // Get the full content
+
+    // Populate the modal with content from the blog card
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerHTML = fullContent;  // Set full content
+
+    // Show the modal
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    const modal = document.getElementById('blogModal');
+    modal.style.display = 'none';  // Hide the modal
+}
+
+
+</script>
+</body>
+</html>
