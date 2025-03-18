@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hockey Innovations - Shop</title>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="shopping.svg">
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>  
+    <style>
+        body {
+            font-family: 'Oswald', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background: #002f6c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .container {
+            display: flex;
+            width: 90%;
+            margin: 40px auto;
+            gap: 30px;
+        }
+
+        /* Product Grid */
+        #products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Exactly 3 items per row */
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .product {
+            max-width: 250px;
+            margin: auto;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+        }
+
+        .product img {
+            width: 100%;
+            border-radius: 12px;
+            max-height: 150px;
+            object-fit: contain;
+        }
+
+        .category {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .dimensions {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        /* Cart */
+        #cart-container {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 20px;
+        }
+
+        button {
+            background: #ff6600;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #cc5500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            #products {
+                grid-template-columns: repeat(2, 1fr); /* 2 per row for medium screens */
+            }
+        }
+
+        @media (max-width: 600px) {
+            #products {
+                grid-template-columns: repeat(1, 1fr); /* 1 per row for small screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>Hockey Innovations</header>
+    <div class="container">
+        <section id="products"></section>
+        <div id="cart-container">
+            <h2>Your Cart</h2>
+            <div id="cart-items"></div>
+            <h3>Total: $<span id="cart-total">0.00</span></h3>
+            <button onclick="goToCheckout()">Checkout</button>
+        </div>
+    </div>
+    <script>
+        emailjs.init("your_emailjs_user_id");
+
+        const products = [
+            { 
+                id: 1, 
+                name: "Postguard", 
+                price: 24.99, 
+                image: "edge-guard.png", 
+                description: "Enhance the life of your edges on the post", 
+                category: "Goalie", 
+                dimensions: "8in x 2in x 1in" 
+            },
+            { 
+                id: 2, 
+                name: "KnobTek - Senior", 
+                price: 15.99, 
+                image: "knobtek-senior.png", 
+                description: "Avoid taping your knob again with KnobTek", 
+                category: "Player", 
+                dimensions: "1.22in x 0.82in x 1in" 
+            },
+            { 
+                id: 3, 
+                name: "KnobTek - Intermediate", 
+                price: 14.99, 
+                image: "knobtek-senior.png", 
+                description: "Avoid taping your knob again with KnobTek", 
+                category: "Player", 
+                dimensions: "0.90in x 0.74in x 1in" 
+            }
+        ];
+
+        let cart = [];
+
+        function displayProducts() {
+            const productContainer = document.getElementById("products");
+            products.forEach(product => {
+                let categoryIcon = product.category === "Goalie" 
+                    ? '<i class="fas fa-hockey-puck"></i>' 
+                    : '<i class="fas fa-tshirt"></i>';
+
+                let div = document.createElement("div");
+                div.classList.add("product");
+                div.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p class="category">${categoryIcon} ${product.category}</p>
+                    <p class="dimensions">📏 Dimensions: ${product.dimensions}</p>
+                    <p><strong>$${product.price.toFixed(2)}</strong></p>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                productContainer.appendChild(div);
+            });
+        }
+
+        function addToCart(id) {
+            let product = products.find(p => p.id === id);
+            let item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity++;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById("cart-items");
+            cartItems.innerHTML = "";
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                let div = document.createElement("div");
+                div.innerHTML = `
+                    <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}<br>
+                    <button onclick="removeFromCart(${item.id})">Remove</button>
+                `;
+                cartItems.appendChild(div);
+            });
+            document.getElementById("cart-total").textContent = total.toFixed(2);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        }
+
+        function goToCheckout() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            localStorage.setItem("totalPrice", document.getElementById("cart-total").textContent);
+            window.location.href = "checkout.html";
+        }
+
+        displayProducts();
+    </script>
+</body>
+</html>

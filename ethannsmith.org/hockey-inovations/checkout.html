@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Hockey Innovations</title>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background: #003366;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 2.2em;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #003366;
+        }
+
+        .cart-summary {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-summary h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #1a73e8;
+        }
+
+        .cart-summary h4 {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 8px;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, button:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+
+        button {
+            background-color: #1a73e8;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #1558b0;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .payment-option:hover {
+            background-color: #f1f1f1;
+        }
+
+        .payment-option input {
+            margin-right: 15px;
+        }
+
+        .payment-option i {
+            font-size: 1.5em;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .payment-option:hover i {
+            color: #1a73e8;
+        }
+
+        footer {
+            background: #003366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>Checkout - Hockey Innovations</header>
+
+    <div class="container">
+        <h2>Enter Your Information</h2>
+        
+        <div class="cart-summary">
+            <h3>Cart Summary</h3>
+            <div id="cart-items"></div>
+            <h4>Total: $<span id="cart-total"></span></h4>
+        </div>
+
+        <form id="checkout-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="user_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="to_email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Shipping Address</label>
+                <input type="text" id="address" name="user_address" required>
+            </div>
+            <input type="hidden" id="order_details" name="order_details">
+<input type="hidden" id="total_price" name="total_price">
+
+            <!-- Payment Methods Section -->
+            <div class="form-group" id="payment-section">
+                <h3>Select Payment Method</h3>
+                <div class="payment-methods">
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="Visa" required>
+                        <i class="fa-brands fa-cc-visa"></i> Visa
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="Paypal">
+                        <i class="fa-brands fa-paypal"></i> PayPal
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="Venmo">
+                        <i class="fa-solid fa-university"></i> Venmo
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="American-Express">
+                        <i class="fa-solid fa-credit-card"></i> American Express
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="Mastercard">
+                        <i class="fa-brands fa-cc-mastercard"></i> Mastercard
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment_method" value="Apple-Pay">
+                        <i class="fa-brands fa-cc-apple-pay"></i> Apple Pay
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit">Submit Order</button>
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2025 Hockey Innovations. All rights reserved.
+    </footer>
+
+    <script>
+  // Initialize EmailJS with your Public Key
+  emailjs.init("31O7qMWoDFs0of_gr");
+
+  // Display cart summary on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
+
+    const cartItemsContainer = document.getElementById("cart-items");
+    cart.forEach(item => {
+        let div = document.createElement("div");
+        div.innerHTML = `<strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}`;
+        cartItemsContainer.appendChild(div);
+    });
+    document.getElementById("cart-total").textContent = totalPrice.toFixed(2); // Display the total price
+  });
+
+  // Handle form submission
+  document.getElementById('checkout-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Retrieve cart data and total price
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
+
+    // Generate order details
+    const orderDetails = cart.map(item => `${item.name} x${item.quantity} ($${item.price.toFixed(2)})`).join(", ");
+
+    // Set values in hidden inputs
+    document.getElementById("order_details").value = orderDetails;
+    document.getElementById("total_price").value = `$${totalPrice.toFixed(2)}`;
+
+    // Log for debugging
+    console.log("Order Details:", orderDetails);
+    console.log("Total Price:", `$${totalPrice.toFixed(2)}`);
+
+    // Send form data
+    emailjs.sendForm('service_c2ufaj8', 'template_c3bf94q', this)
+        .then(function(response) {
+            alert('Your order has been placed! A confirmation email has been sent.');
+            localStorage.clear();
+            window.location.href = "order.html";
+        }, function(error) {
+            alert('Failed to send your order. Please try again later.');
+        });
+});
+
+
+    </script>
+</body>
+</html>
