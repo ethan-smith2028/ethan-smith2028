@@ -10,123 +10,334 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
-        gtag('config', 'G-CGT8KVV8YF'); // Replace 'G-XXXXXXXXXX' with your Google Analytics Measurement ID
+        gtag('config', 'G-CGT8KVV8YF');
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="shopping.svg">
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>  
     <style>
-        body {
-            font-family: 'Oswald', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f8f9fa;
-            color: #333;
-        }
+/* ===== General Styles ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        header {
-            background: #002f6c;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 2em;
-            font-weight: bold;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-        }
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-        .container {
-            display: flex;
-            width: 90%;
-            margin: 40px auto;
-            gap: 30px;
-        }
+/* ===== Header ===== */
+header {
+    background: white;
+    color: black;
+    text-align: center;
+    padding: 50px 20px;
+    font-size: 2.5em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #ddd;
+}
 
-        /* Product Grid */
-        #products {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Exactly 3 items per row */
-            gap: 20px;
-            justify-content: center;
-        }
+/* ===== Menu Navigation ===== */
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
 
-        .product {
-            max-width: 250px;
-            margin: auto;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            transition: transform 0.3s ease-in-out;
-        }
+.menu button {
+    background: white;
+    color: black;
+    border: 2px solid black;
+    padding: 10px 25px;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1em;
+    transition: all 0.3s;
+}
 
-        .product:hover {
-            transform: scale(1.05);
-        }
+.menu button:hover, .menu button.active {
+    background: black;
+    color: white;
+    border: 2px solid black;
+}
 
-        .product img {
-            width: 100%;
-            border-radius: 12px;
-            max-height: 150px;
-            object-fit: contain;
-        }
+/* ===== Layout ===== */
+.container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 60px auto;
+    gap: 40px;
+    flex-grow: 1;
+}
 
-        .category {
-            font-size: 0.9em;
-            color: #777;
-            margin-top: 5px;
-        }
+/* ===== Product Grid ===== */
+#products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    flex: 2;
+}
 
-        .dimensions {
-            font-size: 0.85em;
-            color: #555;
-            margin-top: 5px;
-        }
+.product {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    text-align: center;
+    padding: 40px 30px;
+    cursor: pointer;
+}
 
-        /* Cart */
-        #cart-container {
-            flex: 1;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 20px;
-        }
+.product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
 
-        button {
-            background: #ff6600;
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: background 0.3s;
-        }
+.product img {
+    width: 80%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
 
-        button:hover {
-            background: #cc5500;
-        }
+.product:hover img {
+    transform: scale(1.05);
+}
 
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            #products {
-                grid-template-columns: repeat(2, 1fr); /* 2 per row for medium screens */
-            }
-        }
+.product h3 {
+    font-size: 1.4em;
+    color: #222;
+    margin: 20px 0 10px;
+    font-weight: bold;
+}
 
-        @media (max-width: 600px) {
-            #products {
-                grid-template-columns: repeat(1, 1fr); /* 1 per row for small screens */
-            }
-        }
+.product p {
+    font-size: 1em;
+    color: #666;
+    margin: 10px 0;
+}
+
+/* ===== Category and Dimensions Styling ===== */
+.category, .dimensions {
+    font-size: 0.9em;
+    color: #555;
+    margin: 5px 0;
+}
+
+.category i {
+    margin-right: 5px;
+}
+
+/* ===== Button Style ===== */
+.product button {
+    background: white;
+    color: black;
+    border: 2px solid black;
+    padding: 12px 30px;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1em;
+    transition: all 0.3s;
+    display: inline-block;
+    width: auto;
+    margin-top: 15px;
+}
+
+.product button:hover {
+    background: black;
+    color: white;
+    border: 2px solid black;
+}
+
+/* ===== Cart Styles ===== */
+#cart-container {
+    flex: 1;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 20px;
+    transition: all 0.3s;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#cart-container:hover {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
+}
+
+#cart-container h2 {
+    font-size: 1.8em;
+    color: #222;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+#cart-items div {
+    background: #f9f9f9;
+    margin: 15px 0;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#cart-items button {
+    background: #ff3b3b;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+
+#cart-items button:hover {
+    background: #d32f2f;
+}
+
+#cart-total {
+    font-size: 2em;
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* ===== Checkout Button ===== */
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 16px 34px;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1.1em;
+    transition: background 0.3s;
+    width: 100%;
+    margin-top: 20px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* ===== Footer ===== */
+footer {
+    background: #f5f5f5;
+    color: #555;
+    text-align: center;
+    padding: 30px;
+    margin-top: 60px;
+    border-top: 1px solid #ddd;
+    font-size: 1em;
+}
+
+footer a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer a:hover {
+    color: #0056b3;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1200px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    #products {
+        grid-template-columns: 1fr;
+    }
+
+    #cart-container {
+        position: static;
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .menu {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        font-size: 2em;
+    }
+
+    .container {
+        width: 95%;
+    }
+
+    .product img {
+        height: 200px;
+    }
+
+    .product h3 {
+        font-size: 1.2em;
+    }
+
+    .product button {
+        padding: 10px 20px;
+    }
+
+    #cart-container h2 {
+        font-size: 1.6em;
+    }
+
+    #cart-items div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    button {
+        padding: 14px 20px;
+        font-size: 1em;
+    }
+}
 
     </style>
 </head>
 <body>
     <header>Hockey Innovations</header>
+
+    <!--
+    <div class="menu">
+        <button onclick="filterProducts('All')">All</button>
+        <button onclick="filterProducts('Player')">Player</button>
+        <button onclick="filterProducts('Goalie')">Goalie</button>
+    </div>
+-->
+
     <div class="container">
         <section id="products"></section>
         <div id="cart-container">
@@ -136,102 +347,148 @@
             <button onclick="goToCheckout()">Checkout</button>
         </div>
     </div>
+
+    <footer>
+        Have feedback? Email us at <a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a>
+    </footer>
+
     <script>
-        emailjs.init("your_emailjs_user_id");
+      emailjs.init("your_emailjs_user_id");
 
-        const products = [
-            { 
-                id: 1, 
-                name: "Postguard", 
-                price: 24.99, 
-                image: "edge-guard.png", 
-                description: "Enhance the life of your edges on the post", 
-                category: "Goalie", 
-                dimensions: "8in x 2in x 1in" 
-            },
-            { 
-                id: 2, 
-                name: "KnobTek 1.0 - Senior", 
-                price: 15.99, 
-                image: "knobtek-senior.png", 
-                description: "Avoid taping your knob again with KnobTek", 
-                category: "Player", 
-                dimensions: "1.22in x 0.82in x 1in" 
-            },
-            { 
-                id: 3, 
-                name: "KnobTek 1.0 - Intermediate", 
-                price: 14.99, 
-                image: "knobtek-senior.png", 
-                description: "Avoid taping your knob again with KnobTek", 
-                category: "Player", 
-                dimensions: "0.90in x 0.74in x 1in" 
-            }
-        ];
+const products = [
+    { 
+        id: 1, 
+        name: "Postguard", 
+        price: 24.99, 
+        image: "edge-guard.png", 
+        description: "Enhance the life of your edges on the post", 
+        category: "Goalie", 
+        dimensions: "8in x 2in x 1in" 
+    },
+    { 
+        id: 2, 
+        name: "KnobTek 1.0 - Senior", 
+        price: 15.99, 
+        image: "knobtek-senior.png", 
+        description: "Avoid taping your knob again with KnobTek", 
+        category: "Player", 
+        dimensions: "1.22in x 0.82in x 1in" 
+    },
+    { 
+        id: 3, 
+        name: "KnobTek 1.0 - Intermediate", 
+        price: 14.99, 
+        image: "knobtek-senior.png", 
+        description: "Avoid taping your knob again with KnobTek", 
+        category: "Player", 
+        dimensions: "0.90in x 0.74in x 1in" 
+    }
+];
 
-        let cart = [];
+let cart = [];
 
-        function displayProducts() {
-            const productContainer = document.getElementById("products");
-            products.forEach(product => {
-                let categoryIcon = product.category === "Goalie" 
-                    ? '<i class="fas fa-hockey-puck"></i>' 
-                    : '<i class="fas fa-tshirt"></i>';
+function displayProducts() {
+    const productContainer = document.getElementById("products");
+    productContainer.innerHTML = "";  // Clear previous content
+    products.forEach(product => {
+        let categoryIcon = product.category === "Goalie" 
+            ? '<i class="fas fa-hockey-puck"></i>' 
+            : '<i class="fas fa-tshirt"></i>';
 
-                let div = document.createElement("div");
-                div.classList.add("product");
-                div.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                    <p class="category">${categoryIcon} ${product.category}</p>
-                    <p class="dimensions">📏 Dimensions: ${product.dimensions}</p>
-                    <p><strong>$${product.price.toFixed(2)}</strong></p>
-                    <button onclick="addToCart(${product.id})">Add to Cart</button>
-                `;
-                productContainer.appendChild(div);
-            });
+        let div = document.createElement("div");
+        div.classList.add("product");
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <p class="category">${categoryIcon} ${product.category}</p>
+            <p class="dimensions">📏 Dimensions: ${product.dimensions}</p>
+            <p><strong>$${product.price.toFixed(2)}</strong></p>
+            <button onclick="addToCart(${product.id})">Add to Cart</button>
+        `;
+        productContainer.appendChild(div);
+    });
+}
+
+function addToCart(id) {
+    let product = products.find(p => p.id === id);
+    let item = cart.find(i => i.id === id);
+    if (item) {
+        item.quantity++;
+    } else {
+        cart.push({...product, quantity: 1});
+    }
+    updateCart();
+}
+
+function updateCart() {
+    const cartItems = document.getElementById("cart-items");
+    cartItems.innerHTML = "";
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+        let div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
+            <br>
+            <button onclick="removeFromCart(${item.id})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+    });
+    document.getElementById("cart-total").textContent = total.toFixed(2);
+}
+
+function removeFromCart(id) {
+    let itemIndex = cart.findIndex(item => item.id === id);
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity--;
+        } else {
+            cart.splice(itemIndex, 1);
         }
+    }
+    updateCart();
+}
 
-        function addToCart(id) {
-            let product = products.find(p => p.id === id);
-            let item = cart.find(i => i.id === id);
-            if (item) {
-                item.quantity++;
-            } else {
-                cart.push({...product, quantity: 1});
-            }
-            updateCart();
-        }
+function goToCheckout() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("totalPrice", document.getElementById("cart-total").textContent);
+    window.location.href = "checkout.html";
+}
 
-        function updateCart() {
-            const cartItems = document.getElementById("cart-items");
-            cartItems.innerHTML = "";
-            let total = 0;
-            cart.forEach(item => {
-                total += item.price * item.quantity;
-                let div = document.createElement("div");
-                div.innerHTML = `
-                    <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}<br>
-                    <button onclick="removeFromCart(${item.id})">Remove</button>
-                `;
-                cartItems.appendChild(div);
-            });
-            document.getElementById("cart-total").textContent = total.toFixed(2);
-        }
+function sendOrderConfirmation(email) {
+    const cartDetails = cart.map(item => 
+        `${item.name} (x${item.quantity}): $${(item.price * item.quantity).toFixed(2)}`
+    ).join("\n");
 
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCart();
-        }
+    const templateParams = {
+        email: email,
+        cart_items: cartDetails,
+        total: document.getElementById("cart-total").textContent
+    };
 
-        function goToCheckout() {
-            localStorage.setItem("cart", JSON.stringify(cart));
-            localStorage.setItem("totalPrice", document.getElementById("cart-total").textContent);
-            window.location.href = "checkout.html";
-        }
+    emailjs.send('service_id', 'template_id', templateParams)
+        .then(() => {
+            alert("Order confirmation sent!");
+        }, (error) => {
+            console.error("Failed to send email:", error);
+            alert("Failed to send confirmation email.");
+        });
+}
 
-        displayProducts();
+function loadCart() {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayProducts();
+    loadCart();
+});
+
     </script>
 </body>
 </html>
