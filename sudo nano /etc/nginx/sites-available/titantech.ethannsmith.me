@@ -1,0 +1,11 @@
+server {
+    listen 80;
+    server_name titantech.ethannsmith.me;
+
+    root /var/www/titantech;  # Replace with the actual path where your GitHub site is cloned
+    index /hockey-inovations/order.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
