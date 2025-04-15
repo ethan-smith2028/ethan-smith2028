@@ -264,65 +264,65 @@
 
 <script>
     // Initialize EmailJS with your Public Key
-emailjs.init("31O7qMWoDFs0of_gr");
+    emailjs.init("31O7qMWoDFs0of_gr");
 
-// Display cart summary on page load
-document.addEventListener("DOMContentLoaded", function () {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
+    // Display cart summary on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
 
-    const cartItemsContainer = document.getElementById("cart-items");
-    cartItemsContainer.innerHTML = ""; // Clear previous content
+        const cartItemsContainer = document.getElementById("cart-items");
+        cartItemsContainer.innerHTML = "";
 
-    if (cart.length > 0) {
-        cart.forEach(item => {
-            let div = document.createElement("div");
-            div.innerHTML = `<strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}`;
-            cartItemsContainer.appendChild(div);
-        });
-        document.getElementById("cart-total").textContent = totalPrice.toFixed(2);
-    } else {
-        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-        document.getElementById("cart-total").textContent = "0.00";
-    }
-});
+        if (cart.length > 0) {
+            cart.forEach(item => {
+                const sizeText = item.size ? ` (Size: ${item.size})` : "";
+                let div = document.createElement("div");
+                div.innerHTML = `<strong>${item.name}</strong> ${sizeText} ($${item.price.toFixed(2)}) x${item.quantity}`;
+                cartItemsContainer.appendChild(div);
+            });
+            document.getElementById("cart-total").textContent = totalPrice.toFixed(2);
+        } else {
+            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+            document.getElementById("cart-total").textContent = "0.00";
+        }
+    });
 
-// Handle form submission
-document.getElementById('checkout-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+    // Handle form submission
+    document.getElementById('checkout-form').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    // Retrieve cart data and total price
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
 
-    // Generate order details
-    const orderDetails = cart.map(item => `${item.name} x${item.quantity} ($${item.price.toFixed(2)})`).join(", ");
+        // ✅ Include size info if available
+        const orderDetails = cart.map(item => {
+            const sizeText = item.size ? ` (Size: ${item.size})` : "";
+            return `${item.name}${sizeText} x${item.quantity} ($${item.price.toFixed(2)})`;
+        }).join(", ");
 
-    // Set values in hidden inputs
-    document.getElementById("order_details").value = orderDetails;
-    document.getElementById("total_price").value = `$${totalPrice.toFixed(2)}`;
+        // Set values in hidden inputs
+        document.getElementById("order_details").value = orderDetails;
+        document.getElementById("total_price").value = `$${totalPrice.toFixed(2)}`;
 
-    // Log for debugging
-    console.log("Order Details:", orderDetails);
-    console.log("Total Price:", `$${totalPrice.toFixed(2)}`);
+        console.log("Order Details:", orderDetails);
+        console.log("Total Price:", `$${totalPrice.toFixed(2)}`);
 
-    // Send form data using EmailJS
-    emailjs.sendForm('service_c2ufaj8', 'template_c3bf94q', this)
-        .then(function(response) {
-            console.log('Email sent successfully:', response);
-            alert('Your order has been placed! A confirmation email has been sent.');
-            
-            // Clear cart and redirect
-            localStorage.clear();
-            window.location.href = "order.html";
-        })
-        .catch(function(error) {
-            console.error('Failed to send email:', error);
-            alert('Failed to send your order. Please try again later.');
-        });
-});
+        emailjs.sendForm('service_c2ufaj8', 'template_c3bf94q', this)
+            .then(function(response) {
+                console.log('Email sent successfully:', response);
+                alert('Your order has been placed! A confirmation email has been sent.');
 
+                localStorage.clear();
+                window.location.href = "order.html";
+            })
+            .catch(function(error) {
+                console.error('Failed to send email:', error);
+                alert('Failed to send your order. Please try again later.');
+            });
+    });
 </script>
+
 
 </body>
 </html>
