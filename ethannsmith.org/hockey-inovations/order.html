@@ -410,6 +410,42 @@ footer a:hover {
     }
 }
 
+#ad-banner {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    background: #fff;
+    border-top: 2px solid #ddd;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#ad-banner .ad-image {
+    position: absolute;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: transform 0.8s ease, opacity 0.8s ease;
+    transform: translateX(100%);
+}
+
+#ad-banner .ad-image.active {
+    opacity: 1;
+    transform: translateX(0%);
+    z-index: 1;
+}
+
+#ad-banner .ad-image.exit {
+    opacity: 0;
+    transform: translateX(-100%);
+    z-index: 0;
+}
+
+
         </style>
         
 </head>
@@ -438,6 +474,13 @@ footer a:hover {
                 <button onclick="goToCheckout()">Checkout</button>
             </div>
         </div>
+        
+        <div id="ad-banner">
+            <img class="ad-image active" src="biosteel-ad (1).png" alt="Ad 1">
+            <img class="ad-image" src="shipping-order.png" alt="Ad 2">
+            <img class="ad-image" src="follow-instagram.png" alt="Ad 3">
+        </div>
+        
         
         <footer>
             Have feedback? Email us at <a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a>
@@ -623,6 +666,29 @@ footer a:hover {
             window.onload = function () {
                 localStorage.clear();
             };
+
+            
+    const ads = document.querySelectorAll("#ad-banner .ad-image");
+    let currentAd = 0;
+
+    function rotateAds() {
+        const current = ads[currentAd];
+        current.classList.remove("active");
+        current.classList.add("exit");
+
+        currentAd = (currentAd + 1) % ads.length;
+        const next = ads[currentAd];
+        next.classList.remove("exit");
+        next.classList.add("active");
+
+        setTimeout(() => {
+            current.classList.remove("exit");
+        }, 800);
+    }
+
+    setInterval(rotateAds, 7000); // every 7 seconds
+
+
         </script>
         
         <div id="sizingChartModal" style="
