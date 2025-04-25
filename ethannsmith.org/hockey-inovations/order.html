@@ -445,6 +445,12 @@ footer a:hover {
     z-index: 0;
 }
 
+@media (max-width: 768px) {
+    #ad-banner {
+        display: none;
+    }
+}
+
 
         </style>
         
@@ -453,16 +459,15 @@ footer a:hover {
     
     <body>
 
-        <header>
+        <!-- <header>
             <h1>Titan Tech Store</h1>
             
-            <!-- Filter Buttons in Header -->
             <div class="filter-menu">
                 <button onclick="filterProducts('all')" class="filter-btn active">All</button>
                 <button onclick="filterProducts('Hockey')" class="filter-btn">Hockey</button>
                 <button onclick="filterProducts('Animals')" class="filter-btn">Animals</button>
             </div>
-        </header>
+        </header> -->
         
         <div class="container">
             <section id="products"></section>
@@ -470,7 +475,10 @@ footer a:hover {
             <div id="cart-container">
                 <h2>Your Cart</h2>
                 <div id="cart-items"></div>
+                <h3>Subtotal: $<span id="cart-subtotal">0.00</span></h3>
+                <h3>Tax (5%): $<span id="cart-tax">0.00</span></h3>
                 <h3>Total: $<span id="cart-total">0.00</span></h3>
+                
                 <button onclick="goToCheckout()">Checkout</button>
             </div>
         </div>
@@ -489,11 +497,11 @@ footer a:hover {
         <script>
             emailjs.init("your_emailjs_user_id");
         
+            
             const products = [
                 { id: 1, name: "Postguard - Tall", price: 24.99, image: "postguard.jpeg", description: "Enhance the life of your edges on the post", category: "Goalie", dimensions: "2.362in x 2.044in x 5.500in", sport: "Hockey", availible: true },
                 { id: 2, name: "Postguard - Short", price: 23.99, image: "postguard.jpeg", description: "Enhance the life of your edges on the post", category: "Goalie", dimensions: "2.362in x 2.044in x 4.750in", sport: "Hockey", availible: true },
-                { id: 3, name: "Capybara", price: 29.99, image: "capybara.jpeg", description: "A fun friend to have around!", category: "Capybara", dimensions: "6.00in x 1.850in x 3.922in", sport: "Animals", availible: true },
-                { id: 4, name: "Custom Skate Insoles", price: 32.99, image: "insole.jpeg", description: "Comfortable insoles to prevent burining feet.", category: "Player/Goalie", dimensions: "Size May Vary", sport: "Hockey", availible: false }
+                { id: 4, name: "Custom Skate Insoles", price: 24.99, image: "insole.jpeg", description: "Comfortable insoles to prevent burining feet.", category: "Player/Goalie", dimensions: "Size May Vary", sport: "Hockey", availible: false }
             ];
         
             let cart = [];
@@ -597,24 +605,34 @@ footer a:hover {
             }
         
             function updateCart() {
-                const cartItems = document.getElementById("cart-items");
-                cartItems.innerHTML = "";
-                let total = 0;
-        
-                cart.forEach(item => {
-                    total += item.price * item.quantity;
-                    let div = document.createElement("div");
-                    div.innerHTML = `
-                        <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
-                        ${item.size ? `<br>Size: ${item.size}` : ''}
-                        <br>
-                        <button onclick="removeFromCart(${item.id})">Remove</button>
-                    `;
-                    cartItems.appendChild(div);
-                });
-        
-                document.getElementById("cart-total").textContent = total.toFixed(2);
-            }
+    const cartItems = document.getElementById("cart-items");
+    cartItems.innerHTML = "";
+    let subtotal = 0;
+
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+        let div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
+            ${item.size ? `<br>Size: ${item.size}` : ''}
+            <br>
+            <button onclick="removeFromCart(${item.id})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+    });
+
+    const taxRate = 0.05;
+    const taxAmount = subtotal * taxRate;
+    const total = subtotal + taxAmount;
+
+    document.getElementById("cart-subtotal").textContent = subtotal.toFixed(2);
+document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
+document.getElementById("cart-total").textContent = total.toFixed(2);
+localStorage.setItem("totalPrice", total.toFixed(2));
+
+
+}
+
         
             function removeFromCart(id) {
                 let itemIndex = cart.findIndex(item => item.id === id);
