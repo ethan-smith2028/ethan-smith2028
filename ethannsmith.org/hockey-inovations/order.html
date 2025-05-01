@@ -16,11 +16,11 @@
     <link rel="icon" type="image/png" href="titan-tech-white.png">
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>  
     <style>
-        /* ===== Global Styles ===== */
+/* ===== Reset & Base Styles ===== */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html {
@@ -29,183 +29,237 @@ html {
 
 body {
     font-family: 'Inter', 'Helvetica Neue', sans-serif;
-    background: #f9f9fb;
-    color: #333;
-    line-height: 1.6;
-    min-height: 100vh;
+    background-color: #f8f9fa;
+    color: #212529;
+    line-height: 1.7;
     display: flex;
     flex-direction: column;
-    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
 }
 
-/* Typography */
-h1, h2, h3, h4 {
+/* ===== Typography ===== */
+h1, h2, h3, h4, h5 {
     font-weight: 700;
+    line-height: 1.2;
+    color: #111;
+}
+
+p, a, button, select, label {
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 a {
-    text-decoration: none;
     color: inherit;
+    text-decoration: none;
 }
 
-/* Header Styling */
+/* ===== Header ===== */
 header {
+    background: linear-gradient(90deg, #f9f9f9 0%, #e0e0e0 100%);
+    padding: 20px 40px;
+    color: black;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(to right, #007bff, #0056b3);
-    color: white;
-    padding: 20px 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
-    transition: all 0.3s ease;
 }
 
 header h1 {
-    font-size: 2.2em;
-    letter-spacing: -1px;
+    font-size: 2rem;
+    color: black;
 }
 
-/* Navigation Menu */
+/* ===== Navigation ===== */
 .menu {
     display: flex;
-    gap: 25px;
+    gap: 20px;
 }
 
 .menu button {
     background: transparent;
-    color: white;
-    border: 2px solid white;
-    padding: 12px 25px;
-    cursor: pointer;
-    border-radius: 50px;
-    font-size: 1em;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 30px;
     font-weight: 600;
-    transition: all 0.3s;
+    transition: 0.3s ease;
+    cursor: pointer;
 }
 
 .menu button:hover,
 .menu button.active {
-    background: white;
-    color: #007bff;
+    background: #fff;
+    color: #0d6efd;
 }
 
-/* Hero Section */
+/* ===== Hero Section ===== */
 .hero {
-    background: url('https://via.placeholder.com/1600x500') center/cover no-repeat;
-    padding: 100px 50px;
-    text-align: center;
-    color: white;
-    background-attachment: fixed;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+  padding: 0 20px;
+  background-color: #000; /* fallback in case video fails */
+}
+
+/* Video background */
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.7;
+  filter: brightness(1.2) contrast(1.2);
+}
+
+/* Gradient overlay for text readability */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 20px;
+  animation: fadeInUp 1s ease-out;
 }
 
 .hero h2 {
-    font-size: 3em;
-    margin-bottom: 20px;
+  font-size: 3.2rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 2px 2px 6px #0d6efd;
 }
 
 .hero p {
-    font-size: 1.2em;
-    max-width: 700px;
-    margin: 0 auto;
+  font-size: 1.3rem;
+  color: #f0f0f0;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
 }
 
-/* Layout */
+/* Smooth entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optional: Responsive tweaks */
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+}
+
+
+
+/* ===== Layout & Container ===== */
 .container {
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
-    width: 85%;
-    margin: 80px auto;
     gap: 50px;
-    flex-grow: 1;
+    justify-content: space-between;
+    width: 90%;
+    margin: 60px auto;
 }
 
-/* Product Grid */
+/* ===== Product Grid ===== */
 #products {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 50px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
     flex: 2;
 }
 
-/* Product Card */
+/* ===== Product Card ===== */
 .product {
     background: #fff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
     text-align: center;
-    padding: 50px 40px;
-    position: relative;
+    padding: 40px 30px;
 }
 
 .product:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.1);
 }
 
 .product img {
     width: 85%;
     height: auto;
-    object-fit: cover;
-    transition: transform 0.4s ease;
     border-radius: 12px;
+    transition: transform 0.3s ease;
 }
 
 .product:hover img {
-    transform: scale(1.06);
+    transform: scale(1.05);
 }
 
 .product h3 {
-    font-size: 1.5em;
-    color: #111;
-    margin: 25px 0 15px;
-    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 20px 0 10px;
 }
 
 .product p {
-    font-size: 1em;
     color: #666;
-    margin: 10px 0;
+    font-size: 0.95rem;
+    margin: 8px 0;
 }
 
-/* CTA Buttons */
+/* ===== Buttons & Forms ===== */
 button,
-.product button,
-.menu button,
-.filter-btn {
-    min-height: 44px;
-    padding: 14px 30px;
-    border-radius: 50px;
-    font-size: 1.05em;
+select {
+    font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-button,
-.product button {
-    background: #007bff;
-    color: white;
-    border: none;
+    border-radius: 30px;
+    padding: 12px 28px;
+    transition: 0.3s ease;
     cursor: pointer;
 }
 
-button:hover,
-.product button:hover {
-    background: #0056b3;
-}
-
-/* Add to Cart Specific */
-.add-to-cart {
-    background-color: #28a745;
-    color: white;
+button {
+    background-color: #0d6efd;
+    color: #fff;
     border: none;
 }
 
-.add-to-cart:hover:not(:disabled) {
+button:hover {
+    background-color: #0a58ca;
+}
+
+.add-to-cart {
+    background-color: #28a745;
+}
+
+.add-to-cart:hover {
     background-color: #218838;
 }
 
@@ -216,17 +270,68 @@ button:hover,
     text-decoration: line-through;
 }
 
-/* Styled Dropdown */
-select {
-    padding: 10px 15px;
-    font-size: 1em;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-    margin-bottom: 15px;
+/* ===== Filter Buttons ===== */
+.filter-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 40px 0;
 }
 
-/* Modal Styles */
+.filter-btn {
+    background: #eee;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+/* ===== Cart Section ===== */
+#cart-container {
+    flex: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    max-height: 85vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 30px;
+}
+
+#cart-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+#cart-items div {
+    background: #f1f3f5;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+#cart-items button {
+    background: #dc3545;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#cart-total, #cart-subtotal, #cart-tax {
+    font-size: 1.3rem;
+    margin-top: 10px;
+}
+
+/* ===== Modal ===== */
 #sizingChartModal {
     display: none;
     position: fixed;
@@ -240,119 +345,121 @@ select {
 }
 
 #sizingChartModal .modal-content {
-    position: relative;
-    background-color: #fff;
+    background-color: white;
     padding: 30px;
-    border-radius: 16px;
+    border-radius: 15px;
     max-width: 500px;
-    width: 90%;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     text-align: center;
-}
-
-#sizingChartModal img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
+    position: relative;
 }
 
 #sizingChartModal .close-btn {
     position: absolute;
     top: 15px;
     right: 20px;
-    font-size: 1.5em;
+    font-size: 1.5rem;
+    color: #333;
     cursor: pointer;
-    color: #333;
+}
+
+#ad-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 90px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  transition: bottom 0.3s ease;
+}
+
+#ad-banner .ad-image {
+  position: absolute;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: 0.6s ease;
+  transform: translateX(100%);
+}
+
+#ad-banner .ad-image.active {
+  opacity: 1;
+  transform: translateX(0%);
+  z-index: 1;
+}
+
+#ad-banner .ad-image.exit {
+  opacity: 0;
+  transform: translateX(-100%);
+  z-index: 0;
+}
+
+/* Hide on mobile devices */
+@media (max-width: 768px) {
+  #ad-banner {
+    display: none;
+  }
 }
 
 
-/* Filter Menu */
-.filter-menu {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 40px 0;
-}
-
-.filter-btn {
-    background: #f1f1f1;
-    color: #333;
-    border: 1px solid #ccc;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-/* Cart Styling */
-#cart-container {
-    flex: 1;
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 30px;
-    max-height: 85vh;
-    overflow-y: auto;
-}
-
-#cart-container h2 {
-    font-size: 1.8em;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-}
-
-#cart-items div {
-    background: #f8f8f8;
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.03);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#cart-items button {
-    background: #dc3545;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 10px;
-}
-
-#cart-total {
-    font-size: 2em;
-    color: #28a745;
-    font-weight: bold;
-    margin-top: 20px;
-}
-
-/* Footer */
+/* ===== Footer ===== */
 footer {
-    background: #f2f2f2;
-    color: #555;
-    text-align: center;
+    background: #f1f3f5;
     padding: 50px 20px;
-    font-size: 1em;
-    border-top: 2px solid #ddd;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #555;
+    border-top: 2px solid #dee2e6;
 }
 
 footer a {
-    color: #007bff;
+    color: #0d6efd;
+    font-weight: 500;
 }
 
 footer a:hover {
-    color: #0056b3;
+    color: #084298;
     text-decoration: underline;
 }
 
-/* Responsive Enhancements */
+.sponsors-section {
+    padding: 60px 20px;
+    background: #f1f3f5;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sponsors-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: #111;
+    font-weight: 700;
+}
+
+.sponsors-logos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.sponsors-logos img {
+    height: 200px;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.sponsors-logos img:hover {
+    filter: none;
+    opacity: 1;
+    transform: scale(1.05);
+}
+/* ===== Responsive Enhancements ===== */
 @media (max-width: 1200px) {
     .container {
         flex-direction: column;
@@ -375,7 +482,7 @@ footer a:hover {
     }
 
     .hero h2 {
-        font-size: 2.2em;
+        font-size: 2rem;
     }
 }
 
@@ -388,11 +495,11 @@ footer a:hover {
 
     .menu {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
     }
 
     .product {
-        padding: 30px 20px;
+        padding: 20px;
     }
 
     .filter-menu {
@@ -401,55 +508,45 @@ footer a:hover {
     }
 
     #cart-container {
-        padding: 30px 20px;
-    }
-
-    button {
-        padding: 14px 25px;
-        font-size: 1em;
+        padding: 20px;
     }
 }
 
-#ad-banner {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 100px;
-    background: #fff;
-    border-top: 2px solid #ddd;
-    overflow: hidden;
+.trusted-section {
+    padding: 60px 20px;
+    background: #f9f9f9;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.trusted-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: #111;
+    font-weight: 700;
+}
+
+.trusted-logos {
     display: flex;
     justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    flex-wrap: wrap;
+    gap: 30px;
 }
 
-#ad-banner .ad-image {
-    position: absolute;
-    height: 100%;
+.trusted-logos img {
+    height: 50px;
     object-fit: contain;
-    opacity: 0;
-    transition: transform 0.8s ease, opacity 0.8s ease;
-    transform: translateX(100%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
-#ad-banner .ad-image.active {
+.trusted-logos img:hover {
+    filter: none;
     opacity: 1;
-    transform: translateX(0%);
-    z-index: 1;
+    transform: scale(1.05);
 }
 
-#ad-banner .ad-image.exit {
-    opacity: 0;
-    transform: translateX(-100%);
-    z-index: 0;
-}
-
-@media (max-width: 768px) {
-    #ad-banner {
-        display: none;
-    }
-}
 
 
         </style>
@@ -459,15 +556,28 @@ footer a:hover {
     
     <body>
 
-        <!-- <header>
-            <h1>Titan Tech Store</h1>
-            
-            <div class="filter-menu">
+        <header>
+            <h1><img src="Titan-Tech.png" alt="Titan Tech Logo" style="height: 40px; vertical-align: middle;"> Titan Tech</h1>
+            <nav class="menu">
                 <button onclick="filterProducts('all')" class="filter-btn active">All</button>
                 <button onclick="filterProducts('Hockey')" class="filter-btn">Hockey</button>
                 <button onclick="filterProducts('Animals')" class="filter-btn">Animals</button>
+            </nav>
+          </header>
+
+          <section class="hero">
+            <video autoplay muted loop playsinline class="hero-video">
+              <source src="https://media-hosting.imagekit.io/e656ad8c3d9b4fec/hockey-video.mp4?Expires=1840640814&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=eAPtsSvrKjQKC2fLpA7eOmtSjl6E8ASQdVdMGaxcoVpzYv1PQqBXCT3QXP3x8ihwVr2kXnQVHz1uEyoF9tanAqzWY7n7g4MUfMM-KaxiDM6YuYByHkEzlO7uKM0breLfP2FMnq0lV2jiOF1DeU0gqRjtMEILCB1OFu6lgJQ60UseonkiCHWWh3Q~inZKD9tAT4wo22NGm4xFWhSCNURrrhvp4lT2LnjqqWuAzIOqocc0ryUDSLT4mQT-pncqj~sWQf1Fp7KDQJrq7RYVbEnAHh~~SIooMUFGj7lqoMJ23O1Q87e5gzB3h-htAOkE5Svui5Auuq904aX6N~ksaFcAqw__" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          
+            <div class="hero-content">
+              <h2>Innovative Gear for Competitive Athletes</h2>
+              <p>Designed by players, for players — Titan Tech delivers performance-driven gear to elevate your game.</p>
             </div>
-        </header> -->
+          </section>
+          
+          
         
         <div class="container">
             <section id="products"></section>
@@ -488,11 +598,30 @@ footer a:hover {
             <img class="ad-image" src="shipping-order.png" alt="Ad 2">
             <img class="ad-image" src="follow-instagram.png" alt="Ad 3">
         </div>
+
+        <section class="trusted-section">
+            <h2>Trusted by Athletes Nationwide</h2>
+            <div class="trusted-logos">
+              <img src="https://1000logos.net/wp-content/uploads/2017/06/VISA-Logo-1992.png" alt="Visa">
+              <img src="https://pngimg.com/d/mastercard_PNG23.png" alt="Mastercard">
+              <img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/250_Paypal_logo-512.png" alt="PayPal">
+              <img src="https://static-00.iconduck.com/assets.00/apple-pay-icon-144x113-ooy2rmsz.png" alt="Apple Pay">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Venmo_logo.png" alt="Venmo">
+              <img src="https://cdn.iconscout.com/icon/free/png-256/free-stripe-logo-icon-download-in-svg-png-gif-file-formats--flat-social-media-branding-pack-logos-icons-498440.png" alt="Stripe">
+            </div>
+          </section>
         
         
-        <footer>
-            Have feedback? Email us at <a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a>
-        </footer>
+          <footer>
+            <p>&copy; 2025 Titan Tech. All rights reserved.</p>
+            <p><a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a> | <a href="#">Privacy Policy</a> | <a href="#">Returns</a></p>
+            <p>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-x-twitter"></i></a>
+            </p>
+          </footer>
+          
         
         <script>
             emailjs.init("your_emailjs_user_id");
@@ -688,6 +817,22 @@ localStorage.setItem("totalPrice", total.toFixed(2));
             
     const ads = document.querySelectorAll("#ad-banner .ad-image");
     let currentAd = 0;
+
+    window.addEventListener('scroll', () => {
+  const adBanner = document.getElementById('ad-banner');
+  const footer = document.querySelector('footer');
+
+  const footerTop = footer.getBoundingClientRect().top;
+  const viewportHeight = window.innerHeight;
+
+  if (footerTop < viewportHeight) {
+    adBanner.style.position = 'absolute';
+    adBanner.style.bottom = `${viewportHeight - footerTop}px`;
+  } else {
+    adBanner.style.position = 'fixed';
+    adBanner.style.bottom = '0';
+  }
+});
 
     function rotateAds() {
         const current = ads[currentAd];
