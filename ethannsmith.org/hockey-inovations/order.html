@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titan - Shop</title>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -81,8 +83,8 @@ header h1 {
 
 .menu button {
     background: transparent;
-    border: 2px solid #fff;
-    color: #fff;
+    border: 2px solid #000000;
+    color: #000000;
     padding: 10px 22px;
     border-radius: 30px;
     font-weight: 600;
@@ -92,7 +94,7 @@ header h1 {
 
 .menu button:hover,
 .menu button.active {
-    background: #fff;
+    background: #e0e0e0;
     color: #0d6efd;
 }
 
@@ -345,7 +347,7 @@ button:hover {
 }
 
 #sizingChartModal .modal-content {
-    background-color: white;
+    background-color: black;
     padding: 30px;
     border-radius: 15px;
     max-width: 500px;
@@ -358,7 +360,7 @@ button:hover {
     top: 15px;
     right: 20px;
     font-size: 1.5rem;
-    color: #333;
+    color: #000;
     cursor: pointer;
 }
 
@@ -547,6 +549,21 @@ footer a:hover {
     transform: scale(1.05);
 }
 
+.dimensions {
+  font-family: inherit; /* Ensures the font is not changed by icon */
+  font-size: 1rem;       /* Set your desired size */
+  color: #333;           /* Optional text color */
+  background: #f9f9f9;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 5px;
+}
+
+.dimensions i {
+  margin-right: 0.5em;   /* Space between icon and text */
+  font-family: "Font Awesome 5 Free"; /* Ensure the correct font for icon */
+  font-weight: 900;      /* For solid icons */
+}
 
 
         </style>
@@ -560,8 +577,8 @@ footer a:hover {
             <h1><img src="Titan-Tech.png" alt="Titan Tech Logo" style="height: 40px; vertical-align: middle;"> Titan Tech</h1>
             <nav class="menu">
                 <button onclick="filterProducts('all')" class="filter-btn active">All</button>
-                <button onclick="filterProducts('Hockey')" class="filter-btn">Hockey</button>
-                <button onclick="filterProducts('Animals')" class="filter-btn">Animals</button>
+                <button onclick="filterProducts('Goalie')" class="filter-btn">Goalie</button>
+                <button onclick="filterProducts('General')" class="filter-btn">General</button>
             </nav>
           </header>
 
@@ -628,9 +645,9 @@ footer a:hover {
         
             
             const products = [
-                { id: 1, name: "Postguard - Tall", price: 24.99, image: "postguard.jpeg", description: "Enhance the life of your edges on the post", category: "Goalie", dimensions: "2.362in x 2.044in x 5.500in", sport: "Hockey", availible: true },
-                { id: 2, name: "Postguard - Short", price: 23.99, image: "postguard.jpeg", description: "Enhance the life of your edges on the post", category: "Goalie", dimensions: "2.362in x 2.044in x 4.750in", sport: "Hockey", availible: true },
-                { id: 4, name: "Custom Skate Insoles", price: 24.99, image: "insole.jpeg", description: "Comfortable insoles to prevent burining feet.", category: "Player/Goalie", dimensions: "Size May Vary", sport: "Hockey", availible: false }
+                { id: 1, name: "Postguard - Tall", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 5.500in", sport: "Goalie", availible: true },
+                { id: 2, name: "Postguard - Short", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 4.750in", sport: "Goalie", availible: true },
+                { id: 4, name: "Versole - Custom Skate Insole", price: 24.99, image: "insole.jpeg", description: "Versole is a sole that molds around your foot every skate, enhaning you performance, and preventing sore/burning feet while skating. Great for goalies who are hard on their edges, and players who want more comfortability.", category: "Hockey", dimensions: "Size May Vary", sport: "General", availible: false }
             ];
         
             let cart = [];
@@ -650,8 +667,10 @@ footer a:hover {
                         <img src="${product.image}" alt="${product.name}">
                         <h3>${product.name}</h3>
                         <p>${product.description}</p>
-                        <p class="category">${categoryIcon} ${product.category} (${product.sport})</p>
-                        <p class="dimensions">📏 Dimensions: ${product.dimensions}</p>
+                       <p class="dimensions">
+  <i class="fa-solid fa-ruler"></i></i> ${product.dimensions}
+</p>
+
                         <p><strong>$${product.price.toFixed(2)}</strong></p>
         
                         ${product.id === 4 ? `
@@ -872,11 +891,11 @@ localStorage.setItem("totalPrice", total.toFixed(2));
             <button onclick="closeSizingChart()" style="
                 position: absolute;
                 top: 10px; right: 10px;
-                background: transparent;
+                background: crimson;
                 border: none;
-                font-size: 18px;
+                font-size: 20px;
                 cursor: pointer;">✖</button>
-            <img src="sizing-chart.jpg" alt="Sizing Chart" style="max-width: 100%; height: auto;">
+            <img src="https://www.dickssportinggoods.com/content/dam/protips/imported-from-blob-storage/2017/06/BauerHockeySizeChart.jpg" alt="Sizing Chart" style="max-width: 100%; height: auto;">
         </div>
     </div>
     
