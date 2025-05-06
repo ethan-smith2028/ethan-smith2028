@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titan - Shop</title>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
@@ -258,11 +263,13 @@ button:hover {
 }
 
 .add-to-cart {
-    background-color: #28a745;
+    background-color: #e0e0e0;
+    color: #000;
+    border: 2px solid #0d6efd;
 }
 
 .add-to-cart:hover {
-    background-color: #218838;
+    background-color: #ccc;
 }
 
 .add-to-cart:disabled {
@@ -310,6 +317,7 @@ button:hover {
 #cart-container h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
+    color: #0c6dfd;
 }
 
 #cart-items div {
@@ -559,12 +567,10 @@ footer a:hover {
   padding: 5px;
 }
 
-.dimensions i {
-  margin-right: 0.5em;   /* Space between icon and text */
-  font-family: "Font Awesome 5 Free"; /* Ensure the correct font for icon */
-  font-weight: 900;      /* For solid icons */
+i {
+    padding: 10px;
+    color: #0c6dfd;
 }
-
 
         </style>
         
@@ -600,7 +606,7 @@ footer a:hover {
             <section id="products"></section>
         
             <div id="cart-container">
-                <h2>Your Cart</h2>
+                <h2><i class="fa-solid fa-cart-shopping"></i>Your Cart</h2>
                 <div id="cart-items"></div>
                 <h3>Subtotal: $<span id="cart-subtotal">0.00</span></h3>
                 <h3>Tax (5%): $<span id="cart-tax">0.00</span></h3>
@@ -642,117 +648,115 @@ footer a:hover {
         
         <script>
             emailjs.init("your_emailjs_user_id");
-        
-            
-            const products = [
-                { id: 1, name: "Postguard - Tall", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 5.500in", sport: "Goalie", availible: true },
-                { id: 2, name: "Postguard - Short", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 4.750in", sport: "Goalie", availible: true },
-                { id: 4, name: "Versole - Custom Skate Insole", price: 24.99, image: "insole.jpeg", description: "Versole is a sole that molds around your foot every skate, enhaning you performance, and preventing sore/burning feet while skating. Great for goalies who are hard on their edges, and players who want more comfortability.", category: "Hockey", dimensions: "Size May Vary", sport: "General", availible: false }
-            ];
-        
-            let cart = [];
-        
-            function displayProducts(filteredProducts = products) {
-                const productContainer = document.getElementById("products");
-                productContainer.innerHTML = "";
-        
-                filteredProducts.forEach(product => {
-                    let categoryIcon = product.sport === "Hockey"
-                        ? '<i class="fas fa-hockey-puck"></i>'
-                        : '<i class="fas fa-basketball-ball"></i>';
-        
-                    let div = document.createElement("div");
-                    div.classList.add("product");
-                    div.innerHTML = `
-                        <img src="${product.image}" alt="${product.name}">
-                        <h3>${product.name}</h3>
-                        <p>${product.description}</p>
-                       <p class="dimensions">
-  <i class="fa-solid fa-ruler"></i></i> ${product.dimensions}
-</p>
 
-                        <p><strong>$${product.price.toFixed(2)}</strong></p>
-        
-                        ${product.id === 4 ? `
-                            <label for="size-${product.id}">Size:</label><br>
-                            <select id="size-${product.id}" style="padding: 5px; font-size: 14px; margin-top: 5px;">
-                                         <option value="Youth-8k">Youth 8K</option>
-                                         <option value="Youth-9k">Youth 9K</option>
-                                         <option value="Youth-10k">Youth 10K</option>
-                                         <option value="Youth-11k">Youth 11K</option>
-                                         <option value="Youth-12k">Youth 12K</option>
-                                         <option value="Youth-13k">Youth 13K</option>
-                                    <option value="Junior-1">Junior 1</option>
-                                    <option value="Junior-2">Junior 2</option>
-                                    <option value="Junior-3">Junior 3</option>
-                                    <option value="Junior-4">Junior 4</option>
-                                    <option value="Junior-5">Junior 5</option>
-                                <option value="Senior-6">Senior 6</option>
-                                <option value="Senior-7">Senior 7</option>
-                                <option value="Senior-8">Senior 8</option>
-                                <option value="Senior-9">Senior 9</option>
-                                <option value="Senior-10">Senior 10</option>
-                                <option value="Senior-11">Senior 11</option>
-                                <option value="Senior-12">Senior 12</option>
-                            </select>
-                            <br><br>
-                            <button onclick="showSizingChart()">View Sizing Chart</button><br><br>
-                        ` : ''}
-        
-                        <button class="add-to-cart" ${product.availible ? "" : "disabled"} onclick="addToCart(${product.id})">
-                            Add to Cart
-                        </button>
-                    `;
-                    productContainer.appendChild(div);
-                });
-            }
-        
-            function showSizingChart() {
-                document.getElementById('sizingChartModal').style.display = 'flex';
-            }
-        
-            function closeSizingChart() {
-                document.getElementById('sizingChartModal').style.display = 'none';
-            }
-        
-            function filterProducts(sport) {
-                let filtered = products;
-                if (sport !== 'all') {
-                    filtered = products.filter(product => product.sport === sport);
-                }
-        
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`.filter-btn[onclick="filterProducts('${sport}')"]`).classList.add('active');
-        
-                displayProducts(filtered);
-            }
-        
-            function addToCart(id) {
-                let product = products.find(p => p.id === id);
-                let item = cart.find(i => i.id === id);
-        
-                let selectedSize = null;
-                if (id === 4) {
-                    const sizeSelect = document.getElementById(`size-${id}`);
-                    selectedSize = sizeSelect ? sizeSelect.value : null;
-                }
-        
-                if (item) {
-                    item.quantity++;
-                } else {
-                    cart.push({
-                        ...product,
-                        quantity: 1,
-                        size: selectedSize // ✅ Include size
-                    });
-                }
-        
-                updateCart();
-            }
-        
-            function updateCart() {
+const products = [
+    { id: 1, name: "Postguard - Tall", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 5.500in", sport: "Goalie", availible: true },
+    { id: 2, name: "Postguard - Short", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 4.750in", sport: "Goalie", availible: true },
+    { id: 4, name: "Versole - Custom Skate Insole", price: 24.99, image: "insole.jpeg", description: "Versole is a sole that molds around your foot every skate, enhacing your performance, and preventing sore/burning feet while skating. Great for goalies who are hard on their edges, and players who want more comfortability.", category: "Hockey", dimensions: "Size May Vary", sport: "General", availible: false }
+];
+
+let cart = [];
+
+function displayProducts(filteredProducts = products) {
+    const productContainer = document.getElementById("products");
+    productContainer.innerHTML = "";
+
+    filteredProducts.forEach(product => {
+        let categoryIcon = product.sport === "Hockey"
+            ? '<i class="fas fa-hockey-puck"></i>'
+            : '<i class="fas fa-basketball-ball"></i>';
+
+        let div = document.createElement("div");
+        div.classList.add("product");
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <p class="dimensions">
+                <i class="fa-solid fa-ruler"></i> ${product.dimensions}
+            </p>
+            <p><strong>$${product.price.toFixed(2)}</strong></p>
+
+            ${product.id === 4 ? `
+                <label for="size-${product.id}">Size:</label><br>
+                <select id="size-${product.id}" style="padding: 5px; font-size: 14px; margin-top: 5px;">
+                    <option value="Youth-8k">Youth 8K</option>
+                    <option value="Youth-9k">Youth 9K</option>
+                    <option value="Youth-10k">Youth 10K</option>
+                    <option value="Youth-11k">Youth 11K</option>
+                    <option value="Youth-12k">Youth 12K</option>
+                    <option value="Youth-13k">Youth 13K</option>
+                    <option value="Junior-1">Junior 1</option>
+                    <option value="Junior-2">Junior 2</option>
+                    <option value="Junior-3">Junior 3</option>
+                    <option value="Junior-4">Junior 4</option>
+                    <option value="Junior-5">Junior 5</option>
+                    <option value="Senior-6">Senior 6</option>
+                    <option value="Senior-7">Senior 7</option>
+                    <option value="Senior-8">Senior 8</option>
+                    <option value="Senior-9">Senior 9</option>
+                    <option value="Senior-10">Senior 10</option>
+                    <option value="Senior-11">Senior 11</option>
+                    <option value="Senior-12">Senior 12</option>
+                </select>
+                <br><br>
+                <button onclick="showSizingChart()">View Sizing Chart</button><br><br>
+            ` : ''}
+
+            <button class="add-to-cart" ${product.availible ? "" : "disabled"} onclick="addToCart(${product.id})">
+                <i class="fa-solid fa-cart-plus"></i>Add to Cart
+            </button>
+        `;
+        productContainer.appendChild(div);
+    });
+}
+
+function showSizingChart() {
+    document.getElementById('sizingChartModal').style.display = 'flex';
+}
+
+function closeSizingChart() {
+    document.getElementById('sizingChartModal').style.display = 'none';
+}
+
+function filterProducts(sport) {
+    let filtered = products;
+    if (sport !== 'all') {
+        filtered = products.filter(product => product.sport === sport);
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.filter-btn[onclick="filterProducts('${sport}')"]`).classList.add('active');
+
+    displayProducts(filtered);
+}
+
+function addToCart(id) {
+    let product = products.find(p => p.id === id);
+    let item = cart.find(i => i.id === id);
+
+    let selectedSize = null;
+    if (id === 4) {
+        const sizeSelect = document.getElementById(`size-${id}`);
+        selectedSize = sizeSelect ? sizeSelect.value : null;
+    }
+
+    if (item) {
+        item.quantity++;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1,
+            size: selectedSize // ✅ Include size
+        });
+    }
+
+    updateCart();
+}
+
+function updateCart() {
     const cartItems = document.getElementById("cart-items");
     cartItems.innerHTML = "";
     let subtotal = 0;
@@ -774,67 +778,78 @@ footer a:hover {
     const total = subtotal + taxAmount;
 
     document.getElementById("cart-subtotal").textContent = subtotal.toFixed(2);
-document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
-document.getElementById("cart-total").textContent = total.toFixed(2);
-localStorage.setItem("totalPrice", total.toFixed(2));
-
-
+    document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
+    document.getElementById("cart-total").textContent = total.toFixed(2);
+    localStorage.setItem("totalPrice", total.toFixed(2));
 }
 
-        
-            function removeFromCart(id) {
-                let itemIndex = cart.findIndex(item => item.id === id);
-                if (itemIndex > -1) {
-                    if (cart[itemIndex].quantity > 1) {
-                        cart[itemIndex].quantity--;
-                    } else {
-                        cart.splice(itemIndex, 1);
-                    }
-                }
-                updateCart();
-            }
-        
-            function goToCheckout() {
-                localStorage.setItem("cart", JSON.stringify(cart));
-                localStorage.setItem("totalPrice", document.getElementById("cart-total").textContent);
-                window.location.href = "checkout.html";
-            }
-        
-            function loadCart() {
-                const savedCart = localStorage.getItem("cart");
-                if (savedCart) {
-                    cart = JSON.parse(savedCart);
-                    updateCart();
-                }
-            }
-        
-            function sendConfirmationEmail(email) {
-                let cartDetails = cart.map(item => {
-                    return `${item.name} x${item.quantity}${item.size ? ` (Size: ${item.size})` : ''}`;
-                }).join('\n');
-        
-                let emailParams = {
-                    to_email: email,
-                    message: cartDetails,
-                    total_price: document.getElementById("cart-total").textContent
-                };
-        
-                emailjs.send("your_service_id", "your_template_id", emailParams)
-                    .then(() => alert("Confirmation email sent!"))
-                    .catch(err => console.error("Email send error:", err));
-            }
-        
-            document.addEventListener("DOMContentLoaded", () => {
-                displayProducts();
-                loadCart();
-            });
-        
-            window.onload = function () {
-                localStorage.clear();
-            };
 
-            
-    const ads = document.querySelectorAll("#ad-banner .ad-image");
+
+function removeFromCart(id) {
+    let itemIndex = cart.findIndex(item => item.id === id);
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity--;
+        } else {
+            cart.splice(itemIndex, 1);
+        }
+    }
+    updateCart();
+}
+
+function goToCheckout() {
+    const total = document.getElementById("cart-total").textContent;
+    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+
+    // Optional: prefill more data like email or name if available
+    const email = encodeURIComponent(document.getElementById("user-email")?.value || "");
+    const name = encodeURIComponent(document.getElementById("user-name")?.value || "");
+
+    const prefillUrl = `${tallyBaseUrl}?amount=${total}`;
+
+    // Save cart to localStorage (optional)
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("totalPrice", total);
+
+    // Redirect to Tally form with prefilled data
+    window.location.href = prefillUrl;
+}
+
+
+function loadCart() {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+    }
+}
+
+function sendConfirmationEmail(email) {
+    let cartDetails = cart.map(item => {
+        return `${item.name} x${item.quantity}${item.size ? ` (Size: ${item.size})` : ''}`;
+    }).join('\n');
+
+    let emailParams = {
+        to_email: email,
+        message: cartDetails,
+        total_price: document.getElementById("cart-total").textContent
+    };
+
+    emailjs.send("your_service_id", "your_template_id", emailParams)
+        .then(() => alert("Confirmation email sent!"))
+        .catch(err => console.error("Email send error:", err));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayProducts();
+    loadCart();
+});
+
+window.onload = function () {
+    localStorage.clear();
+};
+
+const ads = document.querySelectorAll("#ad-banner .ad-image");
     let currentAd = 0;
 
     window.addEventListener('scroll', () => {
@@ -870,7 +885,7 @@ localStorage.setItem("totalPrice", total.toFixed(2));
 
     setInterval(rotateAds, 7000); // every 7 seconds
 
-
+  
         </script>
         
         <div id="sizingChartModal" style="
