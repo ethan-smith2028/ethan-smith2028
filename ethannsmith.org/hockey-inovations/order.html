@@ -650,8 +650,30 @@ i {
             emailjs.init("your_emailjs_user_id");
 
 const products = [
-    { id: 1, name: "Postguard - Tall", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 5.500in", sport: "Goalie", availible: true },
-    { id: 2, name: "Postguard - Short", price: 19.99, image: "postguard.jpeg", description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", category: "Hockey", dimensions: "2.362in x 2.044in x 4.750in", sport: "Goalie", availible: true },
+{ 
+  id: 1, 
+  name: "Postguard - Tall", 
+  price: 24.99, 
+  salePrice: 16.24,
+  image: "postguard.jpeg", 
+  description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", 
+  category: "Hockey", 
+  dimensions: "2.362in x 2.044in x 5.500in", 
+  sport: "Goalie", 
+  availible: true 
+},
+{ 
+  id: 2, 
+  name: "Postguard - Short", 
+  price: 24.99, 
+  salePrice: 16.24,
+  image: "postguard.jpeg", 
+  description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", 
+  category: "Hockey", 
+  dimensions: "2.362in x 2.044in x 4.750in", 
+  sport: "Goalie", 
+  availible: true 
+},
     { id: 4, name: "Versole - Custom Skate Insole", price: 24.99, image: "insole.jpeg", description: "Versole is a sole that molds around your foot every skate, enhacing your performance, and preventing sore/burning feet while skating. Great for goalies who are hard on their edges, and players who want more comfortability.", category: "Hockey", dimensions: "Size May Vary", sport: "General", availible: false }
 ];
 
@@ -666,16 +688,26 @@ function displayProducts(filteredProducts = products) {
             ? '<i class="fas fa-hockey-puck"></i>'
             : '<i class="fas fa-basketball-ball"></i>';
 
-        let div = document.createElement("div");
-        div.classList.add("product");
-        div.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>${product.description}</p>
-            <p class="dimensions">
-                <i class="fa-solid fa-ruler"></i> ${product.dimensions}
-            </p>
-            <p><strong>$${product.price.toFixed(2)}</strong></p>
+            let div = document.createElement("div");
+div.classList.add("product");
+
+div.innerHTML = `
+    <img src="${product.image}" alt="${product.name}">
+    <h3>${product.name}</h3>
+    <p>${product.description}</p>
+    <p class="dimensions">
+        <i class="fa-solid fa-ruler"></i> ${product.dimensions}
+    </p>
+    <p>
+        ${product.salePrice ? `
+            <span style="text-decoration: line-through; color: gray; margin-right: 0.5em;">
+                $${product.price.toFixed(2)}
+            </span>
+            <strong style="color: red;">$${product.salePrice.toFixed(2)}</strong>
+        ` : `
+            <strong>$${product.price.toFixed(2)}</strong>
+        `}
+    </p>
 
             ${product.id === 4 ? `
                 <label for="size-${product.id}">Size:</label><br>
