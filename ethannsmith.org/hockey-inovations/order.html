@@ -781,12 +781,14 @@ function addToCart(id) {
         cart.push({
             ...product,
             quantity: 1,
-            size: selectedSize // ✅ Include size
+            size: selectedSize,
+            price: product.salePrice ?? product.price // ✅ Use salePrice if present
         });
     }
 
     updateCart();
 }
+
 
 function updateCart() {
     const cartItems = document.getElementById("cart-items");
