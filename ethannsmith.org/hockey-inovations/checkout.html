@@ -1,343 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Hockey Innovations</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - Titan Tech</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CGT8KVV8YF');
+  </script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
-        gtag('config', 'G-CGT8KVV8YF'); // Replace 'G-XXXXXXXXXX' with your Google Analytics Measurement ID
-    </script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Global styles */
-        html {
-            -webkit-text-size-adjust: 100%; /* Prevent font scaling on rotation */
-        }
-    
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 20px;
-            margin: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    
-        header {
-            background: #003366;
-            color: white;
-            padding: 25px 15px;
-            text-align: center;
-            font-size: 2.2em;
-            font-weight: bold;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-    
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-    
-        h2 {
-            font-size: 1.8em;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #003366;
-        }
-    
-        .cart-summary {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    
-        .cart-summary h3 {
-            font-size: 1.4em;
-            margin-bottom: 10px;
-            color: #1a73e8;
-        }
-    
-        .cart-summary h4 {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-        }
-    
-        .form-group {
-            margin-bottom: 20px;
-        }
-    
-        label {
-            font-size: 1.1em;
-            color: #333;
-            margin-bottom: 8px;
-            display: block;
-        }
-    
-        input, select, button {
-            width: 100%;
-            padding: 15px;
-            font-size: 1em;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-top: 8px;
-            background-color: #fafafa;
-            transition: border-color 0.3s ease;
-            -webkit-appearance: none;
-        }
-    
-        input:focus, select:focus, button:focus {
-            border-color: #1a73e8;
-            outline: none;
-        }
-    
-        button {
-            background-color: #1a73e8;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-weight: bold;
-            border: none;
-        }
-    
-        button:hover {
-            background-color: #1558b0;
-        }
-    
-        /* Payment Methods Section */
-        .payment-methods {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-    
-        .payment-option {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-    
-        .payment-option:hover {
-            background-color: #f1f1f1;
-        }
-    
-        .payment-option input {
-            margin-right: 15px;
-        }
-    
-        .payment-option i {
-            font-size: 1.8em;
-            color: #333;
-            margin-right: 10px;
-        }
-    
-        .payment-option:hover i {
-            color: #1a73e8;
-        }
-    
-        footer {
-            background: #003366;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 40px;
-            border-radius: 10px;
-        }
-    
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-    
-            .payment-methods {
-                grid-template-columns: 1fr;
-            }
-    
-            header {
-                font-size: 1.8em;
-            }
-    
-            button {
-                font-size: 0.95em;
-                padding: 13px;
-            }
-        }
-    </style>
-    
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      padding: 20px;
+      margin: 0;
+    }
+    header {
+      background: #003366;
+      color: white;
+      padding: 25px 15px;
+      text-align: center;
+      font-size: 2.2em;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #003366;
+    }
+    .cart-summary {
+      background: #fafafa;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .cart-summary h3 {
+      color: #1a73e8;
+    }
+    .cart-summary h4 {
+      font-weight: bold;
+    }
+    .tally-box {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    footer {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
+
 <body>
-<header>Checkout - Titan Tech</header>
+<header>Checkout - Northmark</header>
 
 <div class="container">
-    <h2>Enter Your Information</h2>
+  <h2>Enter Your Information</h2>
 
-    <div class="cart-summary">
-        <h3>Cart Summary</h3>
-        <div id="cart-items"></div>
-        <h4>Total: $<span id="cart-total"></span></h4>
+  <div class="cart-summary">
+    <h3>Cart Summary</h3>
+    <div id="cart-items"></div>
+    <h4>Total: $<span id="cart-total"></span></h4>
+  </div>
+
+  <form id="checkout-form">
+    <input type="hidden" id="order_details" name="order_details">
+    <input type="hidden" id="total_price" name="total_price">
+
+    <div class="tally-box">
+      <iframe id="tally-form" src="about:blank" title="Titan Tech Payment Form"></iframe>
     </div>
-
-    <form id="checkout-form">
-        <!-- <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="user_name" required>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="to_email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="address">Shipping Address</label>
-            <input type="text" id="address" name="user_address" required>
-        </div>
-
-        <input type="hidden" id="order_details" name="order_details">
-        <input type="hidden" id="total_price" name="total_price">
-    -->
-        <div class="tally-box">
-            <iframe data-tally-src="https://tally.so/embed/wggLRK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="1" frameborder="0" marginheight="0" marginwidth="0" title="Titan Tech Payment Form"></iframe>
-            <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>        
-        <style>
-            .tally-box {
-            background-color: #ffffff; /* white background */
-            padding: 2rem;             /* space around the form */
-            border-radius: 12px;       /* rounded corners */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* subtle shadow */
-            max-width: 800px;
-            margin: 2rem auto;         /* center it horizontally with some space */
-        }
-        </style>
-
-        <!-- Payment Methods Section
-        <div class="form-group" id="payment-section">
-            <h3>Select Payment Method</h3>
-            <div class="payment-methods">
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="Visa" required>
-                    <i class="fa-brands fa-cc-visa"></i> Visa
-                </label>
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="Paypal">
-                    <i class="fa-brands fa-paypal"></i> PayPal
-                </label>
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="Venmo">
-                    <i class="fa-solid fa-university"></i> Venmo
-                </label>
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="American-Express">
-                    <i class="fa-solid fa-credit-card"></i> AmEx
-                </label>
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="Mastercard">
-                    <i class="fa-brands fa-cc-mastercard"></i> Master
-                </label>
-                <label class="payment-option">
-                    <input type="radio" name="payment_method" value="Apple-Pay">
-                    <i class="fa-brands fa-cc-apple-pay"></i> Apple
-                </label>
-            </div>
-        </div>
-    -->
-
-        <!-- <button type="submit">Submit Order</button> -->
-    </form>
+  </form>
 </div>
 
 <footer>
-    &copy; 2025 Titan Tech. All rights reserved.
+  &copy; 2025 Titan Tech. All rights reserved.
 </footer>
 
 <script>
-    // Initialize EmailJS with your Public Key
-    emailjs.init("31O7qMWoDFs0of_gr");
+  emailjs.init("31O7qMWoDFs0of_gr");
 
-    // Display cart summary on page load
-    document.addEventListener("DOMContentLoaded", function () {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
+  document.addEventListener("DOMContentLoaded", function () {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
 
-        const cartItemsContainer = document.getElementById("cart-items");
-        cartItemsContainer.innerHTML = "";
+    const cartItemsContainer = document.getElementById("cart-items");
+    const cartTotalElement = document.getElementById("cart-total");
 
-        if (cart.length > 0) {
-            cart.forEach(item => {
-                const sizeText = item.size ? ` (Size: ${item.size})` : "";
-                let div = document.createElement("div");
-                div.innerHTML = `<strong>${item.name}</strong> ${sizeText} ($${item.price.toFixed(2)}) x${item.quantity}`;
-                cartItemsContainer.appendChild(div);
-            });
-            document.getElementById("cart-total").textContent = totalPrice.toFixed(2);
-        } else {
-            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-            document.getElementById("cart-total").textContent = "0.00";
-        }
-    });
-
-    // Handle form submission
-    document.getElementById('checkout-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const totalPrice = parseFloat(localStorage.getItem("totalPrice")) || 0;
-
-        // ✅ Include size info if available
-        const orderDetails = cart.map(item => {
+    if (cart.length > 0) {
+        cart.forEach(item => {
             const sizeText = item.size ? ` (Size: ${item.size})` : "";
-            return `${item.name}${sizeText} x${item.quantity} ($${item.price.toFixed(2)})`;
-        }).join(", ");
+            let div = document.createElement("div");
+            div.innerHTML = `<strong>${item.name}</strong>${sizeText} - $${item.price.toFixed(2)} x${item.quantity}`;
+            cartItemsContainer.appendChild(div);
+        });
+        cartTotalElement.textContent = totalPrice.toFixed(2);
+    } else {
+        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+        cartTotalElement.textContent = "0.00";
+    }
 
-        // Set values in hidden inputs
-        document.getElementById("order_details").value = orderDetails;
-        document.getElementById("total_price").value = `$${totalPrice.toFixed(2)}`;
+    // Set iframe src dynamically
+    const tallyFrame = document.getElementById("tally-form");
 
-        console.log("Order Details:", orderDetails);
-        console.log("Total Price:", `$${totalPrice.toFixed(2)}`);
+// Modify the URL to pass the amount as a number
+const tallyURL = `https://tally.so/embed/wggLRK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&amount=${totalPrice.toFixed(2)}`;
+tallyFrame.src = tallyURL;
 
-        emailjs.sendForm('service_c2ufaj8', 'template_c3bf94q', this)
-            .then(function(response) {
-                console.log('Email sent successfully:', response);
-                alert('Your order has been placed! A confirmation email has been sent.');
+    // Log for debugging
+    console.log("Tally Form URL with total amount:", tallyURL);
 
-                localStorage.clear();
-                window.location.href = "order.html";
-            })
-            .catch(function(error) {
-                console.error('Failed to send email:', error);
-                alert('Failed to send your order. Please try again later.');
-            });
-    });
+    // Fill hidden inputs for emailjs
+    const orderDetails = cart.map(item => {
+        const sizeText = item.size ? ` (Size: ${item.size})` : "";
+        return `${item.name}${sizeText} x${item.quantity} ($${item.price.toFixed(2)})`;
+    }).join(", ");
+    
+    document.getElementById("order_details").value = orderDetails;
+    document.getElementById("total_price").value = `$${totalPrice.toFixed(2)}`;
+
+    // Log hidden fields for debugging
+    console.log("Order Details (hidden field):", document.getElementById("order_details").value);
+    console.log("Total Price (hidden field):", document.getElementById("total_price").value);
+});
+
+
 </script>
-
-
 </body>
 </html>
