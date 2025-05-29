@@ -10,6 +10,7 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
@@ -73,23 +74,35 @@ a {
     text-decoration: none;
 }
 
+/* ===== Global Styles (optional additions) ===== */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #101820;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+
 /* ===== Header ===== */
 header {
-    background: linear-gradient(90deg, #f9f9f9 0%, #e0e0e0 100%);
+    background: linear-gradient(90deg, #1e2a38 0%, #0d1b2a 100%);
     padding: 20px 40px;
-    color: black;
+    color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
 header h1 {
-    font-size: 2rem;
-    color: black;
+    font-size: 2.4rem;
+    color: #ffffff;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 /* ===== Navigation ===== */
@@ -100,100 +113,114 @@ header h1 {
 
 .menu button {
     background: transparent;
-    border: 2px solid #000000;
-    color: #000000;
+    border: 2px solid #ffffff;
+    color: #ffffff;
     padding: 10px 22px;
     border-radius: 30px;
     font-weight: 600;
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .menu button:hover,
 .menu button.active {
-    background: #e0e0e0;
-    color: #0d6efd;
+    background: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
 }
 
 /* ===== Hero Section ===== */
 .hero {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-  overflow: hidden;
-  padding: 0 20px;
-  background-color: #000; /* fallback in case video fails */
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 0 20px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 20, 40, 0.9));
 }
 
 /* Video background */
 .hero-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
-  object-fit: cover;
-  z-index: 0;
-  opacity: 0.7;
-  filter: brightness(1.2) contrast(1.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.65;
+    filter: brightness(1.1) contrast(1.25) grayscale(10%);
 }
 
 /* Gradient overlay for text readability */
 .hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
-  z-index: 1;
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 20, 40, 0.9));
+    z-index: 1;
 }
 
 .hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 800px;
-  padding: 20px;
-  animation: fadeInUp 1s ease-out;
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 20px;
+    animation: fadeInUp 1s ease-out;
 }
 
 .hero h2 {
-  font-size: 3.2rem;
-  color: #ccc;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  text-shadow: 2px 2px 6px #0d6efd;
+    font-size: 3.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 3px 3px 10px #0d6efd;
+    text-transform: uppercase;
+    font-weight: 800;
 }
 
 .hero p {
-  font-size: 1.3rem;
-  color: #f0f0f0;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+    font-size: 1.4rem;
+    color: #f5f5f5;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 /* Smooth entrance animation */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Optional: Responsive tweaks */
+/* ===== Responsive Tweaks ===== */
 @media (max-width: 768px) {
-  .hero h2 {
-    font-size: 2rem;
-  }
+    .hero h2 {
+        font-size: 2.2rem;
+    }
 
-  .hero p {
-    font-size: 1rem;
-  }
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
 }
 
 
@@ -221,7 +248,7 @@ header h1 {
 
 /* ===== Product Card ===== */
 .product {
-    background: #fff;
+    background: #1e2a38;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -253,11 +280,11 @@ header h1 {
 .product h3 {
     font-size: 1.5rem;
     margin: 24px 0 12px;
-    color: #111;
+    color: white;
 }
 
 .product p {
-    color: #555;
+    color: #e3e3e3;
     font-size: 1rem;
     margin: 10px 0;
     line-height: 1.5;
@@ -294,7 +321,6 @@ button:hover {
 .add-to-cart {
     background-color: #e0e0e0;
     color: #000;
-    border: 2px solid #0d6efd;
 }
 
 .add-to-cart:hover {
@@ -338,7 +364,7 @@ button:hover {
 /* ===== Cart Section ===== */
 #cart-container {
     flex: 1;
-    background: #ffffff;
+    background: #101820;
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
@@ -355,8 +381,12 @@ button:hover {
     font-weight: 700;
 }
 
+#cart-container h3 {
+    color: #ffffff;
+}
+
 #cart-items div {
-    background: #f8f9fa;
+    background: #0d6efd;
     padding: 16px;
     margin-bottom: 15px;
     border-radius: 12px;
@@ -385,7 +415,7 @@ button:hover {
     font-size: 1.3rem;
     margin-top: 10px;
     font-weight: 600;
-    color: #333;
+    color: #ffffff;
 }
 
 
@@ -423,8 +453,10 @@ button:hover {
 #ad-banner {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  height: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 60px;
   background: #fff;
   border-top: 1px solid #ddd;
   display: flex;
@@ -434,12 +466,12 @@ button:hover {
   transition: bottom 0.3s ease;
 }
 
+
 #ad-banner .ad-image {
   position: absolute;
   height: 100%;
   object-fit: contain;
   opacity: 0;
-  transition: 0.6s ease;
   transform: translateX(100%);
 }
 
@@ -465,21 +497,20 @@ button:hover {
 
 /* ===== Footer ===== */
 footer {
-    background: #f1f3f5;
+    background: #101820;
     padding: 50px 20px;
     text-align: center;
     font-size: 0.95rem;
-    color: #555;
-    border-top: 2px solid #dee2e6;
+    color: #ffffff;
 }
 
 footer a {
-    color: #0d6efd;
+    color: #3785fa;
     font-weight: 500;
 }
 
 footer a:hover {
-    color: #084298;
+    color: #98bef7;
     text-decoration: underline;
 }
 
@@ -572,16 +603,14 @@ footer a:hover {
 
 .trusted-section {
     padding: 60px 20px;
-    background: #f9f9f9;
+    background: #101820;
     text-align: center;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
 }
 
 .trusted-section h2 {
     font-size: 1.8rem;
     margin-bottom: 30px;
-    color: #111;
+    color: #ffffff;
     font-weight: 700;
 }
 
@@ -595,7 +624,7 @@ footer a:hover {
 .trusted-logos img {
     height: 50px;
     object-fit: contain;
-    opacity: 0.8;
+    
     transition: all 0.3s ease;
 }
 
@@ -609,7 +638,7 @@ footer a:hover {
   font-family: inherit; /* Ensures the font is not changed by icon */
   font-size: 1rem;       /* Set your desired size */
   color: #333;           /* Optional text color */
-  background: #f9f9f9;
+  background: #1a2531;
   border-radius: 5px;
   font-family: 'JetBrains Mono', monospace;
   padding: 5px;
@@ -628,23 +657,23 @@ i {
     <body>
 
         <header>
-            <h1><img src="Northmark - Black.png" alt="Titan Tech Logo" style="height: 60px; vertical-align: middle;"></h1>
+            <h1><img src="Northmark - White.png" alt="Titan Tech Logo" style="height: 60px; vertical-align: middle;"></h1>
             <nav class="menu">
                 <button onclick="filterProducts('all')" class="filter-btn active">All</button>
-                <button onclick="filterProducts('Goalie')" class="filter-btn">Goalie</button>
-                <button onclick="filterProducts('General')" class="filter-btn">General</button>
+                <button onclick="filterProducts('Skate')" class="filter-btn">Skate</button>
+                <button onclick="filterProducts('NA')" class="filter-btn">Coming Soon</button>
             </nav>
           </header>
 
           <section class="hero">
             <video autoplay muted loop playsinline class="hero-video">
-              <source src="https://media-hosting.imagekit.io/e656ad8c3d9b4fec/hockey-video.mp4?Expires=1840640814&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=eAPtsSvrKjQKC2fLpA7eOmtSjl6E8ASQdVdMGaxcoVpzYv1PQqBXCT3QXP3x8ihwVr2kXnQVHz1uEyoF9tanAqzWY7n7g4MUfMM-KaxiDM6YuYByHkEzlO7uKM0breLfP2FMnq0lV2jiOF1DeU0gqRjtMEILCB1OFu6lgJQ60UseonkiCHWWh3Q~inZKD9tAT4wo22NGm4xFWhSCNURrrhvp4lT2LnjqqWuAzIOqocc0ryUDSLT4mQT-pncqj~sWQf1Fp7KDQJrq7RYVbEnAHh~~SIooMUFGj7lqoMJ23O1Q87e5gzB3h-htAOkE5Svui5Auuq904aX6N~ksaFcAqw__" type="video/mp4">
+              <source src="https://media.gettyimages.com/id/516129326/video/ice-hockey-goaltender-making-a-save.mp4?s=mp4-640x640-gi&k=20&c=eMDz86SYQSVxfoztqdU0pXSp7Dya0c0LKw618_aei8I=" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           
             <div class="hero-content">
-              <h2>Innovative Gear for Competitive Athletes</h2>
-              <p>Designed by players, for players — Northmark delivers performance-driven gear to elevate your game.</p>
+              <h2>Innovative Gear for Goaltenders</h2>
+              <p>Designed by goalies, for goalies — Northmark delivers performance-driven gear to elevate your game.</p>
             </div>
           </section>
           
@@ -676,7 +705,7 @@ i {
               <img src="https://1000logos.net/wp-content/uploads/2017/06/VISA-Logo-1992.png" alt="Visa">
               <img src="https://pngimg.com/d/mastercard_PNG23.png" alt="Mastercard">
               <img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/250_Paypal_logo-512.png" alt="PayPal">
-              <img src="https://static-00.iconduck.com/assets.00/apple-pay-icon-144x113-ooy2rmsz.png" alt="Apple Pay">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968279.png" alt="Apple Pay">
               <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Venmo_logo.png" alt="Venmo">
               <img src="https://cdn.iconscout.com/icon/free/png-256/free-stripe-logo-icon-download-in-svg-png-gif-file-formats--flat-social-media-branding-pack-logos-icons-498440.png" alt="Stripe">
             </div>
@@ -685,11 +714,11 @@ i {
         
           <footer>
             <p>&copy; 2025 Northmark. All rights reserved.</p>
-            <p><a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a> | <a href="#">Privacy Policy</a> | <a href="#">Returns</a></p>
+            <p><a href="mailto:etsmith2028@gmail.com">etsmith2028@gmail.com</a> | <a href="privacy.html">Privacy Policy</a> | <a href="#">Returns</a></p>
             <p>
-              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.instagram.com/northmark.2024/"><i class="fab fa-instagram"></i></a>
               <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-x-twitter"></i></a>
+              <a href="https://www.youtube.com/@northmark.2024"><i class="fab fa-youtube"></i></a>
             </p>
           </footer>
           
@@ -700,29 +729,16 @@ i {
 const products = [
 { 
   id: 1, 
-  name: "Postguard - Tall", 
-  price: 19.99, 
-  salePrice: 19.99,
-  image: "postguard.jpeg", 
-  description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", 
-  category: "Hockey", 
-  dimensions: "2.362in x 2.044in x 5.500in", 
-  sport: "Goalie", 
-  availible: true 
-},
-{ 
-  id: 2, 
-  name: "Postguard - Short", 
+  name: "Postguard", 
   price: 18.99, 
-  salePrice: 15.24,
-  image: "postguard.jpeg", 
+  salePrice: 18.99,
+  image: "postguard.png", 
   description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)", 
-  category: "Hockey", 
+  category: "Skate", 
+  sport: "Skate",
   dimensions: "2.362in x 2.044in x 4.750in", 
-  sport: "Goalie", 
   availible: true 
-},
-    { id: 4, name: "Versole - Custom Skate Insole", price: 23.99, image: "insole.jpeg", description: "Versole is a sole that molds around your foot every skate, enhacing your performance, and preventing sore/burning feet while skating. Great for goalies who are hard on their edges, and players who want more comfortability.", category: "Hockey", dimensions: "Size May Vary", sport: "General", availible: false }
+}
 ];
 
 let cart = [];
