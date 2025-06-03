@@ -92,6 +92,12 @@
       border-radius: 50%;
       z-index: 1;
     }
+    .timeline li::before,
+#statusList li::before,
+#publicStatusList li::before {
+  display: none;
+}
+
     .timeline i.fa-solid,
     #statusList i.fa-solid,
     #publicStatusList i.fa-solid {
@@ -105,6 +111,8 @@
       color: var(--primary);
       z-index: 2;
     }
+
+    
   </style>
 </head>
 <body>
