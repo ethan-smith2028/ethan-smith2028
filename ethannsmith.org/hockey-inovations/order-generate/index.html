@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Tracker</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f3f4f6;
+      --card: #fff;
+      --text: #111827;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+    }
+  
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: var(--bg);
+      color: var(--text);
+    }
+  
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+  
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+  
+    h2 {
+      margin-top: 0;
+    }
+  
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      margin: 0.3rem 0.3rem 0.3rem 0;
+      cursor: pointer;
+    }
+  
+    button:hover {
+      background: #3730a3;
+    }
+  
+    .order-link {
+      color: var(--primary);
+      word-break: break-word;
+    }
+  
+    .update-buttons i {
+      margin-right: 0.5rem;
+    }
+  
+    .order-list {
+      margin-top: 2rem;
+    }
+  
+    .delete-btn {
+      background-color: #dc2626;
+    }
+  
+    .delete-btn:hover {
+      background-color: #991b1b;
+    }
+  
+    ul#savedOrdersList li {
+      margin-bottom: 0.5rem;
+    }
+  
+    .timeline,
+    #statusList,
+    #publicStatusList {
+      position: relative;
+      padding-left: 2rem;
+      list-style: none;
+      border-left: 2px solid #d1d5db;
+      margin-top: 1rem;
+    }
+  
+    .timeline li,
+    #statusList li,
+    #publicStatusList li {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1.5rem;
+    }
+  
+    .timeline li::before,
+    #statusList li::before,
+    #publicStatusList li::before {
+      content: '';
+      position: absolute;
+      top: 0.5rem;
+      left: -10px;
+      width: 12px;
+      height: 12px;
+      background-color: var(--primary);
+      border: 2px solid white;
+      border-radius: 50%;
+      z-index: 1;
+    }
+  
+    .timeline i.fa-solid,
+    #statusList i.fa-solid,
+    #publicStatusList i.fa-solid {
+      position: absolute;
+      left: -1.8rem;
+      top: 0.1rem;
+      font-size: 1rem;
+      background: white;
+      padding: 2px;
+      border-radius: 50%;
+      color: var(--primary);
+      z-index: 2;
+    }
+  
+    #statusList li,
+    #publicStatusList li {
+      padding-left: 2.5rem;
+    }
+
+    .timeline li::before {
+  display: none;
+}
+
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Create New Order</h2>
+      <button onclick="createOrder()"><i class="fa-solid fa-plus"></i> Generate Order</button>
+      <p id="orderCreated"></p>
+    </div>
+
+    <div class="card order-status" style="display:none;">
+      <h2>Order Status</h2>
+      <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+      <p><strong>Tracking Link:</strong> <a class="order-link" id="orderLink" target="_blank"></a></p>
+      <button onclick="deleteOrder()" class="delete-btn"><i class="fa-solid fa-trash"></i> Delete Order</button>
+
+      <div class="status-update">
+        <h3>Progress Updates</h3>
+        <ul class="timeline" id="statusList"></ul>
+        <div class="update-buttons">
+          <button onclick="addStatus('Order Received')"><i class="fa-solid fa-inbox"></i> Order Received</button>
+          <button onclick="addStatus('Product Made')"><i class="fa-solid fa-cogs"></i> Product Made</button>
+          <button onclick="addStatus('Packaged')"><i class="fa-solid fa-box"></i> Packaged</button>
+          <button onclick="addStatus('Shipped')"><i class="fa-solid fa-truck"></i> Shipped</button>
+          <button onclick="addStatus('Delivered')"><i class="fa-solid fa-check"></i> Delivered</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card order-list">
+      <h2>Saved Orders</h2>
+      <ul id="savedOrdersList"></ul>
+    </div>
+  </div>
+
+
+  <script>
+   const orderStorageKey = 'orders';
+let orders = JSON.parse(localStorage.getItem(orderStorageKey)) || {};
+let currentOrderId = null;
+
+const statusIcons = {
+  'Order Received': 'fa-inbox',
+  'Product Made': 'fa-cogs',
+  'Packaged': 'fa-box',
+  'Shipped': 'fa-truck',
+  'Delivered': 'fa-check'
+};
+
+function generateId() {
+  return 'NMRK-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+}
+
+function saveOrders() {
+  localStorage.setItem(orderStorageKey, JSON.stringify(orders));
+  renderSavedOrders();
+}
+
+function createOrder() {
+  const id = generateId();
+  const link = `${window.location.origin}${window.location.pathname}?orderId=${id}`;
+  orders[id] = { id, updates: [], link };
+  currentOrderId = id;
+  saveOrders();
+  showOrder(id);
+  document.getElementById('orderCreated').innerText = `Order created: ${id}`;
+}
+
+function showOrder(id) {
+  currentOrderId = id;
+  const order = orders[id];
+  document.querySelector('.order-status').style.display = 'block';
+  document.getElementById('orderId').innerText = id;
+  const linkElem = document.getElementById('orderLink');
+  linkElem.href = order.link;
+  linkElem.textContent = order.link;
+  renderStatus(id);
+}
+
+function addStatus(status) {
+  if (!currentOrderId) return;
+  orders[currentOrderId].updates.push({
+    text: status,
+    time: new Date().toLocaleString(),
+    icon: statusIcons[status] || 'fa-info-circle'
+  });
+  saveOrders();
+  renderStatus(currentOrderId);
+}
+
+function renderStatus(id) {
+  const list = document.getElementById('statusList');
+  list.className = 'timeline';
+  list.innerHTML = '';
+  orders[id].updates.forEach(update => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <i class="fa-solid ${update.icon}"></i>
+      <div><strong>${update.text}</strong><br><small>${update.time}</small></div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function renderSavedOrders() {
+  const list = document.getElementById('savedOrdersList');
+  list.innerHTML = '';
+  Object.values(orders).forEach(order => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = "#";
+    link.textContent = order.id;
+    link.className = "order-link";
+    link.onclick = () => showOrder(order.id);
+    li.appendChild(link);
+    list.appendChild(li);
+  });
+}
+
+function deleteOrder() {
+  if (currentOrderId && confirm('Delete this order?')) {
+    delete orders[currentOrderId];
+    saveOrders();
+    document.querySelector('.order-status').style.display = 'none';
+    currentOrderId = null;
+    document.getElementById('orderCreated').innerText = '';
+  }
+}
+
+function loadTrackingView(orderId) {
+  const order = orders[orderId];
+  if (!order) {
+    document.body.innerHTML = '<h2>Order not found.</h2>';
+    return;
+  }
+
+  document.body.innerHTML = `
+    <div class="container">
+      <div class="card">
+        <h2>Tracking Order: ${orderId}</h2>
+        <ul class="timeline" id="publicStatusList"></ul>
+      </div>
+    </div>
+  `;
+
+  const list = document.getElementById('publicStatusList');
+  order.updates.forEach(update => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <i class="fa-solid ${update.icon}"></i>
+      <div><strong>${update.text}</strong><br><small>${update.time}</small></div>
+    `;
+    list.appendChild(li);
+  });
+
+  setInterval(() => {
+    const updated = JSON.parse(localStorage.getItem(orderStorageKey)) || {};
+    const latest = updated[orderId]?.updates || [];
+    if (latest.length !== order.updates.length) location.reload();
+  }, 2000);
+}
+
+window.onload = () => {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  if (orderId) {
+    loadTrackingView(orderId);
+  } else {
+    renderSavedOrders();
+  }
+};
+
+  </script>
+  
+</body>
+</html>
