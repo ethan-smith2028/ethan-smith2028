@@ -178,7 +178,7 @@
 
     async function createOrder() {
       const id = generateId();
-      const link = `${window.location.origin}/order-generate/view.html?orderId=${id}`;
+      const link = `${window.location.origin}/hockey-inovations/order-generate/view.html?orderId=${id}`;
       const newOrder = { id, updates: [], link };
       await saveOrderToFirestore(newOrder);
       currentOrderId = id;
