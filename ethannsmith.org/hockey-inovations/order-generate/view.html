@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Status</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+      padding: 2rem;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .timeline {
+      list-style: none;
+      padding-left: 2rem;
+      position: relative;
+      border-left: 2px solid #d1d5db;
+      margin-top: 1.5rem;
+    }
+    .timeline li {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1rem;
+    }
+    .timeline li::before {
+      content: '';
+      position: absolute;
+      top: 0.5rem;
+      left: -11px;
+      width: 12px;
+      height: 12px;
+      background: #4f46e5;
+      border: 2px solid white;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    .timeline i {
+      position: absolute;
+      left: -2rem;
+      top: 0.3rem;
+      color: #4f46e5;
+      background: white;
+      border-radius: 50%;
+      padding: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Order Status</h2>
+    <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+    <ul class="timeline" id="publicStatusList"></ul>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYX9orOfKCSgER6UXdH0HeYYG5nf1G-4",
+      authDomain: "order-generate-55b67.firebaseapp.com",
+      projectId: "order-generate-55b67",
+      storageBucket: "order-generate-55b67.appspot.com",
+      messagingSenderId: "192439380242",
+      appId: "1:192439380242:web:19c58f71367fe7fabbabcb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const statusIcons = {
+      'Order Received': 'fa-inbox',
+      'Product Made': 'fa-cogs',
+      'Packaged': 'fa-box',
+      'Shipped': 'fa-truck',
+      'Delivered': 'fa-check'
+    };
+
+    async function loadPublicOrder(id) {
+      const snap = await getDoc(doc(db, "orders", id));
+      if (!snap.exists()) {
+        document.body.innerHTML = '<h2>Order not found.</h2>';
+        return;
+      }
+      const order = snap.data();
+      document.getElementById('orderId').textContent = order.id;
+      renderTimeline(order);
+
+      onSnapshot(doc(db, "orders", id), (updatedSnap) => {
+        const updated = updatedSnap.data();
+        if (updated) renderTimeline(updated);
+      });
+    }
+
+    function renderTimeline(order) {
+      const list = document.getElementById('publicStatusList');
+      list.innerHTML = '';
+      order.updates.forEach(update => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <i class="fa-solid ${update.icon}"></i>
+          <div><strong>${update.text}</strong><br><small>${update.time}</small></div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    window.onload = () => {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get('orderId');
+      if (orderId) {
+        loadPublicOrder(orderId);
+      } else {
+        document.body.innerHTML = '<h2>No order ID provided.</h2>';
+      }
+    };
+  </script>
+</body>
+</html>
