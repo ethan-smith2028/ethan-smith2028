@@ -499,6 +499,43 @@ footer a:hover {
   color: #007bff;
 }
 
+.zip-code-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.zip-code-container label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.zip-code-container input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 200px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.zip-code-container p {
+  font-size: 1rem;
+  color: #000;
+}
+
+.zip-code-container input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
         </style>
         
 </head>
@@ -537,6 +574,13 @@ footer a:hover {
             <h2><i class="fa-solid fa-cart-shopping"></i> Your Cart</h2>
             <div id="bulk-warning" style="color: red; font-weight: bold;"></div>
             <div id="cart-items"></div>
+          <div class="zip-code-container">
+  <label for="zip">Enter ZIP Code for Shipping:</label>
+  <input type="text" id="zip" name="zip" maxlength="5" placeholder="e.g. 90210" oninput="calculateShipping()" />
+  <p>Shipping: $<span id="shipping-cost">0.00</span></p>
+</div>
+
+
             <h3>Subtotal: $<span id="cart-subtotal">0.00</span></h3>
             <h3>Tax (5%): $<span id="cart-tax">0.00</span></h3>
             <h3>Total: $<span id="cart-total">0.00</span></h3>
@@ -587,7 +631,7 @@ const products = [
         name: "Postguard",
         price: 18.99,
         salePrice: 18.99,
-        image: "postguard.png",
+        image: "postguard-demo.png",
         description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
         category: "Skate",
         sport: "Postguard",
@@ -599,7 +643,7 @@ const products = [
         name: "Postguard Bulk (3+)",
         price: 12.99,
         salePrice: 12.99,
-        image: "postguard.png",
+        image: "postguard-demo.png",
         description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
         category: "Skate",
         sport: "Postguard",
@@ -617,19 +661,7 @@ const products = [
         sport: "Postguard",
         dimensions: "2.362in x 2.044in x 5.500-6.000in",
         availible: true
-    },
-     {
-        id: 4,
-        name: "Postguard + Stake Bulk",
-        price: 14.99,
-        salePrice: 14.99,
-        image: "postguard-stake-demo.png",
-        description: "Postguard + Stake is perfect for goalies who are looking to get more protection for their skate, and are able to stake the net into the ice, to prevent it from moving. With it's sleek, light, and durable design, it's perfect for all goalies who are training on ice!",
-        category: "Skate",
-        sport: "Postguard",
-        dimensions: "2.362in x 2.044in x 5.500-6.000in",
-        availible: false
-    },
+    }
 ];
 
 let cart = [];
@@ -658,6 +690,28 @@ function displayProducts(filteredProducts = products) {
     });
 }
 
+function calculateShipping() {
+    const zip = document.getElementById("zip").value.trim();
+    const shippingSpan = document.getElementById("shipping-cost");
+    let shipping = 0;
+
+    // Example: use flat rates based on proximity from your ZIP (e.g., 10001)
+    if (/^\d{5}$/.test(zip)) {
+        const originZip = 97123; // Replace with YOUR ZIP code
+        const distance = Math.abs(parseInt(zip) - originZip);
+
+        if (distance < 500) {
+            shipping = 5.00;
+        } else if (distance < 1500) {
+            shipping = 10.00;
+        } else {
+            shipping = 15.00;
+        }
+    }
+
+    shippingSpan.textContent = shipping.toFixed(2);
+    updateCart(); // Recalculate total
+}
 
 
 document.getElementById("close-cart").addEventListener("click", () => {
@@ -735,9 +789,13 @@ function updateCart() {
         cartItems.appendChild(div);
     });
 
-    const taxRate = 0.05;
+       const taxRate = 0.05;
     const taxAmount = subtotal * taxRate;
-    const total = subtotal + taxAmount;
+
+    const shippingInput = document.getElementById("shipping-cost");
+    const shipping = shippingInput ? parseFloat(shippingInput.textContent) || 0 : 0;
+
+    const total = subtotal + taxAmount + shipping;
 
     document.getElementById("cart-subtotal").textContent = subtotal.toFixed(2);
     document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
@@ -772,14 +830,26 @@ function goToCheckout() {
         return;
     }
 
-    const total = document.getElementById("cart-total").textContent;
-    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+    const zip = document.getElementById("zip").value.trim();
+    if (!/^\d{5}$/.test(zip)) {
+        alert("Please enter a valid ZIP code.");
+        return;
+    }
 
-    // You can add prefill fields if needed, e.g., user email/name, here:
-    const prefillUrl = `${tallyBaseUrl}?amount=${total}`;
+    const total = document.getElementById("cart-total").textContent;
+    const shipping = document.getElementById("shipping-cost").textContent;
+
+    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+    const productDetails = cart
+        .map(item => `${item.name} x${item.quantity}`)
+        .join(', ');
+
+    const prefillUrl = `${tallyBaseUrl}?products=${encodeURIComponent(productDetails)}&amount=${encodeURIComponent(total)}&zip=${zip}&shipping=${shipping}`;
 
     window.location.href = prefillUrl;
 }
+
+
 
 function loadCart() {
     const savedCart = localStorage.getItem("cart");
