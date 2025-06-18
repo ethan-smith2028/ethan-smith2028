@@ -22,6 +22,43 @@
       padding: 2rem;
       background: var(--bg);
       color: var(--text);
+
+      /* Header */
+header {
+  background: #111;
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+header img {
+  height: 60px;
+}
+
+.menu {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.menu button {
+  background: transparent;       /* transparent background */
+  border: 2px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu button.active {
+  background: white;             /* filled background */
+  color: #111;                   /* dark text */
+  border-color: white;           /* keep border same or remove if you want */
+}
     }
     .container {
       max-width: 900px;
