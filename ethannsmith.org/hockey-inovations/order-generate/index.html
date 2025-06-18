@@ -297,23 +297,30 @@ async function addStatus(status) {
   }
 }
 
-const emojiIcons = {
-  'Order Received': '📥',
-  'Product Made': '⚙️',
-  'Packaged': '📦',
-  'Shipped': '🚚',
-  'Delivered': '✅'
+const statusIcons1 = {
+  'Order Received': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/vector-icons-4/inbox-nkjt1id8blrjrvnzqr1rk.png/inbox-dt0g3ocppmo7let66n2teq.png?_a=DATAdtAAZAA0',
+  'Product Made': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c3/gears-ugfonrgniinnklif1bxzsn.png/gears-bzo57uzz1f529fo7orh5r3.png?_a=DATAdtAAZAA0',
+  'Packaged': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/essentional-ui/box-jccqo8zyqgg9d53uheyn2.png/box-v0xnvh17ucebzz0s3yy.png?_a=DATAdtAAZAA0',
+  'Shipped': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c2/delivery-truck-6h2hfitgbyji0n3oxqkrs.png/delivery-truck-urz7957cdeznhq8xq0j8p.png?_a=DATAdtAAZAA0',
+  'Delivered': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c2/checkmark-867nkrhdv4fjg0p5ik7qk.png/checkmark-r6qdyimvp3tzdg8w90ls.png?_a=DATAdtAAZAA0'
 };
+
 
 function generateStatusHTML(updates) {
   return updates.map(update => `
-    <li style="margin-bottom:1rem;">
-      <span style="font-size:1.2rem; margin-right:8px;">${emojiIcons[update.text] || '🔔'}</span>
+    <li style="margin-bottom: 1rem;">
+      <img 
+        src="${statusIcons1[update.text]}" 
+        alt="${update.text}" 
+        style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" 
+      />
       <strong>${update.text}</strong><br/>
       <small style="color:#555;">${update.time}</small>
     </li>
   `).join('');
 }
+
+
 
 function sendStatusEmail(email, orderId, timelineHTML) {
   console.log("Preparing to send email with the following data:");
