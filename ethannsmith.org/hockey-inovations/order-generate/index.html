@@ -159,20 +159,6 @@ header img {
             </div>
           </header>
 <body>
-  <!-- === Business Settings ============================================= -->
-<div class="card" id="bizSettings">
-  <h2>Your Business Info</h2>
-
-  <input id="bizName"  placeholder="Business / Store Name"  style="width:100%;padding:.5rem;margin:.3rem 0;">
-  <input id="bizEmail" placeholder="Business Email"         style="width:100%;padding:.5rem;margin:.3rem 0;">
-  <input id="bizPhone" placeholder="Phone"                  style="width:100%;padding:.5rem;margin:.3rem 0;">
-  <textarea id="bizAddress" rows="2" placeholder="Address"  style="width:100%;padding:.5rem;margin:.3rem 0;"></textarea>
-
-  <button onclick="saveBizInfo()">Save Info</button>
-  <span id="bizSaved" style="margin-left:.5rem;color:var(--primary);display:none;">Saved ✓</span>
-</div>
-<!-- =================================================================== -->
-
   <div class="container">
     <div class="card">
       <h2>Create New Order</h2>
@@ -199,12 +185,6 @@ header img {
           <button onclick="addStatus('Shipped')"><i class="fa-solid fa-truck"></i> Shipped</button>
           <button onclick="addStatus('Delivered')"><i class="fa-solid fa-check"></i> Delivered</button>
         </div>
-        <hr style="margin:1.5rem 0;">
-<button onclick="generateReceiptPDF()" style="background:#10b981;">
-  <i class="fa-solid fa-file-pdf"></i> Generate Receipt PDF
-</button>
-<a id="pdfLink" style="display:none;margin-left:1rem;color:var(--primary);" target="_blank">View / Download PDF ↗</a>
-
       </div>
     </div>
 
@@ -226,154 +206,192 @@ header img {
       });
    })();
 </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-        integrity="sha512-AKSqO8bIpOqzvYk9p9gZz8VbW32x1X4sKpHa3WzH6Shy/j8X1xa2ILfAXfVl9Z/7CYL3B2NMw+PY4F7gmR9p1g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 
  <script type="module">
-import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc,
-         collection, getDocs, onSnapshot   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const { jsPDF } = window.jspdf;   /* jsPDF UMD export */
+const firebaseConfig = {
+  apiKey: "AIzaSyCBYX9orOfKCSgER6UXdH0HeYYG5nf1G-4",
+  authDomain: "order-generate-55b67.firebaseapp.com",
+  projectId: "order-generate-55b67",
+  storageBucket: "order-generate-55b67.appspot.com",
+  messagingSenderId: "192439380242",
+  appId: "1:192439380242:web:19c58f71367fe7fabbabcb",
+  measurementId: "G-E5WYWG0H54"
+};
 
-const firebaseConfig = {/* … unchanged … */};
-initializeApp(firebaseConfig);
-const db = getFirestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const statusFA  = { 'Order Received':'fa-inbox','Product Made':'fa-cogs','Packaged':'fa-box','Shipped':'fa-truck','Delivered':'fa-check' };
-const statusImg = { /* your hosted PNGs – unchanged */ };
+const statusIcons = {
+  'Order Received': 'fa-inbox',
+  'Product Made': 'fa-cogs',
+  'Packaged': 'fa-box',
+  'Shipped': 'fa-truck',
+  'Delivered': 'fa-check'
+};
 
 let currentOrderId = null;
 
-/* ---------- Business-info helpers ---------------------------------- */
+const generateId = () => 'NMRK-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 
-function loadBizInfo() {
-  const saved = JSON.parse(localStorage.getItem('bizInfo')||'{}');
-  ['bizName','bizEmail','bizPhone','bizAddress'].forEach(k=>{
-    if(saved[k]) document.getElementById(k).value = saved[k];
-  });
-}
-function saveBizInfo() {
-  const bizInfo = {};
-  ['bizName','bizEmail','bizPhone','bizAddress'].forEach(k=>{
-    bizInfo[k] = document.getElementById(k).value.trim();
-  });
-  localStorage.setItem('bizInfo',JSON.stringify(bizInfo));
-  document.getElementById('bizSaved').style.display = 'inline';
-  setTimeout(()=>document.getElementById('bizSaved').style.display='none',2000);
+async function saveOrderToFirestore(order) {
+  await setDoc(doc(db, "orders", order.id), order);
 }
 
-/* ---------- Core order flows (create / status / list) -------------- */
+async function getOrderFromFirestore(id) {
+  const snap = await getDoc(doc(db, "orders", id));
+  return snap.exists() ? snap.data() : null;
+}
 
-const genId = ()=>'NMRK-'+Math.random().toString(36).substring(2,9).toUpperCase();
+async function createOrder() {
+  const id = generateId();
+  const email = document.getElementById('customerEmail').value;
+  const address = document.getElementById('customerAddress').value;
+  const link = ${window.location.origin}/hockey-inovations/order-generate/view.html?orderId=${id};
 
-async function createOrder(){
-  const id   = genId();
-  const link = `${location.origin}/hockey-inovations/order-generate/view.html?orderId=${id}`;
   const newOrder = {
-    id, link,
-    email   : document.getElementById('customerEmail').value || null,
-    address : document.getElementById('customerAddress').value|| null,
-    updates : []
+    id,
+    updates: [],
+    email: email || null,
+    address: address || null,
+    link
   };
-  await setDoc(doc(db,'orders',id), newOrder);
+
+  await saveOrderToFirestore(newOrder);
   currentOrderId = id;
   showOrder(newOrder);
-  document.getElementById('orderCreated').textContent = `Order created: ${id}`;
-  loadAllOrders();
+  document.getElementById('orderCreated').innerText = Order created: ${id};
+  await loadAllOrders();
 }
 
-function showOrder(order){
+function showOrder(order) {
   currentOrderId = order.id;
-  document.querySelector('.order-status').style.display='block';
-  document.getElementById('orderId').textContent = order.id;
-  const l = document.getElementById('orderLink'); l.href = l.textContent = order.link;
+  document.querySelector('.order-status').style.display = 'block';
+  document.getElementById('orderId').innerText = order.id;
+  const linkElem = document.getElementById('orderLink');
+  linkElem.href = order.link;
+  linkElem.textContent = order.link;
   renderStatus(order);
 }
 
-async function addStatus(text){
-  const ref = doc(db,'orders',currentOrderId);
-  const order = (await getDoc(ref)).data();
-  order.updates.push({ text,time:new Date().toLocaleString(), icon:statusFA[text]});
-  await setDoc(ref,order);
+async function addStatus(status) {
+  const ref = doc(db, "orders", currentOrderId);
+  const snap = await getDoc(ref);
+  const order = snap.data();
+
+  const update = {
+    text: status,
+    time: new Date().toLocaleString(),
+    icon: statusIcons[status] || 'fa-info-circle'
+  };
+
+  order.updates.push(update);
+  await setDoc(ref, order);
   renderStatus(order);
+
+  if (order.email) {
+    const timelineHTML = generateStatusHTML(order.updates);
+    sendStatusEmail(order.email, order.id, timelineHTML);
+  }
 }
 
-/* ---------- PDF generation (3×6 inch) ------------------------------ */
+const statusIcons1 = {
+  'Order Received': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/vector-icons-4/inbox-nkjt1id8blrjrvnzqr1rk.png/inbox-dt0g3ocppmo7let66n2teq.png?_a=DATAdtAAZAA0',
+  'Product Made': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c3/gears-ugfonrgniinnklif1bxzsn.png/gears-bzo57uzz1f529fo7orh5r3.png?_a=DATAdtAAZAA0',
+  'Packaged': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/essentional-ui/box-jccqo8zyqgg9d53uheyn2.png/box-v0xnvh17ucebzz0s3yy.png?_a=DATAdtAAZAA0',
+  'Shipped': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c2/delivery-truck-6h2hfitgbyji0n3oxqkrs.png/delivery-truck-urz7957cdeznhq8xq0j8p.png?_a=DATAdtAAZAA0',
+  'Delivered': 'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/c2/checkmark-867nkrhdv4fjg0p5ik7qk.png/checkmark-r6qdyimvp3tzdg8w90ls.png?_a=DATAdtAAZAA0'
+};
 
-function generateReceiptPDF(){
-  if(!currentOrderId) return alert('No order selected.');
-  const biz = JSON.parse(localStorage.getItem('bizInfo')||'{}');
-  const orderEl = document.getElementById('orderId');
-  const orderId = orderEl ? orderEl.textContent : currentOrderId;
 
-  getDoc(doc(db,'orders',orderId)).then(snap=>{
-    if(!snap.exists()) return alert('Order not found.');
-    const data = snap.data();
-    const docPDF = new jsPDF({ orientation:'portrait', unit:'pt', format:[216,432] }); // 3×6 inch
-
-    /* ---- Receipt layout ------------------------------------------ */
-    let y=24; const line=16, left=16, w=200;
-    docPDF.setFont('helvetica','bold').setFontSize(12).text(biz.bizName||'[Your Business]',left,y); y+=line;
-    docPDF.setFont('helvetica','normal').setFontSize(9);
-    if(biz.bizAddress) { docPDF.text(biz.bizAddress,left,y,{maxWidth:w}); y+=line; }
-    if(biz.bizPhone  ) { docPDF.text('Tel: '+biz.bizPhone,left,y); y+=line; }
-    if(biz.bizEmail  ) { docPDF.text('Email: '+biz.bizEmail,left,y); y+=line+4; }
-
-    docPDF.setFontSize(11).setFont('helvetica','bold').text('RECEIPT',left,y); y+=line;
-    docPDF.setFont('helvetica','normal').setFontSize(9);
-    docPDF.text(`Order #: ${data.id}`, left, y); y+=line;
-    docPDF.text(`Date   : ${new Date().toLocaleDateString()}`, left, y); y+=line+4;
-
-    if(data.address){
-      docPDF.setFont('helvetica','bold').text('Ship To:',left,y); y+=line;
-      docPDF.setFont('helvetica','normal');
-      docPDF.text(data.address,left,y,{maxWidth:w}); y+=line*2;
-    }
-
-    docPDF.setFont('helvetica','bold').text('Status History',left,y); y+=line;
-    docPDF.setFontSize(8).setFont('helvetica','normal');
-    data.updates.slice().reverse().forEach(u=>{
-      docPDF.text(`• ${u.text}  (${u.time})`,left+8,y,{maxWidth:w-8});
-      y+=line;
-    });
-
-    /* ---- output -------------------------------------------------- */
-    const fileName = `Receipt-${data.id}.pdf`;
-    const pdfURL   = docPDF.output('bloburl');
-    const pdfLink  = document.getElementById('pdfLink');
-    pdfLink.href   = pdfURL;
-    pdfLink.download = fileName;
-    pdfLink.style.display='inline';
-    pdfLink.textContent = 'View / Download PDF ↗';
-  });
+function generateStatusHTML(updates) {
+  return updates.map(update => 
+    <li style="margin-bottom: 1rem;">
+      <img 
+        src="${statusIcons1[update.text]}" 
+        alt="${update.text}" 
+        style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" 
+      />
+      <strong>${update.text}</strong><br/>
+      <small style="color:#555;">${update.time}</small>
+    </li>
+  ).join('');
 }
 
-/* ---------- Firestore listing, on-load, etc. ----------------------- */
 
-async function loadAllOrders(){
-  const list = document.getElementById('savedOrdersList'); list.innerHTML='';
-  (await getDocs(collection(db,'orders'))).forEach(d=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<a class="order-link" href="?orderId=${d.id}">${d.id}</a>`;
+
+function sendStatusEmail(email, orderId, timelineHTML) {
+  console.log("Preparing to send email with the following data:");
+  console.log("To Email:", email);
+  console.log("Order ID:", orderId);
+  console.log("Status HTML:", timelineHTML);
+
+  emailjs.send("service_1uqpv95", "template_0phx18p", {
+    to_email: email,
+    order_id: orderId,
+    status_html: timelineHTML
+  }).then(
+    (response) => console.log("Email sent", response),
+    (error) => console.error("Email failed", error)
+  );
+}
+
+
+function renderStatus(order) {
+  const list = document.getElementById('statusList');
+  list.innerHTML = '';
+  order.updates.forEach(update => {
+    const li = document.createElement('li');
+    li.innerHTML = <i class="fa-solid ${update.icon}"></i><div><strong>${update.text}</strong><br><small>${update.time}</small></div>;
     list.appendChild(li);
   });
 }
 
-window.saveBizInfo      = saveBizInfo;
-window.createOrder      = createOrder;
-window.addStatus        = addStatus;
-window.generateReceiptPDF = generateReceiptPDF;
+async function loadOrderWithAdminView(orderId) {
+  const order = await getOrderFromFirestore(orderId);
+  if (!order) {
+    document.body.innerHTML = '<h2>Order not found.</h2>';
+    return;
+  }
+  showOrder(order);
+  onSnapshot(doc(db, "orders", orderId), (snapshot) => {
+    const updated = snapshot.data();
+    if (updated) renderStatus(updated);
+  });
+}
 
-window.onload = async ()=>{
-  loadBizInfo();
-  const id=new URLSearchParams(location.search).get('orderId');
-  id ? showOrder((await getDoc(doc(db,'orders',id))).data()) : loadAllOrders();
+async function loadAllOrders() {
+  const ordersCol = collection(db, "orders");
+  const snap = await getDocs(ordersCol);
+  const list = document.getElementById('savedOrdersList');
+  list.innerHTML = '';
+  snap.forEach(doc => {
+    const order = doc.data();
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = ${window.location.pathname}?orderId=${order.id};
+    a.textContent = order.id;
+    a.className = 'order-link';
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+}
+
+window.createOrder = createOrder;
+window.addStatus = addStatus;
+
+window.onload = async () => {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  if (orderId) {
+    await loadOrderWithAdminView(orderId);
+  } else {
+    await loadAllOrders();
+  }
 };
 </script>
-
 
 </body>
 </html>
