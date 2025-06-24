@@ -215,7 +215,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCBYX9orOfKCSgER6UXdH0HeYYG5nf1G-4",
   authDomain: "order-generate-55b67.firebaseapp.com",
   projectId: "order-generate-55b67",
-  storageBucket: "order-generate-55b67.firebasestorage.app",
+  storageBucket: "order-generate-55b67.appspot.com",
   messagingSenderId: "192439380242",
   appId: "1:192439380242:web:19c58f71367fe7fabbabcb",
   measurementId: "G-E5WYWG0H54"
@@ -249,7 +249,7 @@ async function createOrder() {
   const id = generateId();
   const email = document.getElementById('customerEmail').value;
   const address = document.getElementById('customerAddress').value;
-  const link = ${window.location.origin}/hockey-inovations/order-generate/view.html?orderId=${id};
+const link = `${window.location.origin}/hockey-inovations/order-generate/view.html?orderId=${id}`;
 
   const newOrder = {
     id,
@@ -262,7 +262,7 @@ async function createOrder() {
   await saveOrderToFirestore(newOrder);
   currentOrderId = id;
   showOrder(newOrder);
-  document.getElementById('orderCreated').innerText = Order created: ${id};
+  document.getElementById('orderCreated').innerText = `Order created: ${id}`;
   await loadAllOrders();
 }
 
@@ -306,18 +306,15 @@ const statusIcons1 = {
 };
 
 
-function generateStatusHTML(updates) {
-  return updates.map(update => 
-    <li style="margin-bottom: 1rem;">
-      <img 
-        src="${statusIcons1[update.text]}" 
-        alt="${update.text}" 
-        style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" 
-      />
+// 3a. generateStatusHTML
+function generateStatusHTML(updates){
+  return updates.map(update=>`
+    <li style="margin-bottom:1rem;">
+      <img src="${statusIcons1[update.text]}" alt="${update.text}"
+           style="width:24px;height:24px;vertical-align:middle;margin-right:8px;">
       <strong>${update.text}</strong><br/>
       <small style="color:#555;">${update.time}</small>
-    </li>
-  ).join('');
+    </li>`).join('');
 }
 
 
@@ -344,7 +341,8 @@ function renderStatus(order) {
   list.innerHTML = '';
   order.updates.forEach(update => {
     const li = document.createElement('li');
-    li.innerHTML = <i class="fa-solid ${update.icon}"></i><div><strong>${update.text}</strong><br><small>${update.time}</small></div>;
+   li.innerHTML = `<i class="fa-solid ${update.icon}"></i>
+                <div><strong>${update.text}</strong><br><small>${update.time}</small></div>`;
     list.appendChild(li);
   });
 }
@@ -371,7 +369,7 @@ async function loadAllOrders() {
     const order = doc.data();
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = ${window.location.pathname}?orderId=${order.id};
+    a.href = `${window.location.pathname}?orderId=${order.id}`;
     a.textContent = order.id;
     a.className = 'order-link';
     li.appendChild(a);
