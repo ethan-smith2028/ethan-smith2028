@@ -21,7 +21,7 @@
         gtag('config', 'G-CGT8KVV8YF');
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="Northmark - White.png">
+    <link rel="icon" type="image/png" href="ui/logos/Northmark - White.png">
     <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>  
     <style>
 /* Reset and Base Styles */
@@ -66,7 +66,7 @@ a:hover {
 
 /* Header */
 header {
-  background: #111;
+  background: #007BFF ;
   color: white;
   padding: 1rem 0;
   text-align: center;
@@ -86,7 +86,7 @@ header img {
 
 .menu button {
   background: transparent;       /* transparent background */
-  border: 2px solid white;
+  border: 2px solid 	#00E5FF;
   color: white;
   padding: 0.5rem 1rem;
   font-weight: bold;
@@ -99,54 +99,6 @@ header img {
   background: white;             /* filled background */
   color: #111;                   /* dark text */
   border-color: white;           /* keep border same or remove if you want */
-}
-
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-  }
-
-  .dropdown-menu.show {
-    display: block;
-  }
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 110%;
-  left: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  min-width: 180px;
-  z-index: 10;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content a {
-  display: block;
-  padding: 0.75rem 1rem;
-  color: #111;
-}
-
-.dropdown-content a:hover {
-  background: #f0f0f0;
 }
 
 /* Hero Section */
@@ -193,7 +145,7 @@ header img {
 /* Product Card */
 .product {
   background: white;
-  border: 1px solid #eee;
+  border: 1px solid	#6C757D;
   border-radius: 10px;
   overflow: hidden;
   transition: 0.3s ease;
@@ -233,7 +185,7 @@ header img {
 
 /* Add to Cart Button */
 .add-to-cart {
-  background: #007bff;
+  background: #1C1C1C;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -244,7 +196,7 @@ header img {
 }
 
 .add-to-cart:hover {
-  background: #0056b3;
+  background: #6C757D;
 }
 
 /* Cart Container */
@@ -267,7 +219,7 @@ header img {
   position: absolute;
   top: -10px;
   right: -12px;
-  background: red;
+  background: #FF3B30;
   color: white;
   font-size: 0.75rem;
   font-weight: bold;
@@ -277,7 +229,7 @@ header img {
 
 
 #checkout {
-  background: #111;
+  background: #1C1C1C;
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -360,7 +312,7 @@ header img {
 
 /* Footer */
 footer {
-  background: #111;
+  background: 	#007BFF;
   color: white;
   text-align: center;
   padding: 2rem 1rem;
@@ -496,7 +448,7 @@ footer a:hover {
 }
 
 #close-cart:hover {
-  color: #007bff;
+  color: #FF3B30;
 }
 
         </style>
@@ -508,15 +460,8 @@ footer a:hover {
         <header>
             <div class="menu">
               <!-- Added logo -->
-              <img src="Northmark - White.png" alt="Northmark Logo" class="menu-logo" />
+              <img src="ui/logos/Northmark - White.png" alt="Northmark Logo" class="menu-logo" />
               <button class="active">Home</button>
-              <div class="dropdown">
-                <button>Sectors</button>
-                <div class="dropdown-content">
-                  <a onclick="filterProducts('Postguard')" >Postguard</a>
-                  <a href="#">Coming Soon</a>
-                </div>
-              </div>
               <button onclick="window.open('privacy.html', '_blank')">Privacy Policy</button>
               <button onclick="window.open('terms.html', '_blank')">Terms and Conditions</button>
 
@@ -547,20 +492,20 @@ footer a:hover {
           <section class="trusted-section">
             <h2>Trusted by Teams, Coaches, and Companies Nationwide</h2>
             <div class="trusted-logos">
-              <a href="https://vyha.org"><img src="rangers (1).png" alt="Vancouver Rangers"></a>
-              <a href="https://linsly.org"><img src="linsly-white.png" alt="Linsly"></a>
-              <a href="#"><img src="challenge-hockey (1).png" alt="Challenge Hockey"></a>
-              <a href="https://wvwaha.com"><img src="jr-nailers.png" alt="JR Nailers"></a>
-              <a href="https://matterhackers.com"><img src="https://avatars.githubusercontent.com/u/6200144?s=280" alt="MatterHackers" style="width: 100px;"></a>
+              <a href="https://vyha.org"><img src="ui/logos/rangers (1).png" alt="Vancouver Rangers"></a>
+              <a href="https://linsly.org"><img src="ui/logos/linsly-white.png" alt="Linsly"></a>
+              <a href="#"><img src="ui/logos/challenge-hockey (1).png" alt="Challenge Hockey"></a>
+              <a href="https://wvwaha.com"><img src="ui/logos/jr-nailers.png" alt="JR Nailers"></a>
+              <a href="https://matterhackers.com"><img src="ui/logos/matterhackers.png" alt="MatterHackers"></a>
             </div>
           </section>
           
           <div id="payment-methods" aria-label="Accepted Payment Methods" role="contentinfo">
-            <img src="payment-methods (1)/visa.png" alt="Visa" />
-            <img src="payment-methods (1)/mastercard.png" alt="Mastercard" />
-            <img src="payment-methods (1)/discover.png" alt="Discover" />
-            <img src="payment-methods (1)/amex.png" alt="American Express" />
-            <img src="payment-methods (1)/chase.png" alt="Chase" />
+            <img src="ui/payment-methods (1)/visa.png" alt="Visa" />
+            <img src="ui/payment-methods (1)/mastercard.png" alt="Mastercard" />
+            <img src="ui/payment-methods (1)/discover.png" alt="Discover" />
+            <img src="ui/payment-methods (1)/amex.png" alt="American Express" />
+            <img src="ui/payment-methods (1)/chase.png" alt="Chase" />
           </div>
           
           
@@ -587,7 +532,7 @@ const products = [
         name: "Postguard",
         price: 18.99,
         salePrice: 18.99,
-        image: "postguard-demo.png",
+        image: "ui/products/postguard-demo.png",
         description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
         category: "Skate",
         sport: "Postguard",
@@ -599,7 +544,7 @@ const products = [
         name: "Postguard Bulk (3+)",
         price: 12.99,
         salePrice: 12.99,
-        image: "postguard-demo.png",
+        image: "ui/products/postguard-demo.png",
         description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
         category: "Skate",
         sport: "Postguard",
@@ -611,7 +556,7 @@ const products = [
         name: "Postguard + Stake",
         price: 22.99,
         salePrice: 22.99,
-        image: "postguard-stake-demo.png",
+        image: "ui/products/postguard-stake-demo.png",
         description: "Postguard + Stake is perfect for goalies who are looking to get more protection for their skate, and are able to stake the net into the ice, to prevent it from moving. With it's sleek, light, and durable design, it's perfect for all goalies who are training on ice!",
         category: "Skate",
         sport: "Postguard",
