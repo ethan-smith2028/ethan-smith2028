@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player - Ethan Smith</title>
+    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-CGT8KVV8YF');
+    </script>
+</head>
+
+<body class="light-mode">
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <h1 class="logo"><a href="index.html">Ethan Smith</a></h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about/about-me.html">About Me</a></li>
+                <li><a href="../index.html#hockey-videos">Hockey Videos</a></li>
+                <li><a href="../player-profile.html">Player Profile</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img src="pics/2024-11-23 Vancouver Rangers-110.jpg" alt="Player Image">
+            </div>
+            <div class="player-info">
+                <h1>Ethan Smith</h1>
+                <h2>#72 G</h2>
+                <ul class="player-details">
+                    <li><strong>Height:</strong> 5'9"</li>
+                    <li><strong>Weight:</strong> 177 lb</li>
+                    <li><strong>Born:</strong> 12/21/2009 (Age: 15)</li>
+                    <li><strong>Birthplace:</strong> Columbus, OH</li>
+                    <li><strong>Catches:</strong> Left</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Previous Game Section -->
+<!-- <div class="previous-game">
+    <h3>Previous Game</h3>
+    <div class="previous-game-content">
+
+        <div class="video-container">
+            <video controls>
+                <source src="path-to-your-video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <div id="previousGameDetails">
+            <p><strong>Date:</strong> <span id="previousGameDate"></span></p>
+            <p><strong>Opponent:</strong> <span id="previousGameOpponent"></span></p>
+            <p><strong>Decision:</strong> <span id="previousGameDecision"></span></p>
+            <p><strong>Shots Against:</strong> <span id="previousGameSA"></span></p>
+            <p><strong>Goals Against:</strong> <span id="previousGameGA"></span></p>
+            <p><strong>Save Percentage:</strong> <span id="previousGameSV"></span></p>
+            <p><strong>Minutes Played:</strong> <span id="previousGameMinutes"></span></p>
+        </div>
+    </div>
+</div> -->
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="season-stats">
+                <h3>2024-25 Season - Rangers</h3>
+                <table>
+                    <tr>
+                        <th>GP</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>GAA</th>
+                        <th>SV%</th>
+                    </tr>
+                    <tr>
+                        <td id="GamesPlayed-season"></td>
+                        <td id="wins-season"></td>
+                        <td id="loss-season"></td>
+                        <td id="gaa"></td>
+                        <td id="sv%"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="career-stats">
+                <h3>Career</h3>
+                <table>
+                    <tr>
+                        <th>GP</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>SO</th>
+                        <th>GAA</th>
+                        <th>SV%</th>
+                    </tr>
+                    <tr>
+                        <td id="GamesPlayed"></td>
+                        <td id="wins"></td>
+                        <td id="loss"></td>
+                        <td id="shutouts"></td>
+                        <td id="gaa1"></td>
+                        <td id="sv%1"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+                
+                    
+                <!-- Game Log Section -->
+                <div class="game-log">
+                    <h3>Season Game Logs</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Opp</th>
+                                <th>DEC</th>
+                                <th>SA</th>
+                                <th>GA</th>
+                                <th>SV%</th>
+                                <th>MIN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="game-log-body">
+                            <!-- Data will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+
+    
+    <script>
+     document.addEventListener("DOMContentLoaded", function () {
+    const jsonFilePath = 'gameLog.json';
+
+    // Helper function to calculate Save Percentage
+    const calculateSavePercentage = (shotsAgainst, goalsAgainst) => {
+        return shotsAgainst > 0
+            ? ((shotsAgainst - goalsAgainst) / shotsAgainst).toFixed(3)
+            : "N/A"; // Avoid division by zero
+    };
+
+    // Helper function to calculate Goals Against Average (GAA)
+    const calculateGAA = (goalsAgainst, gamesPlayed) => {
+        return gamesPlayed > 0
+            ? (goalsAgainst / gamesPlayed).toFixed(2)
+            : "N/A"; // Avoid division by zero
+    };
+
+    // Update stats based on season and career data
+    const updateStats = (seasonStats, careerStats) => {
+        const seasonSavePercentage = calculateSavePercentage(seasonStats.shotsAgainst, seasonStats.goalsAgainst);
+        const seasonGAA = calculateGAA(seasonStats.goalsAgainst, seasonStats.gamesPlayed);
+
+        // Career stats
+        document.getElementById('GamesPlayed').innerText = careerStats.gamesPlayed;
+        document.getElementById('wins').innerText = careerStats.wins;
+        document.getElementById('loss').innerText = careerStats.losses;
+        document.getElementById('shutouts').innerText = careerStats.shutouts;
+        document.getElementById('gaa1').innerText = calculateGAA(careerStats.goalsAgainst, careerStats.gamesPlayed);
+        document.getElementById('sv%1').innerText = calculateSavePercentage(careerStats.shotsAgainst, careerStats.goalsAgainst);
+
+        // Season stats
+        document.getElementById('GamesPlayed-season').innerText = seasonStats.gamesPlayed;
+        document.getElementById('wins-season').innerText = seasonStats.wins;
+        document.getElementById('loss-season').innerText = seasonStats.losses;
+        document.getElementById('gaa').innerText = seasonGAA;
+        document.getElementById('sv%').innerText = seasonSavePercentage;
+    };
+
+    // Load and populate game logs with calculated SV% and aggregate stats
+    async function loadGameLog() {
+        try {
+            // Fetch JSON data
+            const response = await fetch(jsonFilePath);
+            if (!response.ok) throw new Error('Failed to load JSON data');
+            const data = await response.json();
+
+            let seasonStats = {
+                gamesPlayed: 0,
+                wins: 0,
+                losses: 0,
+                shutouts: 0,
+                shotsAgainst: 0,
+                goalsAgainst: 0,
+            };
+
+            let careerStats = {
+                gamesPlayed: 0,
+                wins: 0,
+                losses: 0,
+                shutouts: 0,
+                shotsAgainst: 0,
+                goalsAgainst: 0,
+            };
+
+            const tableBody = document.getElementById('game-log-body');
+
+            // Populate the game log table and aggregate stats
+            data.games.forEach(game => {
+                const savePercentage = calculateSavePercentage(game.shotsAgainst, game.goalsAgainst);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${game.date}</td>
+                    <td>
+                        <div class="matchup">
+                            <div class="team">
+                                <p class="team-name">${game.awayTeam.name}</p>
+                                <img src="${game.awayTeam.logo}" alt="${game.awayTeam.name}" class="team-logo">
+                            </div>
+                            <div class="versus">vs</div>
+                            <div class="team">
+                                <p class="team-name">${game.homeTeam.name}</p>
+                                <img src="${game.homeTeam.logo}" alt="${game.homeTeam.name}" class="team-logo">
+                            </div>
+                        </div>
+                    </td>
+                    <td>${game.decision}</td>
+                    <td>${game.shotsAgainst}</td>
+                    <td>${game.goalsAgainst}</td>
+                    <td>${savePercentage}</td>
+                    <td>${game.minutesPlayed}</td>
+                `;
+                tableBody.appendChild(row);
+
+                // Update season stats
+                seasonStats.gamesPlayed++;
+                if (game.decision === "W") seasonStats.wins++;
+                if (game.decision === "L") seasonStats.losses++;
+                seasonStats.shotsAgainst += game.shotsAgainst;
+                seasonStats.goalsAgainst += game.goalsAgainst;
+
+                // Update career stats (assuming career = current season for now)
+                careerStats.gamesPlayed++;
+                if (game.decision === "W") careerStats.wins++;
+                if (game.decision === "L") careerStats.losses++;
+                careerStats.shotsAgainst += game.shotsAgainst;
+                careerStats.goalsAgainst += game.goalsAgainst;
+            });
+
+            // Update the stats in the HTML
+            updateStats(seasonStats, careerStats);
+        } catch (error) {
+            console.error('Error loading game log:', error);
+        }
+    }
+
+    // Load game log on page load
+    loadGameLog();
+});
+
+
+    </script>
+</body>
+</html>

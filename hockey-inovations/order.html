@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Northmark - Shop</title>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-CGT8KVV8YF');
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="Northmark - White.png">
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>  
+    <style>
+/* Reset and Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f9f9f9;
+  color: #222;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  color: #111;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Container */
+.container {
+  width: 90%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+/* Header */
+header {
+  background: #111;
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+header img {
+  height: 60px;
+}
+
+.menu {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.menu button {
+  background: transparent;       /* transparent background */
+  border: 2px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu button.active {
+  background: white;             /* filled background */
+  color: #111;                   /* dark text */
+  border-color: white;           /* keep border same or remove if you want */
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+  }
+
+  .dropdown-menu.show {
+    display: block;
+  }
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 10;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #111;
+}
+
+.dropdown-content a:hover {
+  background: #f0f0f0;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 60vh;
+  overflow: hidden;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-content {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  color: white;
+  max-width: 600px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.hero-content h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-content p {
+  font-size: 1rem;
+}
+
+/* Product Grid */
+#products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Product Card */
+.product {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 1rem;
+  text-align: center;
+}
+
+.product:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+.product img {
+  max-width: 100%;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.product h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.product p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.product .dimensions {
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+/* Add to Cart Button */
+.add-to-cart {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background: #0056b3;
+}
+
+/* Cart Container */
+#cart-icon {
+  position: relative;
+  cursor: pointer;
+  margin-left: 1rem;
+  margin-right: 1.5rem;  /* Add this */
+  font-size: 1.5rem;
+  color: white;
+  padding-right: 40px;
+}
+
+
+#cart-icon:hover {
+  color: #ccc;
+}
+
+#cart-count {
+  position: absolute;
+  top: -10px;
+  right: -12px;
+  background: red;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
+
+
+#checkout {
+  background: #111;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+#checkout:hover {
+  background: #333;
+}
+
+/* Ad Banner */
+#ad-banner {
+  margin: 4rem auto;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+#ad-banner img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: none;
+}
+
+#ad-banner img.active {
+  display: block;
+}
+
+#payment-methods {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+#payment-methods img {
+  height: 54px;
+  width: auto;
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.1));
+}
+
+
+/* Team Logos */
+.trusted-section {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.trusted-logos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.trusted-logos img {
+  width: 70px;
+  transition: 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.2));
+}
+
+.trusted-logos img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+}
+
+/* Footer */
+footer {
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 4rem;
+}
+
+footer a {
+  color: #ddd;
+  margin: 0 0.5rem;
+}
+
+footer a:hover {
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-content {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .product img {
+    height: 150px;
+  }
+
+  .payment-logos img,
+  .trusted-logos img {
+    width: 50px;
+  }
+}
+
+#cart-container {
+    position: fixed;
+    top: 60px; /* below header */
+    right: 0;
+    width: 320px;
+    max-width: 80vw;
+    height: calc(100vh - 60px);
+    background: white;
+    box-shadow: -3px 0 15px rgba(0,0,0,0.2);
+    padding: 1rem;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+  #cart-container.open {
+    transform: translateX(0);
+  }
+
+  /* Adjust header menu to include logo */
+  .menu {
+    margin-top: 0px;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .menu-logo {
+    margin-right: auto;
+    padding-left: 40px;
+    height: 60px;
+  }
+
+  /* Cart icon stays on header */
+  #cart-icon {
+    position: relative;
+    cursor: pointer;
+    margin-left: 1rem;
+    font-size: 1.8rem;
+    color: white;
+  }
+
+  /* Style the cart header inside cart */
+  #cart-container h2 {
+    margin-bottom: 1rem;
+  }
+
+  #cart-items div {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+#cart-items div strong {
+  flex-grow: 1;
+  font-weight: 700;
+  color: #111;
+}
+
+#cart-items div button {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 12px;
+}
+
+#cart-items div button:hover {
+  background-color: #c0392b;
+}
+
+#close-cart {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #333;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+#close-cart:hover {
+  color: #007bff;
+}
+
+        </style>
+        
+</head>
+<body>
+    
+    <body>
+        <header>
+            <div class="menu">
+              <!-- Added logo -->
+              <img src="Northmark - White.png" alt="Northmark Logo" class="menu-logo" />
+              <button class="active">Home</button>
+              <div class="dropdown">
+                <button>Sectors</button>
+                <div class="dropdown-content">
+                  <a onclick="filterProducts('Postguard')" >Postguard</a>
+                  <a href="#">Coming Soon</a>
+                </div>
+              </div>
+              <button onclick="window.open('privacy.html', '_blank')">Privacy Policy</button>
+              <button onclick="window.open('terms.html', '_blank')">Terms and Conditions</button>
+
+              <div id="cart-icon" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count">0</span>
+              </div>
+            </div>
+          </header>
+
+          <section id="products" class="container">
+            <!-- Products will be dynamically inserted here -->
+          </section>
+          
+
+          <div id="cart-container" aria-label="Shopping Cart" role="region" aria-hidden="true">
+            <button id="close-cart" aria-label="Close Cart">&times;</button>
+            <h2><i class="fa-solid fa-cart-shopping"></i> Your Cart</h2>
+            <div id="bulk-warning" style="color: red; font-weight: bold;"></div>
+            <div id="cart-items"></div>
+            <h3>Subtotal: $<span id="cart-subtotal">0.00</span></h3>
+            <h3>Tax (5%): $<span id="cart-tax">0.00</span></h3>
+            <h3>Total: $<span id="cart-total">0.00</span></h3>
+          
+            <button onclick="goToCheckout()" id="checkout">Checkout</button>
+          </div>
+
+          <section class="trusted-section">
+            <h2>Trusted by Teams, Coaches, and Companies Nationwide</h2>
+            <div class="trusted-logos">
+              <a href="https://vyha.org"><img src="rangers (1).png" alt="Vancouver Rangers"></a>
+              <a href="https://linsly.org"><img src="linsly-white.png" alt="Linsly"></a>
+              <a href="#"><img src="challenge-hockey (1).png" alt="Challenge Hockey"></a>
+              <a href="https://wvwaha.com"><img src="jr-nailers.png" alt="JR Nailers"></a>
+              <a href="https://matterhackers.com"><img src="https://avatars.githubusercontent.com/u/6200144?s=280" alt="MatterHackers" style="width: 100px;"></a>
+            </div>
+          </section>
+          
+          <div id="payment-methods" aria-label="Accepted Payment Methods" role="contentinfo">
+            <img src="payment-methods (1)/visa.png" alt="Visa" />
+            <img src="payment-methods (1)/mastercard.png" alt="Mastercard" />
+            <img src="payment-methods (1)/discover.png" alt="Discover" />
+            <img src="payment-methods (1)/amex.png" alt="American Express" />
+            <img src="payment-methods (1)/chase.png" alt="Chase" />
+          </div>
+          
+          
+          
+        
+        
+          <footer>
+            <p>&copy; 2025 Northmark. All rights reserved.</p>
+            <p><a href="mailto:etsmith2028@gmail.com">northmark.help@gmail.com</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+            <p>
+              <a href="https://www.instagram.com/northmark.2024/"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="https://www.youtube.com/@northmark.2024"><i class="fab fa-youtube"></i></a>
+            </p>
+          </footer>
+          
+        
+          <script>
+            emailjs.init("your_emailjs_user_id");
+
+const products = [
+    {
+        id: 1,
+        name: "Postguard",
+        price: 18.99,
+        salePrice: 18.99,
+        image: "postguard-demo.png",
+        description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
+        category: "Skate",
+        sport: "Postguard",
+        dimensions: "2.362in x 2.044in x 5.500-6.000in",
+        availible: true
+    },
+    {
+        id: 2,
+        name: "Postguard Bulk (3+)",
+        price: 12.99,
+        salePrice: 12.99,
+        image: "postguard-demo.png",
+        description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
+        category: "Skate",
+        sport: "Postguard",
+        dimensions: "2.362in x 2.044in x 5.500-6.000in",
+        availible: true
+    },
+    {
+        id: 3,
+        name: "Postguard + Stake",
+        price: 22.99,
+        salePrice: 22.99,
+        image: "postguard-stake-demo.png",
+        description: "Postguard + Stake is perfect for goalies who are looking to get more protection for their skate, and are able to stake the net into the ice, to prevent it from moving. With it's sleek, light, and durable design, it's perfect for all goalies who are training on ice!",
+        category: "Skate",
+        sport: "Postguard",
+        dimensions: "2.362in x 2.044in x 5.500-6.000in",
+        availible: true
+    }
+];
+
+let cart = [];
+
+function displayProducts(filteredProducts = products) {
+    const productContainer = document.getElementById("products");
+    productContainer.innerHTML = "";
+
+    filteredProducts.forEach(product => {
+        const div = document.createElement("div");
+        div.classList.add("product");
+
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <p class="dimensions">
+                <i class="fa-solid fa-ruler"></i> ${product.dimensions}
+            </p>
+            <p><strong>$${product.salePrice.toFixed(2)}</strong></p>
+            <button class="add-to-cart" ${product.availible ? "" : "disabled"} onclick="addToCart(${product.id})">
+                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </button>
+        `;
+        productContainer.appendChild(div);
+    });
+}
+
+
+
+document.getElementById("close-cart").addEventListener("click", () => {
+  const cartContainer = document.getElementById("cart-container");
+  cartContainer.classList.remove("open");
+  cartContainer.setAttribute("aria-hidden", "true");
+});
+
+
+function filterProducts(sport) {
+    let filtered = products;
+    if (sport !== 'all') {
+        filtered = products.filter(product => product.sport === sport);
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.filter-btn[onclick="filterProducts('${sport}')"]`)?.classList.add('active');
+
+    displayProducts(filtered);
+}
+
+function addToCart(id) {
+    let product = products.find(p => p.id === id);
+    let item = cart.find(i => i.id === id);
+
+    if (item) {
+        item.quantity++;
+    } else {
+        cart.push({
+            ...product,
+            quantity: 1,
+            price: product.salePrice ?? product.price
+        });
+    }
+
+    updateCart();
+    updateCartCount();
+}
+
+function removeFromCart(id) {
+    let itemIndex = cart.findIndex(item => item.id === id);
+    if (itemIndex > -1) {
+        if (cart[itemIndex].quantity > 1) {
+            cart[itemIndex].quantity--;
+        } else {
+            cart.splice(itemIndex, 1);
+        }
+    }
+    updateCart();
+    updateCartCount();
+}
+
+function updateCart() {
+    const cartItems = document.getElementById("cart-items");
+    cartItems.innerHTML = "";
+    let subtotal = 0;
+
+    const bulkItem = cart.find(item => item.name.includes("Bulk"));
+    const bulkWarning = document.getElementById("bulk-warning");
+
+    if (bulkItem && bulkItem.quantity < 3) {
+        bulkWarning.textContent = "Bulk purchases require at least 3 sets.";
+    } else {
+        bulkWarning.textContent = "";
+    }
+
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
+            <br>
+            <button onclick="removeFromCart(${item.id})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+    });
+
+    const taxRate = 0.05;
+    const taxAmount = subtotal * taxRate;
+    const total = subtotal + taxAmount;
+
+    document.getElementById("cart-subtotal").textContent = subtotal.toFixed(2);
+    document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
+    document.getElementById("cart-total").textContent = total.toFixed(2);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("totalPrice", total.toFixed(2));
+}
+
+document.querySelectorAll('.menu button').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  });
+});
+
+function updateCartCount() {
+    const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+    document.getElementById("cart-count").textContent = count;
+}
+
+function toggleCart() {
+    const cartContainer = document.getElementById("cart-container");
+    const isOpen = cartContainer.classList.toggle("open");
+    cartContainer.setAttribute("aria-hidden", !isOpen);
+}
+
+function goToCheckout() {
+    const bulkItem = cart.find(item => item.name.includes("Bulk"));
+    if (bulkItem && bulkItem.quantity < 3) {
+        alert("You must order at least 3 sets to purchase in bulk.");
+        return;
+    }
+
+    const total = document.getElementById("cart-total").textContent;
+    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+
+    // You can add prefill fields if needed, e.g., user email/name, here:
+    const prefillUrl = `${tallyBaseUrl}?amount=${total}`;
+
+    window.location.href = prefillUrl;
+}
+
+function loadCart() {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+        updateCartCount();
+    }
+}
+
+function sendConfirmationEmail(email) {
+    let cartDetails = cart.map(item => `${item.name} x${item.quantity}`).join('\n');
+
+    let emailParams = {
+        to_email: email,
+        message: cartDetails,
+        total_price: document.getElementById("cart-total").textContent
+    };
+
+    emailjs.send("your_service_id", "your_template_id", emailParams)
+        .then(() => alert("Confirmation email sent!"))
+        .catch(err => console.error("Email send error:", err));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayProducts();
+    loadCart();
+});
+
+const dropdown = document.getElementById('dropdown');
+  const btn = document.getElementById('dropdownBtn');
+  const menu = document.getElementById('dropdownMenu');
+
+  let timeoutId;
+
+  function showMenu() {
+    clearTimeout(timeoutId);
+    menu.classList.add('show');
+  }
+
+  function hideMenu() {
+    timeoutId = setTimeout(() => {
+      menu.classList.remove('show');
+    }, 300); // Delay to allow moving from button to menu
+  }
+
+  btn.addEventListener('mouseenter', showMenu);
+  btn.addEventListener('mouseleave', hideMenu);
+
+  menu.addEventListener('mouseenter', showMenu);
+  menu.addEventListener('mouseleave', hideMenu);
+
+            </script>
+            
+        
+        <div id="sizingChartModal" style="
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;">
+        <div style="
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            position: relative;">
+            <button onclick="closeSizingChart()" style="
+                position: absolute;
+                top: 10px; right: 10px;
+                background: crimson;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;">✖</button>
+            <img src="https://www.dickssportinggoods.com/content/dam/protips/imported-from-blob-storage/2017/06/BauerHockeySizeChart.jpg" alt="Sizing Chart" style="max-width: 100%; height: auto;">
+        </div>
+    </div>
+    
+
+    </body>
+</html>

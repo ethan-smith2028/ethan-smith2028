@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cart Summary</title>
+</head>
+<body>
+  <h1>Your Cart</h1>
+  <ul id="cart">
+    <li>Apple - $1</li>
+    <li>Banana - $2</li>
+  </ul>
+  <p>Total: $3</p>
+
+  <button onclick="submitToTally()">Submit to Tally</button>
+
+  <script>
+    function submitToTally() {
+      const cartData = [
+        "Apple - $1",
+        "Banana - $2"
+      ];
+      const total = 3;
+
+      const cartString = encodeURIComponent(cartData.join(', '));
+      const tallyUrl = `https://tally.so/r/wggLRK?cart=Apple%20-%20%241%2CBanana%20-%20%242&total=3
+`;
+
+      window.open(tallyUrl, '_blank');
+    }
+  </script>
+</body>
+</html>
