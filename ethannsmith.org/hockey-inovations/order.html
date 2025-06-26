@@ -451,6 +451,38 @@ footer a:hover {
   color: #FF3B30;
 }
 
+.zip-code-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.zip-code-container label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.zip-code-container input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 200px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.zip-code-container p {
+  font-size: 1rem;
+  color: #000;
+}
+
+
         </style>
         
 </head>
@@ -481,6 +513,12 @@ footer a:hover {
             <button id="close-cart" aria-label="Close Cart">&times;</button>
             <h2><i class="fa-solid fa-cart-shopping"></i> Your Cart</h2>
             <div id="bulk-warning" style="color: red; font-weight: bold;"></div>
+            <div class="zip-code-container">
+  <label for="zip">Enter ZIP Code for Shipping:</label>
+  <input type="text" id="zip" name="zip" maxlength="5" placeholder="e.g. 90210" oninput="calculateShipping()" />
+  <p>Shipping: $<span id="shipping-cost">0.00</span></p>
+</div>
+
             <div id="cart-items"></div>
             <h3>Subtotal: $<span id="cart-subtotal">0.00</span></h3>
             <h3>Tax (5%): $<span id="cart-tax">0.00</span></h3>
@@ -523,127 +561,124 @@ footer a:hover {
           </footer>
           
         
-          <script>
-            emailjs.init("your_emailjs_user_id");
+<script>
+  emailjs.init("your_emailjs_user_id");
 
-const products = [
+  const products = [
     {
-        id: 1,
-        name: "Postguard",
-        price: 18.99,
-        salePrice: 18.99,
-        image: "ui/products/postguard-demo.png",
-        description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
-        category: "Skate",
-        sport: "Postguard",
-        dimensions: "2.362in x 2.044in x 5.500-6.000in",
-        availible: true
+      id: 1,
+      name: "Postguard",
+      price: 18.99,
+      salePrice: 18.99,
+      image: "ui/products/postguard-demo.png",
+      description: "Postguard is a plastic wraparound that you slide on and off of your goal post...",
+      category: "Skate",
+      sport: "Postguard",
+      dimensions: "2.362in x 2.044in x 5.500-6.000in",
+      availible: true
     },
     {
-        id: 2,
-        name: "Postguard Bulk (3+)",
-        price: 12.99,
-        salePrice: 12.99,
-        image: "ui/products/postguard-demo.png",
-        description: "Postguard is a plastic wraparound that you slide on and off of your goal post. Great for goalies who are constantly needing sharpenings on their skates due to rubbing their edges on the posts. (Gets about 8-10 more hours out of your blades)",
-        category: "Skate",
-        sport: "Postguard",
-        dimensions: "2.362in x 2.044in x 5.500-6.000in",
-        availible: true
+      id: 2,
+      name: "Postguard Bulk (3+)",
+      price: 12.99,
+      salePrice: 12.99,
+      image: "ui/products/postguard-demo.png",
+      description: "Postguard is a plastic wraparound that you slide on and off of your goal post...",
+      category: "Skate",
+      sport: "Postguard",
+      dimensions: "2.362in x 2.044in x 5.500-6.000in",
+      availible: true
     },
     {
-        id: 3,
-        name: "Postguard + Stake",
-        price: 22.99,
-        salePrice: 22.99,
-        image: "ui/products/postguard-stake-demo.png",
-        description: "Postguard + Stake is perfect for goalies who are looking to get more protection for their skate, and are able to stake the net into the ice, to prevent it from moving. With it's sleek, light, and durable design, it's perfect for all goalies who are training on ice!",
-        category: "Skate",
-        sport: "Postguard",
-        dimensions: "2.362in x 2.044in x 5.500-6.000in",
-        availible: true
+      id: 3,
+      name: "Postguard + Stake",
+      price: 22.99,
+      salePrice: 22.99,
+      image: "ui/products/postguard-stake-demo.png",
+      description: "Postguard + Stake is perfect for goalies...",
+      category: "Skate",
+      sport: "Postguard",
+      dimensions: "2.362in x 2.044in x 5.500-6.000in",
+      availible: true
     }
-];
+  ];
 
-let cart = [];
+  let cart = [];
 
-function displayProducts(filteredProducts = products) {
+  function displayProducts(filteredProducts = products) {
     const productContainer = document.getElementById("products");
     productContainer.innerHTML = "";
 
     filteredProducts.forEach(product => {
-        const div = document.createElement("div");
-        div.classList.add("product");
+      const div = document.createElement("div");
+      div.classList.add("product");
 
-        div.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>${product.description}</p>
-            <p class="dimensions">
-                <i class="fa-solid fa-ruler"></i> ${product.dimensions}
-            </p>
-            <p><strong>$${product.salePrice.toFixed(2)}</strong></p>
-            <button class="add-to-cart" ${product.availible ? "" : "disabled"} onclick="addToCart(${product.id})">
-                <i class="fa-solid fa-cart-plus"></i> Add to Cart
-            </button>
-        `;
-        productContainer.appendChild(div);
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>${product.description}</p>
+        <p class="dimensions">
+          <i class="fa-solid fa-ruler"></i> ${product.dimensions}
+        </p>
+        <p><strong>$${product.salePrice.toFixed(2)}</strong></p>
+        <button class="add-to-cart" ${product.availible ? "" : "disabled"} onclick="addToCart(${product.id})">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      `;
+      productContainer.appendChild(div);
     });
-}
+  }
 
+  document.getElementById("close-cart").addEventListener("click", () => {
+    const cartContainer = document.getElementById("cart-container");
+    cartContainer.classList.remove("open");
+    cartContainer.setAttribute("aria-hidden", "true");
+  });
 
-
-document.getElementById("close-cart").addEventListener("click", () => {
-  const cartContainer = document.getElementById("cart-container");
-  cartContainer.classList.remove("open");
-  cartContainer.setAttribute("aria-hidden", "true");
-});
-
-
-function filterProducts(sport) {
+  function filterProducts(sport) {
     let filtered = products;
     if (sport !== 'all') {
-        filtered = products.filter(product => product.sport === sport);
+      filtered = products.filter(product => product.sport === sport);
     }
 
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`.filter-btn[onclick="filterProducts('${sport}')"]`)?.classList.add('active');
 
     displayProducts(filtered);
-}
+  }
 
-function addToCart(id) {
+  function addToCart(id) {
     let product = products.find(p => p.id === id);
     let item = cart.find(i => i.id === id);
 
     if (item) {
-        item.quantity++;
+      item.quantity++;
     } else {
-        cart.push({
-            ...product,
-            quantity: 1,
-            price: product.salePrice ?? product.price
-        });
+      cart.push({
+        ...product,
+        quantity: 1,
+        price: product.salePrice ?? product.price
+      });
     }
 
     updateCart();
     updateCartCount();
-}
+  }
 
-function removeFromCart(id) {
+  function removeFromCart(id) {
     let itemIndex = cart.findIndex(item => item.id === id);
     if (itemIndex > -1) {
-        if (cart[itemIndex].quantity > 1) {
-            cart[itemIndex].quantity--;
-        } else {
-            cart.splice(itemIndex, 1);
-        }
+      if (cart[itemIndex].quantity > 1) {
+        cart[itemIndex].quantity--;
+      } else {
+        cart.splice(itemIndex, 1);
+      }
     }
     updateCart();
     updateCartCount();
-}
+  }
 
-function updateCart() {
+  function updateCart() {
     const cartItems = document.getElementById("cart-items");
     cartItems.innerHTML = "";
     let subtotal = 0;
@@ -652,25 +687,29 @@ function updateCart() {
     const bulkWarning = document.getElementById("bulk-warning");
 
     if (bulkItem && bulkItem.quantity < 3) {
-        bulkWarning.textContent = "Bulk purchases require at least 3 sets.";
+      bulkWarning.textContent = "Bulk purchases require at least 3 sets.";
     } else {
-        bulkWarning.textContent = "";
+      bulkWarning.textContent = "";
     }
 
     cart.forEach(item => {
-        subtotal += item.price * item.quantity;
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
-            <br>
-            <button onclick="removeFromCart(${item.id})">Remove</button>
-        `;
-        cartItems.appendChild(div);
+      subtotal += item.price * item.quantity;
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <strong>${item.name}</strong> ($${item.price.toFixed(2)}) x${item.quantity}
+        <br>
+        <button onclick="removeFromCart(${item.id})">Remove</button>
+      `;
+      cartItems.appendChild(div);
     });
 
     const taxRate = 0.05;
     const taxAmount = subtotal * taxRate;
-    const total = subtotal + taxAmount;
+
+    const shippingInput = document.getElementById("shipping-cost");
+    const shipping = shippingInput ? parseFloat(shippingInput.textContent) || 0 : 0;
+
+    const total = subtotal + taxAmount + shipping;
 
     document.getElementById("cart-subtotal").textContent = subtotal.toFixed(2);
     document.getElementById("cart-tax").textContent = taxAmount.toFixed(2);
@@ -678,71 +717,97 @@ function updateCart() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
     localStorage.setItem("totalPrice", total.toFixed(2));
-}
+  }
 
-document.querySelectorAll('.menu button').forEach(button => {
-  button.addEventListener('click', () => {
-    document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-  });
-});
-
-function updateCartCount() {
+  // ✅ Moved this outside of updateCart
+  function updateCartCount() {
     const count = cart.reduce((acc, item) => acc + item.quantity, 0);
     document.getElementById("cart-count").textContent = count;
-}
+  }
 
-function toggleCart() {
+  function toggleCart() {
     const cartContainer = document.getElementById("cart-container");
     const isOpen = cartContainer.classList.toggle("open");
     cartContainer.setAttribute("aria-hidden", !isOpen);
-}
+  }
 
-function goToCheckout() {
+  function calculateShipping() {
+    const zip = document.getElementById("zip").value.trim();
+    const shippingSpan = document.getElementById("shipping-cost");
+    let shipping = 0;
+
+    if (/^\d{5}$/.test(zip)) {
+      const originZip = 97123;
+      const distance = Math.abs(parseInt(zip) - originZip);
+
+      if (distance < 500) {
+        shipping = 5.00;
+      } else if (distance < 1500) {
+        shipping = 10.00;
+      } else {
+        shipping = 15.00;
+      }
+    }
+
+    shippingSpan.textContent = shipping.toFixed(2);
+    updateCart();
+  }
+
+  function goToCheckout() {
     const bulkItem = cart.find(item => item.name.includes("Bulk"));
     if (bulkItem && bulkItem.quantity < 3) {
-        alert("You must order at least 3 sets to purchase in bulk.");
-        return;
+      alert("You must order at least 3 sets to purchase in bulk.");
+      return;
+    }
+
+    const zip = document.getElementById("zip").value.trim();
+    if (!/^\d{5}$/.test(zip)) {
+      alert("Please enter a valid ZIP code.");
+      return;
     }
 
     const total = document.getElementById("cart-total").textContent;
-    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+    const shipping = document.getElementById("shipping-cost").textContent;
 
-    // You can add prefill fields if needed, e.g., user email/name, here:
-    const prefillUrl = `${tallyBaseUrl}?amount=${total}`;
+    const tallyBaseUrl = "https://tally.so/r/wggLRK";
+    const productDetails = cart
+      .map(item => `${item.name} x${item.quantity}`)
+      .join(', ');
+
+    const prefillUrl = `${tallyBaseUrl}?products=${encodeURIComponent(productDetails)}&amount=${encodeURIComponent(total)}&zip=${zip}&shipping=${shipping}`;
 
     window.location.href = prefillUrl;
-}
+  }
 
-function loadCart() {
+  function loadCart() {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
-        cart = JSON.parse(savedCart);
-        updateCart();
-        updateCartCount();
+      cart = JSON.parse(savedCart);
+      updateCart();
+      updateCartCount();
     }
-}
+  }
 
-function sendConfirmationEmail(email) {
+  function sendConfirmationEmail(email) {
     let cartDetails = cart.map(item => `${item.name} x${item.quantity}`).join('\n');
 
     let emailParams = {
-        to_email: email,
-        message: cartDetails,
-        total_price: document.getElementById("cart-total").textContent
+      to_email: email,
+      message: cartDetails,
+      total_price: document.getElementById("cart-total").textContent
     };
 
     emailjs.send("your_service_id", "your_template_id", emailParams)
-        .then(() => alert("Confirmation email sent!"))
-        .catch(err => console.error("Email send error:", err));
-}
+      .then(() => alert("Confirmation email sent!"))
+      .catch(err => console.error("Email send error:", err));
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
     displayProducts();
     loadCart();
-});
+  });
 
-const dropdown = document.getElementById('dropdown');
+  const dropdown = document.getElementById('dropdown');
   const btn = document.getElementById('dropdownBtn');
   const menu = document.getElementById('dropdownMenu');
 
@@ -756,16 +821,15 @@ const dropdown = document.getElementById('dropdown');
   function hideMenu() {
     timeoutId = setTimeout(() => {
       menu.classList.remove('show');
-    }, 300); // Delay to allow moving from button to menu
+    }, 300);
   }
 
   btn.addEventListener('mouseenter', showMenu);
   btn.addEventListener('mouseleave', hideMenu);
-
   menu.addEventListener('mouseenter', showMenu);
   menu.addEventListener('mouseleave', hideMenu);
+</script>
 
-            </script>
             
         
         <div id="sizingChartModal" style="
