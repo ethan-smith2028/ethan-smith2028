@@ -6,9 +6,7 @@
   <title>Northmark Tracker</title>
   <link rel="icon" type="image/x-icon" href="shipping (1).png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-  <style>
+   <style>
     :root {
       --primary: #4f46e5;
       --bg: #f3f4f6;
@@ -187,12 +185,12 @@
 
     async function createOrder() {
       const id = generateId();
-      const link = `${window.location.origin}/order-generate/view.html?orderId=${id}`;
+     const link = `${window.location.origin}/order-generate/view.html?orderId=${id}`;
       const newOrder = { id, updates: [], link };
       await saveOrderToFirestore(newOrder);
       currentOrderId = id;
       showOrder(newOrder);
-      document.getElementById('orderCreated').innerText = `Order created: ${id}`;
+     document.getElementById('orderCreated').innerText = `Order created: ${id}`;
       await loadAllOrders(); // refresh the list
     }
 
@@ -247,8 +245,8 @@
       const snap = await getDocs(ordersCol);
       const list = document.getElementById('savedOrdersList');
       list.innerHTML = '';
-      snap.forEach(doc => {
-        const order = doc.data();
+     snap.forEach(snapshotDoc => {
+  const order = snapshotDoc.data();
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = `${window.location.pathname}?orderId=${order.id}`;
