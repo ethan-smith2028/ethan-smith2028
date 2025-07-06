@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Northmark Tracker</title>
+  
   <link rel="icon" type="image/x-icon" href="shipping (1).png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
    <style>
@@ -118,6 +119,10 @@
   <div class="container">
     <div class="card">
       <h2>Create New Order</h2>
+
+      <label for="email"><strong>Email Address:</strong></label><br>
+<input type="email" id="emailInput" placeholder="example@email.com" style="margin-bottom: 1rem; padding: 0.5rem; width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+
       <button onclick="createOrder()"><i class="fa-solid fa-plus"></i> Generate Order</button>
       <p id="orderCreated"></p>
     </div>
@@ -144,6 +149,17 @@
       <ul id="savedOrdersList"></ul>
     </div>
   </div>
+</script>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "gfyQUSMLIE0KLYUPm",
+      });
+   })();
+</script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -184,15 +200,17 @@
     }
 
     async function createOrder() {
-      const id = generateId();
-     const link = `${window.location.origin}/order-generate/view.html?orderId=${id}`;
-      const newOrder = { id, updates: [], link };
-      await saveOrderToFirestore(newOrder);
-      currentOrderId = id;
-      showOrder(newOrder);
-     document.getElementById('orderCreated').innerText = `Order created: ${id}`;
-      await loadAllOrders(); // refresh the list
-    }
+  const id = generateId();
+  const email = document.getElementById('emailInput').value;
+  const link = `${window.location.origin}/order-generate/view.html?orderId=${id}`;
+  const newOrder = { id, updates: [], link, email };
+  await saveOrderToFirestore(newOrder);
+  currentOrderId = id;
+  showOrder(newOrder);
+  document.getElementById('orderCreated').innerText = `Order created: ${id}`;
+  await loadAllOrders(); // refresh the list
+}
+
 
     function showOrder(order) {
       currentOrderId = order.id;
@@ -204,18 +222,35 @@
       renderStatus(order);
     }
 
-    async function addStatus(status) {
-      const ref = doc(db, "orders", currentOrderId);
-      const snap = await getDoc(ref);
-      const order = snap.data();
-      order.updates.push({
-        text: status,
-        time: new Date().toLocaleString(),
-        icon: statusIcons[status] || 'fa-info-circle'
+   async function addStatus(status) {
+  const ref = doc(db, "orders", currentOrderId);
+  const snap = await getDoc(ref);
+  const order = snap.data();
+
+  const time = new Date().toLocaleString();
+  const icon = statusIcons[status] || 'fa-info-circle';
+  order.updates.push({ text: status, time, icon });
+
+  await setDoc(ref, order);
+  renderStatus(order);
+
+  if (order.email) {
+    const statusHtml = order.updates.map(u =>
+      `<li><strong>${u.text}</strong> <br/><small>${u.time}</small></li>`
+    ).join('');
+
+    try {
+      await emailjs.send("service_1uqpv95", "template_0phx18p", {
+        order_id: order.id,
+        status_html: statusHtml,
+        to_email: order.email
       });
-      await setDoc(ref, order);
-      renderStatus(order);
+      console.log("Status email sent");
+    } catch (err) {
+      console.error("EmailJS send failed:", err);
     }
+  }
+}
 
     function renderStatus(order) {
       const list = document.getElementById('statusList');
