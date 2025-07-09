@@ -87,7 +87,7 @@
 
     <label>Company Name: <input type="text" id="companyName" value="Northmark" /></label>
     <label>Company Address: <textarea id="companyAddress">1162 SE Roundelay Street, Hillsboro, OR 97123</textarea></label>
-    <label>Company Contact: <input type="text" id="companyContact" value="northmark.company@gmail.com | (971) 732-0192" /></label>
+    <label>Company Contact: <input type="text" id="companyContact" value="northmark.help@gmail.com | (971) 732-0192" /></label>
     <label>Logo URL: <input type="text" id="logoUrl" value="ui/logos/northmark.png" /></label>
 
     <label>Order Number: <input type="text" id="orderNumber" value="NMRK-" /></label>
@@ -106,8 +106,8 @@
       <button onclick="addProductLine()">+ Add Product</button>
     </div>
 
-    <label>Discount (%): <input type="number" id="discount" value="0" onchange="updatePreview()" /></label>
-    <label>Shipping Cost ($): <input type="number" id="shipping" value="0" onchange="updatePreview()" /></label>
+    <label>Discount (%): <input type="number" id="discount" value="0" /></label>
+    <label>Shipping Cost ($): <input type="number" id="shipping" value="0" /></label>
 
     <button onclick="downloadPDF()">Download PDF</button>
   </div>
@@ -127,10 +127,8 @@
     let productLineCounter = 0;
 
     function addProductLine() {
-      const lineId = productLineCounter++;
       const container = document.createElement('div');
       container.className = 'product-line';
-      container.dataset.id = lineId;
 
       const select = document.createElement('select');
       products.forEach(p => {
@@ -147,11 +145,13 @@
       qty.min = 1;
       qty.placeholder = 'Qty';
       qty.oninput = updatePreview;
+      qty.addEventListener('keydown', handleEnter);
 
       const custom = document.createElement('input');
       custom.type = 'number';
       custom.placeholder = 'Custom Price (optional)';
       custom.oninput = updatePreview;
+      custom.addEventListener('keydown', handleEnter);
 
       container.appendChild(select);
       container.appendChild(qty);
@@ -227,6 +227,20 @@
       `;
     }
 
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        updatePreview();
+      }
+    }
+
+    function attachInputListeners() {
+      document.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('keydown', handleEnter);
+        el.addEventListener('input', updatePreview);
+      });
+    }
+
     function downloadPDF() {
       const element = document.getElementById('invoicePreview');
       html2pdf().from(element).set({
@@ -241,6 +255,7 @@
     // Initial setup
     addProductLine();
     document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+    attachInputListeners();
   </script>
 </body>
 </html>
