@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      padding: 20px;
+      gap: 30px;
+      background: #f9f9f9;
+    }
+
+    .controls, .preview {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      margin: 5px 0 15px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .product-line {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .product-line > * {
+      flex: 1;
+    }
+
+    .invoice-box {
+      max-width: 800px;
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .invoice-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .invoice-box table td, .invoice-box table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .invoice-box img {
+      max-width: 100px;
+      margin-bottom: 20px;
+    }
+
+    .totals {
+      margin-top: 20px;
+    }
+
+    .totals strong {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <h2>Invoice Details</h2>
+    <label>Company Name: <input type="text" id="companyName" value="My Company"></label>
+    <label>Company Address: <textarea id="companyAddress">123 Main St, City, Country</textarea></label>
+    <label>Logo URL: <input type="text" id="logoUrl" value="https://via.placeholder.com/100"></label>
+
+    <h3>Products</h3>
+    <div id="productLines"></div>
+    <button onclick="addProductLine()">+ Add Product</button>
+
+    <label>Discount (%): <input type="number" id="discount" value="0" onchange="updatePreview()"></label>
+
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <div class="preview">
+    <div id="invoicePreview" class="invoice-box"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    const products = [
+      { name: 'Product A', price: 50 },
+      { name: 'Product B', price: 100 },
+      { name: 'Product C', price: 150 }
+    ];
+
+    let productLineCounter = 0;
+
+    function addProductLine() {
+      const lineId = productLineCounter++;
+      const container = document.createElement('div');
+      container.className = 'product-line';
+      container.dataset.id = lineId;
+
+      const select = document.createElement('select');
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.price;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+      });
+      select.onchange = updatePreview;
+
+      const qty = document.createElement('input');
+      qty.type = 'number';
+      qty.value = 1;
+      qty.min = 1;
+      qty.placeholder = 'Qty';
+      qty.oninput = updatePreview;
+
+      const custom = document.createElement('input');
+      custom.type = 'number';
+      custom.placeholder = 'Custom Price (optional)';
+      custom.oninput = updatePreview;
+
+      container.appendChild(select);
+      container.appendChild(qty);
+      container.appendChild(custom);
+
+      document.getElementById('productLines').appendChild(container);
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const companyName = document.getElementById('companyName').value;
+      const companyAddress = document.getElementById('companyAddress').value;
+      const logoUrl = document.getElementById('logoUrl').value;
+      const discount = parseFloat(document.getElementById('discount').value) || 0;
+
+      let total = 0;
+      let productRows = '';
+
+      document.querySelectorAll('.product-line').forEach(line => {
+        const select = line.children[0];
+        const qty = parseFloat(line.children[1].value) || 1;
+        const customPrice = parseFloat(line.children[2].value);
+        const basePrice = parseFloat(select.value);
+        const productName = select.options[select.selectedIndex].text;
+
+        const finalPrice = customPrice || basePrice;
+        const lineTotal = finalPrice * qty;
+        total += lineTotal;
+
+        productRows += `<tr>
+          <td>${productName}</td>
+          <td>${qty}</td>
+          <td>$${finalPrice.toFixed(2)}</td>
+          <td>$${lineTotal.toFixed(2)}</td>
+        </tr>`;
+      });
+
+      const discountedTotal = total * (1 - discount / 100);
+
+      document.getElementById('invoicePreview').innerHTML = `
+        <img src="${logoUrl}" alt="Company Logo">
+        <h2>${companyName}</h2>
+        <p>${companyAddress.replace(/\n/g, '<br>')}</p>
+        <table>
+          <thead>
+            <tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr>
+          </thead>
+          <tbody>${productRows}</tbody>
+        </table>
+        <div class="totals">
+          <p>Subtotal: $${total.toFixed(2)}</p>
+          <p>Discount: ${discount}%</p>
+          <strong>Total: $${discountedTotal.toFixed(2)}</strong>
+        </div>
+      `;
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('invoicePreview');
+      html2pdf().from(element).set({ margin: 1, filename: 'invoice.pdf' }).save();
+    }
+
+    // Initial
+    addProductLine();
+  </script>
+</body>
+</html>
