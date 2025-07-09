@@ -248,41 +248,40 @@
     }
 
     function downloadPDF() {
-      const element = document.getElementById('invoicePreview');
+  const element = document.getElementById('invoicePreview');
 
-      // Clone invoice preview to scale and add padding for PDF without scroll
-      const clone = element.cloneNode(true);
-      clone.style.width = '8.5in';
-      clone.style.minHeight = '11in';
-      clone.style.padding = '0.5in';
-      clone.style.background = 'white';
-      clone.style.color = 'black';
-      clone.style.boxSizing = 'border-box';
+  // Save original styles so we can restore them later
+  const originalWidth = element.style.width;
+  const originalMinHeight = element.style.minHeight;
+  const originalPadding = element.style.padding;
+  const originalBackground = element.style.background;
 
-      // Append clone temporarily to body
-      clone.id = 'cloneInvoicePreview';
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      document.body.appendChild(clone);
+  // Set styles for PDF sizing
+  element.style.width = '8.5in';
+  element.style.minHeight = '11in';
+  element.style.padding = '0.5in';
+  element.style.background = 'white';
+  element.style.color = 'black';
 
-      html2pdf()
-        .from(clone)
-        .set({
-          margin: 0.5,
-          filename: 'invoice.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 3, scrollY: -window.scrollY },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        })
-        .toPdf()
-        .get('pdf').then(function (pdf) {
-          // Optionally add page numbers, header, footer here
-        })
-        .save()
-        .finally(() => {
-          // Remove cloned node
-          document.body.removeChild(clone);
-        });
+  html2pdf()
+    .from(element)
+    .set({
+      margin: 0,
+      filename: 'invoice.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 3, scrollY: -window.scrollY },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    })
+    .save()
+    .finally(() => {
+      // Restore original styles
+      element.style.width = originalWidth;
+      element.style.minHeight = originalMinHeight;
+      element.style.padding = originalPadding;
+      element.style.background = originalBackground;
+    });
+}
+
     }
 
     // Initial setup
