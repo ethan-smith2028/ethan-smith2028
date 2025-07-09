@@ -17,12 +17,15 @@
       padding: 20px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      overflow: auto;
+      max-height: 90vh;
     }
     input, select, textarea {
       width: 100%;
       margin: 5px 0 15px;
       padding: 8px;
       font-size: 14px;
+      box-sizing: border-box;
     }
     label {
       display: block;
@@ -52,6 +55,10 @@
       max-width: 800px;
       font-size: 14px;
       line-height: 24px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: white;
+      color: black;
     }
     .invoice-box table {
       width: 100%;
@@ -87,10 +94,10 @@
 
     <label>Company Name: <input type="text" id="companyName" value="Northmark" /></label>
     <label>Company Address: <textarea id="companyAddress">1162 SE Roundelay Street, Hillsboro, OR 97123</textarea></label>
-    <label>Company Contact: <input type="text" id="companyContact" value="northmark.help@gmail.com | (971) 732-0192" /></label>
+    <label>Company Contact: <input type="text" id="companyContact" value="info@northmark.com | (503) 555-1234" /></label>
     <label>Logo URL: <input type="text" id="logoUrl" value="ui/logos/northmark.png" /></label>
 
-    <label>Order Number: <input type="text" id="orderNumber" value="NMRK-" /></label>
+    <label>Order Number: <input type="text" id="orderNumber" value="INV-00123" /></label>
     <label>Date: <input type="date" id="invoiceDate" /></label>
 
     <div class="section">
@@ -124,8 +131,6 @@
       { name: 'Postguard', price: 18.99 }
     ];
 
-    let productLineCounter = 0;
-
     function addProductLine() {
       const container = document.createElement('div');
       container.className = 'product-line';
@@ -138,6 +143,7 @@
         select.appendChild(opt);
       });
       select.onchange = updatePreview;
+      select.addEventListener('keydown', handleEnter);
 
       const qty = document.createElement('input');
       qty.type = 'number';
@@ -202,10 +208,10 @@
       const grandTotal = total - discountAmount + shipping;
 
       document.getElementById('invoicePreview').innerHTML = `
-        <img src="${logoUrl}" alt="Company Logo">
+        <img src="${logoUrl}" alt="Company Logo" />
         <h2>${companyName}</h2>
         <p>${companyAddress.replace(/\n/g, '<br>')}<br>${companyContact}</p>
-        <p><strong>Invoice #:</strong> ${orderNumber}<br>
+        <p><strong>Invoice #:</strong> ${orderNumber}<br />
            <strong>Date:</strong> ${invoiceDate}</p>
 
         <h3>Bill To:</h3>
@@ -235,7 +241,7 @@
     }
 
     function attachInputListeners() {
-      document.querySelectorAll('input, textarea').forEach(el => {
+      document.querySelectorAll('input, textarea, select').forEach(el => {
         el.addEventListener('keydown', handleEnter);
         el.addEventListener('input', updatePreview);
       });
@@ -243,13 +249,40 @@
 
     function downloadPDF() {
       const element = document.getElementById('invoicePreview');
-      html2pdf().from(element).set({
-        margin: 0.5,
-        filename: 'invoice.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      }).save();
+
+      // Clone invoice preview to scale and add padding for PDF without scroll
+      const clone = element.cloneNode(true);
+      clone.style.width = '8.5in';
+      clone.style.minHeight = '11in';
+      clone.style.padding = '0.5in';
+      clone.style.background = 'white';
+      clone.style.color = 'black';
+      clone.style.boxSizing = 'border-box';
+
+      // Append clone temporarily to body
+      clone.id = 'cloneInvoicePreview';
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      document.body.appendChild(clone);
+
+      html2pdf()
+        .from(clone)
+        .set({
+          margin: 0.5,
+          filename: 'invoice.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 3, scrollY: -window.scrollY },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        })
+        .toPdf()
+        .get('pdf').then(function (pdf) {
+          // Optionally add page numbers, header, footer here
+        })
+        .save()
+        .finally(() => {
+          // Remove cloned node
+          document.body.removeChild(clone);
+        });
     }
 
     // Initial setup
