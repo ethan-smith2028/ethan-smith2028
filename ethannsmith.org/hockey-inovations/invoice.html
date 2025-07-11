@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      padding: 20px;
+      gap: 30px;
+      background: #f9f9f9;
+    }
+    .controls, .preview {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 90vh;
+    }
+    input, select, textarea {
+      width: 100%;
+      margin: 5px 0 15px;
+      padding: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .product-line {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .product-line > * {
+      flex: 1;
+    }
+    .invoice-box {
+      max-width: 800px;
+      font-size: 14px;
+      line-height: 24px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: white;
+      color: black;
+    }
+    .invoice-box table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .invoice-box table td, .invoice-box table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    .invoice-box img {
+      max-width: 120px;
+      margin-bottom: 10px;
+    }
+    .totals {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .totals strong {
+      font-size: 18px;
+    }
+    h2, h3 {
+      margin-bottom: 10px;
+    }
+    .section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <h2>Invoice Details</h2>
+
+    <label>Company Name: <input type="text" id="companyName" value="Northmark" /></label>
+    <label>Company Address: <textarea id="companyAddress">1162 SE Roundelay Street, Hillsboro, OR 97123</textarea></label>
+    <label>Company Contact: <input type="text" id="companyContact" value="info@northmark.com | (503) 555-1234" /></label>
+    <label>Logo URL: <input type="text" id="logoUrl" value="ui/logos/northmark.png" /></label>
+
+    <label>Order Number: <input type="text" id="orderNumber" value="INV-00123" /></label>
+    <label>Date: <input type="date" id="invoiceDate" /></label>
+
+    <div class="section">
+      <h3>Receiver Info</h3>
+      <label>Name: <input type="text" id="receiverName" value="John Doe" /></label>
+      <label>Address: <textarea id="receiverAddress">456 Client Ave, Portland, OR 97205</textarea></label>
+      <label>Contact Info: <input type="text" id="receiverContact" value="john.doe@example.com | (503) 555-5678" /></label>
+    </div>
+
+    <div class="section">
+      <h3>Products</h3>
+      <div id="productLines"></div>
+      <button onclick="addProductLine()">+ Add Product</button>
+    </div>
+
+    <label>Discount (%): <input type="number" id="discount" value="0" /></label>
+    <label>Shipping Cost ($): <input type="number" id="shipping" value="0" /></label>
+
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <div class="preview">
+    <div id="invoicePreview" class="invoice-box"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    const products = [
+      { name: 'Postguard + Stake V1', price: 22.99 },
+      { name: 'Postguard + Stake V2', price: 25.99 },
+      { name: 'Postguard', price: 18.99 }
+    ];
+
+    function addProductLine() {
+      const container = document.createElement('div');
+      container.className = 'product-line';
+
+      const select = document.createElement('select');
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.price;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+      });
+      select.onchange = updatePreview;
+      select.addEventListener('keydown', handleEnter);
+
+      const qty = document.createElement('input');
+      qty.type = 'number';
+      qty.value = 1;
+      qty.min = 1;
+      qty.placeholder = 'Qty';
+      qty.oninput = updatePreview;
+      qty.addEventListener('keydown', handleEnter);
+
+      const custom = document.createElement('input');
+      custom.type = 'number';
+      custom.placeholder = 'Custom Price (optional)';
+      custom.oninput = updatePreview;
+      custom.addEventListener('keydown', handleEnter);
+
+      container.appendChild(select);
+      container.appendChild(qty);
+      container.appendChild(custom);
+
+      document.getElementById('productLines').appendChild(container);
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const companyName = document.getElementById('companyName').value;
+      const companyAddress = document.getElementById('companyAddress').value;
+      const companyContact = document.getElementById('companyContact').value;
+      const logoUrl = document.getElementById('logoUrl').value;
+
+      const receiverName = document.getElementById('receiverName').value;
+      const receiverAddress = document.getElementById('receiverAddress').value;
+      const receiverContact = document.getElementById('receiverContact').value;
+
+      const orderNumber = document.getElementById('orderNumber').value;
+      const invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
+      const discount = parseFloat(document.getElementById('discount').value) || 0;
+      const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+
+      let total = 0;
+      let productRows = '';
+
+      document.querySelectorAll('.product-line').forEach(line => {
+        const select = line.children[0];
+        const qty = parseFloat(line.children[1].value) || 1;
+        const customPrice = parseFloat(line.children[2].value);
+        const basePrice = parseFloat(select.value);
+        const productName = select.options[select.selectedIndex].text;
+
+        const finalPrice = customPrice || basePrice;
+        const lineTotal = finalPrice * qty;
+        total += lineTotal;
+
+        productRows += `<tr>
+          <td>${productName}</td>
+          <td>${qty}</td>
+          <td>$${finalPrice.toFixed(2)}</td>
+          <td>$${lineTotal.toFixed(2)}</td>
+        </tr>`;
+      });
+
+      const discountAmount = total * (discount / 100);
+      const grandTotal = total - discountAmount + shipping;
+
+      document.getElementById('invoicePreview').innerHTML = `
+        <img src="${logoUrl}" alt="Company Logo" />
+        <h2>${companyName}</h2>
+        <p>${companyAddress.replace(/\n/g, '<br>')}<br>${companyContact}</p>
+        <p><strong>Invoice #:</strong> ${orderNumber}<br />
+           <strong>Date:</strong> ${invoiceDate}</p>
+
+        <h3>Bill To:</h3>
+        <p>${receiverName}<br>${receiverAddress.replace(/\n/g, '<br>')}<br>${receiverContact}</p>
+
+        <table>
+          <thead>
+            <tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr>
+          </thead>
+          <tbody>${productRows}</tbody>
+        </table>
+
+        <div class="totals">
+          <p>Subtotal: $${total.toFixed(2)}</p>
+          <p>Discount: ${discount}% (-$${discountAmount.toFixed(2)})</p>
+          <p>Shipping: $${shipping.toFixed(2)}</p>
+          <strong>Grand Total: $${grandTotal.toFixed(2)}</strong>
+        </div>
+      `;
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        updatePreview();
+      }
+    }
+
+    function attachInputListeners() {
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('keydown', handleEnter);
+        el.addEventListener('input', updatePreview);
+      });
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('invoicePreview');
+
+      // Save original styles so we can restore them later
+      const originalWidth = element.style.width;
+      const originalMinHeight = element.style.minHeight;
+      const originalPadding = element.style.padding;
+      const originalBackground = element.style.background;
+
+      // Set styles for PDF sizing
+      element.style.width = '8.5in';
+      element.style.minHeight = '11in';
+      element.style.padding = '0.5in';
+      element.style.background = 'white';
+      element.style.color = 'black';
+
+      html2pdf()
+        .from(element)
+        .set({
+          margin: 0,
+          filename: 'invoice.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 3, scrollY: -window.scrollY },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        })
+        .save()
+        .finally(() => {
+          // Restore original styles
+          element.style.width = originalWidth;
+          element.style.minHeight = originalMinHeight;
+          element.style.padding = originalPadding;
+          element.style.background = originalBackground;
+        });
+    }
+
+    // Initial setup
+    addProductLine();
+    document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+    attachInputListeners();
+  </script>
+</body>
+</html>
