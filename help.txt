@@ -1,0 +1,8 @@
+To push update, run: 
+git push origin main
+======================================
+To force update, run:
+git push --force-with-lease origin 
+======================================
+To pull to update, run:
+git pull origin main
