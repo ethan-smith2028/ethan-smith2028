@@ -51,28 +51,81 @@
     .product-line > * {
       flex: 1;
     }
-    .invoice-box {
-      max-width: 800px;
-      font-size: 14px;
-      line-height: 24px;
-      padding: 20px;
-      box-sizing: border-box;
-      background: white;
-      color: black;
-    }
-    .invoice-box table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    .invoice-box table td, .invoice-box table th {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    .invoice-box img {
-      max-width: 120px;
-      margin-bottom: 10px;
-    }
+   .invoice-box {
+  width: 4in;
+  min-height: 6in;
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 0.3in;
+  box-sizing: border-box;
+  background: white;
+  color: black;
+  margin: auto;
+  
+}
+
+.invoice-box table td,
+.invoice-box table th {
+  border-right: 1px solid #000;
+  padding: 8px;
+}
+
+@media print {
+  html, body {
+    width: 4in;
+    height: 6in;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .invoice-box {
+    width: 4in !important;
+    height: 6in !important;
+    box-shadow: none;
+    border: black;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .invoice-box, .invoice-box * {
+    visibility: visible;
+  }
+
+  .invoice-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+
+.invoice-box table {
+  font-size: 14px;
+}
+
+.invoice-box h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.invoice-box h3 {
+  font-size: 18px;
+  margin: 8px 0 4px;
+}
+
+.invoice-box p, .invoice-box td, .invoice-box th {
+  font-size: 14px;
+}
+
+.invoice-box img {
+  max-width: 100px;
+}
+
     .totals {
       margin-top: 20px;
       text-align: right;
@@ -94,8 +147,8 @@
 
     <label>Company Name: <input type="text" id="companyName" value="Northmark" /></label>
     <label>Company Address: <textarea id="companyAddress">1162 SE Roundelay Street, Hillsboro, OR 97123</textarea></label>
-    <label>Company Contact: <input type="text" id="companyContact" value="info@northmark.com | (503) 555-1234" /></label>
-    <label>Logo URL: <input type="text" id="logoUrl" value="ui/logos/northmark.png" /></label>
+    <label>Company Contact: <input type="text" id="companyContact" value="northmark.help@gmail.com | (971) 732-0192" /></label>
+    <label>Logo URL: <input type="text" id="logoUrl" value="ui/logos/nmrk-black.png" /></label>
 
     <label>Order Number: <input type="text" id="orderNumber" value="INV-00123" /></label>
     <label>Date: <input type="date" id="invoiceDate" /></label>
@@ -117,6 +170,8 @@
     <label>Shipping Cost ($): <input type="number" id="shipping" value="0" /></label>
 
     <button onclick="downloadPDF()">Download PDF</button>
+    <button onclick="printInvoice()">Print Invoice</button>
+
   </div>
 
   <div class="preview">
@@ -168,7 +223,9 @@
     }
 
     function updatePreview() {
-      const companyName = document.getElementById('companyName').value;
+      updateTitle(); // add this
+
+  const companyName = document.getElementById('companyName').value;
       const companyAddress = document.getElementById('companyAddress').value;
       const companyContact = document.getElementById('companyContact').value;
       const logoUrl = document.getElementById('logoUrl').value;
@@ -178,6 +235,7 @@
       const receiverContact = document.getElementById('receiverContact').value;
 
       const orderNumber = document.getElementById('orderNumber').value;
+      document.getElementById('orderNumber').addEventListener('input', updateTitle);
       const invoiceDate = document.getElementById('invoiceDate').value || new Date().toISOString().split('T')[0];
       const discount = parseFloat(document.getElementById('discount').value) || 0;
       const shipping = parseFloat(document.getElementById('shipping').value) || 0;
@@ -247,45 +305,74 @@
       });
     }
 
-    function downloadPDF() {
-      const element = document.getElementById('invoicePreview');
+   function downloadPDF() {
+  const element = document.getElementById('invoicePreview');
 
-      // Save original styles so we can restore them later
-      const originalWidth = element.style.width;
-      const originalMinHeight = element.style.minHeight;
-      const originalPadding = element.style.padding;
-      const originalBackground = element.style.background;
+  // Save original styles
+  const originalStyle = element.getAttribute('style');
 
-      // Set styles for PDF sizing
-      element.style.width = '8.5in';
-      element.style.minHeight = '11in';
-      element.style.padding = '0.5in';
-      element.style.background = 'white';
-      element.style.color = 'black';
+  // Apply 4x6 style for PDF
+  element.style.width = '4in';
+  element.style.minHeight = '6in';
+  element.style.padding = '0.3in';
+  element.style.background = 'white';
+  element.style.color = 'black';
 
-      html2pdf()
-        .from(element)
-        .set({
-          margin: 0,
-          filename: 'invoice.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 3, scrollY: -window.scrollY },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        })
-        .save()
-        .finally(() => {
-          // Restore original styles
-          element.style.width = originalWidth;
-          element.style.minHeight = originalMinHeight;
-          element.style.padding = originalPadding;
-          element.style.background = originalBackground;
-        });
-    }
+  html2pdf()
+    .from(element)
+    .set({
+      margin: 0,
+      filename: 'invoice.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 3, scrollY: -window.scrollY },
+      jsPDF: { unit: 'in', format: [4, 6], orientation: 'portrait' }
+    })
+    .save()
+    .finally(() => {
+      if (originalStyle !== null) {
+        element.setAttribute('style', originalStyle);
+      } else {
+        element.removeAttribute('style');
+      }
+    });
+}
+
 
     // Initial setup
     addProductLine();
     document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
     attachInputListeners();
+
+    function updateTitle() {
+  const orderNumber = document.getElementById('orderNumber').value || 'Invoice';
+  document.title = `Invoice - ${orderNumber}`;
+}
+
+
+function printInvoice() {
+  const invoice = document.getElementById('invoicePreview');
+  const originalBody = document.body.innerHTML;
+
+  // Replace body content with only the invoice
+  document.body.innerHTML = '';
+  const clone = invoice.cloneNode(true);
+  clone.style.margin = '0';
+  clone.style.padding = '0.3in';
+  clone.style.width = '4in';
+  clone.style.minHeight = '6in';
+  clone.style.boxSizing = 'border-box';
+  clone.style.color = 'black';
+  document.body.appendChild(clone);
+
+  // Trigger print
+  window.print();
+
+  // Restore original page content
+  document.body.innerHTML = originalBody;
+  attachInputListeners(); // Re-bind input events
+  updatePreview(); // Refresh preview
+}
+
   </script>
 </body>
 </html>
