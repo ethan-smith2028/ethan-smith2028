@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peak Frame Photography</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1f1f1f, #3c3c3c);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    header h1 {
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+    nav button {
+      background: #555;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      margin-left: 0.8rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    nav button:hover {
+      background: #037bff;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Homepage Folders */
+    .folders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      padding: 3rem 2rem;
+    }
+    .folder {
+      background: white;
+      padding: 2.5rem 1.5rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .folder:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .folder-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      color: #037bff;
+    }
+    .folder h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    .folder button {
+      margin-top: 1rem;
+      background: #037bff;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    .folder button:hover {
+      background: #666;
+      transform: scale(1.05);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav button {
+        margin: 0.5rem 0 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Peak Frame Photography</h1>
+    <nav>
+      <button onclick="goHome()">Home</button>
+      <button onclick="location.href='https://tally.so/r/31e5ob'">Book Now</button>
+      <button onclick="location.href='purchase.html'">Purchase Photos</button>
+    </nav>
+  </header>
+
+  <!-- Homepage Folders -->
+  <section class="folders" id="folderSection">
+    <div class="folder">
+      <div class="folder-icon"><i class="fas fa-medal"></i></div>
+      <h3>Vancouver Rangers v. Seattle Jr. Kraken</h3>
+      <button onclick="location.href='rangers-v-kraken/gallery.html'">Open</button>
+    </div>
+    <div class="folder">
+      <div class="folder-icon"><i class="fas fa-umbrella-beach"></i></div>
+      <h3>Seaside Beach</h3>
+      <button onclick="location.href='seaside/gallery.html'">Open</button>
+    </div>
+  </section>
+
+  <script>
+    function goHome() {
+      document.getElementById("folderSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Example: Automatically give each photo in a gallery page a unique ID
+    // This script is meant to be reused inside gallery pages
+    function assignPhotoIDs() {
+      const photos = document.querySelectorAll('.gallery img');
+      photos.forEach((photo, index) => {
+        photo.id = `photo-${index + 1}`;
+      });
+    }
+  </script>
+
+</body>
+</html>
