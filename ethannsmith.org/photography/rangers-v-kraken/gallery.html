@@ -17,19 +17,18 @@
     header button:hover { background: #666; }
 
     .gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 photos per row on desktop */
-  gap: 1.5rem; 
-  padding: 2rem;
-}
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 photos per row on desktop */
+      gap: 1.5rem; 
+      padding: 2rem;
+    }
 
-/* On mobile, show only one photo per row */
-@media (max-width: 768px) {
-  .gallery {
-    grid-template-columns: 1fr; /* single column */
-  }
-}
-
+    /* On mobile, show only one photo per row */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr; /* single column */
+      }
+    }
 
     .watermark-container {
       position: relative;
@@ -46,7 +45,6 @@
       user-select: none;
     }
 
-    /* Watermark overlay */
     .watermark {
       position: absolute;
       top: 50%; left: 50%;
@@ -59,9 +57,42 @@
       text-align: center;
       white-space: pre-line;
     }
+
+    /* Fullscreen Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      z-index: 9999;
+    }
+
+    /* Optional spinner */
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
-<body oncontextmenu="return false"> <!-- disables right click -->
+<body oncontextmenu="return false">
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div> Loading photos...
+  </div>
 
   <header>
     <h1>Vancouver Rangers v. Jr. Kraken</h1>
@@ -73,7 +104,7 @@
   </section>
 
   <script>
-   const images = [
+    const images = [
   "upload/1.JPG",
   "upload/2.JPG",
   "upload/3.JPG",
@@ -136,15 +167,24 @@
 
 
     const gallery = document.getElementById("gallery");
+    const overlay = document.getElementById("loadingOverlay");
 
-    // Generate a persistent 5-digit ID from filename
     function getPhotoID(filename) {
       let hash = 0;
       for (let i = 0; i < filename.length; i++) {
         hash = (hash << 5) - hash + filename.charCodeAt(i);
-        hash = hash & hash; // Convert to 32bit integer
+        hash = hash & hash;
       }
       return Math.abs(hash % 90000) + 10000;
+    }
+
+    let loadedCount = 0;
+
+    function checkAllLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length) {
+        overlay.style.display = "none"; // hide overlay once all images loaded
+      }
     }
 
     images.forEach(src => {
@@ -154,6 +194,10 @@
       const img = document.createElement("img");
       img.src = src;
       img.alt = "Protected Image";
+
+      // track loading
+      img.onload = checkAllLoaded;
+      img.onerror = checkAllLoaded; // also count if error, so overlay won't hang
 
       const watermark = document.createElement("div");
       watermark.className = "watermark";
