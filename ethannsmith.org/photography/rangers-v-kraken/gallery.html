@@ -17,11 +17,19 @@
     header button:hover { background: #666; }
 
     .gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 photos per row */
-      gap: 1.5rem; 
-      padding: 2rem;
-    }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 photos per row on desktop */
+  gap: 1.5rem; 
+  padding: 2rem;
+}
+
+/* On mobile, show only one photo per row */
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: 1fr; /* single column */
+  }
+}
+
 
     .watermark-container {
       position: relative;
