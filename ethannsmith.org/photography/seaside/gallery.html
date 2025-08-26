@@ -66,12 +66,28 @@
       z-index: 9999;
       transition: opacity 0.5s ease;
     }
+    /* Optional spinner */
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
-<body oncontextmenu="return false"> <!-- disables right click -->
 
-  <!-- Loading screen -->
-  <div id="loadingOverlay">Loading photos...</div>
+<body oncontextmenu="return false">
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div> Loading photos...
+  </div>
 
   <header>
     <h1>Seaside Beach</h1>
