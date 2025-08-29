@@ -56,6 +56,13 @@
   -webkit-user-drag: none;
 }
 
+/* On mobile, show only one photo per row */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr; /* single column */
+      }
+    }
+
 
     .image-wrapper img.overlay {
       position: absolute;
