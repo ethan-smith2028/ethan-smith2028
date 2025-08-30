@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    header button:hover {
+      background: #666;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .image-wrapper img.base {
+      width: 100%;
+      display: block;
+    }
+
+    img {
+  -webkit-user-drag: none;
+}
+
+/* On mobile, show only one photo per row */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr; /* single column */
+      }
+    }
+
+
+    .image-wrapper img.overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* Loading overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div> Loading photos...
+  </div>
+
+  <header>
+    <h1>Linsly Girls Soccer v. Williamstown - Aug. 30</h1>
+    <button onclick="location.href='../index.html'">⬅ Back</button>
+  </header>
+
+  <section class="gallery" id="gallery">
+    <!-- JS will populate this -->
+  </section>
+
+  <script>
+    const images = [
+  "upload/1.jpg",
+  "upload/2.jpg",
+  "upload/3.jpg",
+  "upload/4.jpg",
+  "upload/5.jpg",
+  "upload/6.jpg",
+  "upload/7.jpg",
+  "upload/9.jpg",
+  "upload/10.jpg",
+  "upload/11.jpg",
+  "upload/12.jpg",
+  "upload/13.jpg",
+  "upload/14.jpg",
+  "upload/15.jpg",
+  "upload/16.jpg",
+  "upload/17.jpg",
+  "upload/18.jpg",
+  "upload/19.jpg",
+  "upload/20.jpg",
+  "upload/21.jpg",
+  "upload/22.jpg",
+  "upload/23.jpg",
+  "upload/24.jpg",
+  "upload/25.jpg",
+  "upload/26.jpg",
+  "upload/27.jpg",
+  "upload/28.jpg",
+  "upload/29.jpg",
+  "upload/30.jpg",
+  "upload/31.jpg",
+  "upload/32.jpg",
+  "upload/33.jpg",
+  "upload/34.jpg",
+  "upload/35.jpg",
+  "upload/36.jpg",
+  "upload/37.jpg",
+  "upload/38.jpg",
+  "upload/39.jpg",
+  "upload/40.jpg",
+  "upload/41.jpg",
+  "upload/42.jpg",
+  "upload/43.jpg",
+  "upload/44.jpg",
+  "upload/45.jpg",
+  "upload/46.jpg",
+  "upload/47.jpg",
+  "upload/48.jpg",
+  "upload/49.jpg",
+  "upload/50.jpg",
+  "upload/51.jpg",
+  "upload/52.jpg",
+  "upload/53.jpg",
+  "upload/54.jpg",
+  "upload/55.jpg",
+  "upload/56.jpg",
+  "upload/57.jpg",
+  "upload/58.jpg",
+  "upload/59.jpg",
+  "upload/60.jpg",
+  "upload/61.jpg",
+  "upload/62.jpg",
+  "upload/63.jpg",
+  "upload/64.jpg",
+  "upload/65.jpg",
+  "upload/66.jpg",
+  "upload/67.jpg",
+  "upload/68.jpg",
+  "upload/69.jpg",
+  "upload/70.jpg",
+  "upload/71.jpg",
+  "upload/72.jpg",
+  "upload/73.jpg",
+  "upload/74.jpg",
+  "upload/75.jpg",
+  "upload/76.jpg",
+  "upload/77.jpg",
+  "upload/78.jpg",
+  "upload/79.jpg",
+  "upload/80.jpg",
+  "upload/81.jpg",
+  "upload/82.jpg",
+  "upload/83.jpg",
+  "upload/84.jpg",
+  "upload/85.jpg",
+  "upload/86.jpg",
+  "upload/87.jpg",
+  "upload/88.jpg",
+  "upload/89.jpg",
+  "upload/90.jpg",
+  "upload/91.jpg",
+  "upload/92.jpg",
+  "upload/93.jpg",
+  "upload/94.jpg",
+  "upload/95.jpg",
+  "upload/96.jpg",
+  "upload/97.jpg",
+  "upload/98.jpg",
+  "upload/99.jpg",
+  "upload/100.jpg",
+  "upload/101.jpg",
+  "upload/102.jpg",
+  "upload/103.jpg",
+  "upload/104.jpg",
+  "upload/105.jpg",
+  "upload/106.jpg"
+
+    ];
+
+    const overlayImagePath = "linsly-overlay.png"; // <-- Your overlay PNG path
+
+    const gallery = document.getElementById("gallery");
+    const overlay = document.getElementById("loadingOverlay");
+
+    let loadedCount = 0;
+    function markImageLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length * 2) { // base + overlay per image
+        overlay.style.opacity = "0";
+        setTimeout(() => overlay.style.display = "none", 500);
+      }
+    }
+
+    images.forEach(src => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "image-wrapper";
+
+      const baseImg = document.createElement("img");
+      baseImg.className = "base";
+      baseImg.src = src;
+      baseImg.onload = markImageLoaded;
+      baseImg.onerror = markImageLoaded;
+
+      const overlayImg = document.createElement("img");
+      overlayImg.className = "overlay";
+      overlayImg.src = overlayImagePath;
+      overlayImg.onload = markImageLoaded;
+      overlayImg.onerror = markImageLoaded;
+
+      wrapper.appendChild(baseImg);
+      wrapper.appendChild(overlayImg);
+      gallery.appendChild(wrapper);
+    });
+  </script>
+</body>
+</html>
