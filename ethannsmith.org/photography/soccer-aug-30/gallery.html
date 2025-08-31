@@ -1,37 +1,24 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Photo Gallery</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-    }
-
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
     header {
-      background: #222;
-      color: white;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #222; color: white; padding: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
     header button {
-      background: #444;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
+      background: #444; color: white; border: none;
+      padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;
     }
-
-    header button:hover {
-      background: #666;
-    }
+    header button:hover { background: #666; }
 
     .gallery {
       display: grid;
@@ -40,41 +27,60 @@
       padding: 2rem;
     }
 
-    .image-wrapper {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .image-wrapper img.base {
-      width: 100%;
-      display: block;
-    }
-
-    img {
-  -webkit-user-drag: none;
-}
-
-/* On mobile, show only one photo per row */
     @media (max-width: 768px) {
       .gallery {
-        grid-template-columns: 1fr; /* single column */
+        grid-template-columns: 1fr;
       }
     }
 
-
-    .image-wrapper img.overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .watermark-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
     }
 
-    /* Loading overlay */
+    .watermark-container img {
+      width: 100%;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: rgba(255,255,255,0.5);
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      pointer-events: none;
+      white-space: nowrap;
+      text-align: center;
+      line-height: 1.3;
+      user-select: none;
+    }
+
+    .download-button {
+      display: block;
+      background: #f48126;
+      color: white;
+      text-align: center;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .download-button:hover {
+      background: #0056b3;
+    }
+
     #loadingOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -86,7 +92,6 @@
       color: white;
       font-size: 2rem;
       z-index: 9999;
-      transition: opacity 0.5s ease;
     }
 
     .spinner {
@@ -102,25 +107,103 @@
     @keyframes spin {
       100% { transform: rotate(360deg); }
     }
+
+    #loginModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #loginModalContent {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      position: relative;
+    }
+
+    #loginModalContent input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+    }
+
+    #loginModalContent button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #loginModalContent button:hover {
+      background: #0056b3;
+    }
+
+    #closeLoginModal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .fixed-logo {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 80px;   /* adjust size as needed */
+  height: auto;
+  z-index: 10001; /* make sure it stays above everything */
+  opacity: 0.8;   /* optional: slight transparency */
+}
+.fixed-logo:hover {
+  opacity: 1;
+}
+
   </style>
 </head>
+<img src="athletics.png" alt="Logo" class="fixed-logo" />
 <body oncontextmenu="return false">
   <!-- Loading overlay -->
   <div id="loadingOverlay">
     <div class="spinner"></div> Loading photos...
   </div>
 
+  <!-- Header -->
   <header>
     <h1>Linsly Girls Soccer v. Williamstown - Aug. 30</h1>
     <button onclick="location.href='../index.html'">⬅ Back</button>
   </header>
 
-  <section class="gallery" id="gallery">
-    <!-- JS will populate this -->
-  </section>
+  <!-- Login Modal -->
+  <div id="loginModal">
+    <div id="loginModalContent">
+      <button id="closeLoginModal" onclick="closeLoginModal()">✖</button>
+      <img src="athletics.png" alt="Logo" style="width:80px; height:auto; margin-bottom:1rem;">
+      <h2>Cadets Login</h2>
+      <input type="text" id="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginError" style="color:red; font-size:0.9rem; margin-top:0.5rem;"></p>
+    </div>
+  </div>
+
+  <!-- Gallery Section -->
+  <section class="gallery" id="gallery"></section>
 
   <script>
-    const images = [
+        const images = [
   "upload/1.jpg",
   "upload/2.jpg",
   "upload/3.jpg",
@@ -223,38 +306,137 @@
 
     ];
 
-    const overlayImagePath = "linsly-overlay.png"; // <-- Your overlay PNG path
+    const VALID_USERS = {
+  "linslySoccer25": atob("d2h5bm90eW91MjUyNg=="),
+};
+
+
+    let isLoggedIn = false;
+    let downloadCallback = null;
 
     const gallery = document.getElementById("gallery");
     const overlay = document.getElementById("loadingOverlay");
 
-    let loadedCount = 0;
-    function markImageLoaded() {
-      loadedCount++;
-      if (loadedCount === images.length * 2) { // base + overlay per image
-        overlay.style.opacity = "0";
-        setTimeout(() => overlay.style.display = "none", 500);
+    // Show login modal
+    function showLoginPopup(callback) {
+      downloadCallback = callback;
+      document.getElementById("loginModal").style.display = "flex";
+    }
+
+    // Close login modal
+    function closeLoginModal() {
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("loginError").innerText = "";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+    }
+
+    // Login handler
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDisplay = document.getElementById("loginError");
+
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        isLoggedIn = true;
+        closeLoginModal();
+        if (downloadCallback) {
+          downloadCallback();
+          downloadCallback = null;
+        }
+      } else {
+        errorDisplay.innerText = "Invalid credentials.";
       }
     }
 
+    // Mark image loaded for loader removal
+    let loadedCount = 0;
+    function markImageLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length) {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 500);
+      }
+    }
+
+    // Generate stable 5-digit number from filename
+    function generateStableID(filename) {
+      let hash = 0;
+      for (let i = 0; i < filename.length; i++) {
+        hash = (hash << 5) - hash + filename.charCodeAt(i);
+        hash |= 0;
+      }
+      return (Math.abs(hash) % 90000) + 10000;
+    }
+
+    // Build gallery
     images.forEach(src => {
+      const filename = src.split("/").pop().split(".")[0];
+      const stableID = `${filename}-${generateStableID(filename)}`;
+
       const wrapper = document.createElement("div");
-      wrapper.className = "image-wrapper";
+      wrapper.className = "watermark-container";
 
-      const baseImg = document.createElement("img");
-      baseImg.className = "base";
-      baseImg.src = src;
-      baseImg.onload = markImageLoaded;
-      baseImg.onerror = markImageLoaded;
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "Protected Image";
+      img.onload = markImageLoaded;
+      img.onerror = markImageLoaded;
 
-      const overlayImg = document.createElement("img");
-      overlayImg.className = "overlay";
-      overlayImg.src = overlayImagePath;
-      overlayImg.onload = markImageLoaded;
-      overlayImg.onerror = markImageLoaded;
+      // Watermark element (not part of download)
+      const watermark = document.createElement("div");
+      watermark.className = "watermark";
+      watermark.innerText = `© Ethan Smith\nID: ${stableID}`;
 
-      wrapper.appendChild(baseImg);
-      wrapper.appendChild(overlayImg);
+      const downloadBtn = document.createElement("a");
+      downloadBtn.href = "#";
+      downloadBtn.innerText = "Download";
+      downloadBtn.className = "download-button";
+
+      downloadBtn.addEventListener("click", e => {
+        e.preventDefault();
+
+        const triggerDownload = () => {
+          // Create an off-screen canvas to draw the image *without* watermark
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          const image = new Image();
+
+          image.crossOrigin = "anonymous"; // Handle CORS if needed
+
+          image.onload = () => {
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            context.drawImage(image, 0, 0);
+
+            // Convert canvas to blob and trigger download
+            canvas.toBlob(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = src.split("/").pop();
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+            }, "image/jpeg", 0.92);
+          };
+          image.src = src;
+        };
+
+        if (isLoggedIn) {
+          triggerDownload();
+        } else {
+          showLoginPopup(triggerDownload);
+        }
+      });
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(watermark);
+      wrapper.appendChild(downloadBtn);
+
       gallery.appendChild(wrapper);
     });
   </script>
