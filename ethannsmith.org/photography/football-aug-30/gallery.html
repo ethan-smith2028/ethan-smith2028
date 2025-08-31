@@ -99,7 +99,7 @@
   </div>
 
   <header>
-    <h1>Vancouver Rangers v. Jr. Kraken</h1>
+    <h1>Linsly Football v. Westinghouse High School - Aug. 30</h1>
     <button onclick="location.href='../index.html'">⬅ Back</button>
   </header>
 
@@ -111,8 +111,8 @@
 const images = [
   "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg",
   "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
-  "upload/11.jpg", "upload/12.jpg", "upload/13.jpg", "upload/14.jpg", "upload/15.jpg",
-  "upload/16.jpg", "upload/17.jpg", "upload/18.jpg", "upload/19.jpg", "upload/20.jpg",
+  "upload/11.jpg", "upload/12.jpg", "upload/15.jpg",
+  "upload/16.jpg", "upload/17.jpg", "upload/19.jpg", "upload/20.jpg",
   "upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/24.jpg", "upload/25.jpg",
   "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg",
   "upload/31.jpg", "upload/32.jpg", "upload/33.jpg", "upload/34.jpg", "upload/35.jpg",
@@ -161,42 +161,53 @@ const images = [
 
 
     const gallery = document.getElementById("gallery");
-    const overlay = document.getElementById("loadingOverlay");
+  const overlay = document.getElementById("loadingOverlay");
 
-    function getCustomPhotoID(src) {
-  // Extract base filename without path or extension
-  const parts = src.split('/');
-  const filenameWithExt = parts[parts.length - 1];
-  const baseName = filenameWithExt.split('.')[0]; // e.g., "1"
-
-  // Generate consistent 5-digit hash from full path (or baseName if you prefer)
-  let hash = 0;
-  for (let i = 0; i < src.length; i++) {
-    hash = (hash << 5) - hash + src.charCodeAt(i);
-    hash = hash & hash;
+  // Track loaded images
+  let loadedCount = 0;
+  function markImageLoaded() {
+    loadedCount++;
+    if (loadedCount === images.length) {
+      overlay.style.opacity = "0"; // fade out
+      setTimeout(() => {
+        overlay.style.display = "none";
+      }, 500); // matches CSS transition
+    }
   }
-  const id = Math.abs(hash % 90000) + 10000;
-  return `${baseName}-${id}`;
-}
 
-images.forEach(src => {
-  const wrapper = document.createElement("div");
-  wrapper.className = "watermark-container";
+  function getCustomPhotoID(src) {
+    const parts = src.split('/');
+    const filenameWithExt = parts[parts.length - 1];
+    const baseName = filenameWithExt.split('.')[0];
 
-  const img = document.createElement("img");
-  img.src = src;
-  img.alt = "Protected Image";
-  img.onload = markImageLoaded;
-  img.onerror = markImageLoaded;
+    let hash = 0;
+    for (let i = 0; i < src.length; i++) {
+      hash = (hash << 5) - hash + src.charCodeAt(i);
+      hash = hash & hash;
+    }
+    const id = Math.abs(hash % 90000) + 10000;
+    return `${baseName}-${id}`;
+  }
 
-  const watermark = document.createElement("div");
-  watermark.className = "watermark";
-  watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
+  // Build gallery
+  images.forEach(src => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "watermark-container";
 
-  wrapper.appendChild(img);
-  wrapper.appendChild(watermark);
-  gallery.appendChild(wrapper);
-});
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = "Protected Image";
+    img.onload = markImageLoaded;
+    img.onerror = markImageLoaded;
+
+    const watermark = document.createElement("div");
+    watermark.className = "watermark";
+    watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(watermark);
+    gallery.appendChild(wrapper);
+  });
   </script>
 
 </body>
