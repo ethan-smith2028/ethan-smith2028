@@ -200,9 +200,9 @@ const images = [
     img.onload = markImageLoaded;
     img.onerror = markImageLoaded;
 
-    const watermark = document.createElement("div");
-    watermark.className = "watermark";
-    watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
+   // const watermark = document.createElement("div");
+    //watermark.className = "watermark";
+    //watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
 
     wrapper.appendChild(img);
     wrapper.appendChild(watermark);
