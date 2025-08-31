@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Gallery</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+    header {
+      background: #222; color: white; padding: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    header button {
+      background: #444; color: white; border: none;
+      padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;
+    }
+    header button:hover { background: #666; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 photos per row on desktop */
+      gap: 1.5rem; 
+      padding: 2rem;
+    }
+
+    /* On mobile, show only one photo per row */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr; /* single column */
+      }
+    }
+
+    .watermark-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 100%;
+    }
+
+    .watermark-container img {
+      width: 100%;
+      display: block;
+      pointer-events: none; /* Prevent drag */
+      user-select: none;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: rgba(255,255,255,0.5);
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      pointer-events: none;
+      text-align: center;
+      white-space: pre-line;
+    }
+
+        img {
+  -webkit-user-drag: none;
+}
+
+    /* Fullscreen Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      z-index: 9999;
+    }
+
+    /* Optional spinner */
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div> Loading photos...
+  </div>
+
+  <header>
+    <h1>Vancouver Rangers v. Jr. Kraken</h1>
+    <button onclick="location.href='../index.html'">⬅ Back</button>
+  </header>
+
+  <section class="gallery" id="gallery">
+    <!-- Images will be inserted by JS -->
+  </section>
+
+  <script>
+    const images = [
+  "upload/1.JPG",
+  "upload/2.JPG",
+  "upload/3.JPG",
+  "upload/4.JPG",
+  "upload/5.JPG",
+  "upload/6.JPG",
+  "upload/7.JPG",
+  "upload/8.JPG",
+  "upload/9.JPG",
+  "upload/10.JPG",
+  "upload/11.JPG",
+  "upload/12.JPG",
+  "upload/13.JPG",
+  "upload/14.JPG",
+  "upload/15.JPG",
+  "upload/16.JPG",
+  "upload/17.JPG",
+  "upload/18.JPG",
+  "upload/19.JPG",
+  "upload/20.JPG",
+  "upload/21.JPG",
+  "upload/22.JPG",
+  "upload/23.JPG",
+  "upload/24.JPG",
+  "upload/25.JPG",
+  "upload/26.JPG",
+  "upload/27.JPG",
+  "upload/28.JPG",
+  "upload/29.JPG",
+  "upload/30.JPG",
+  "upload/31.JPG",
+  "upload/32.JPG",
+  "upload/33.JPG",
+  "upload/34.JPG",
+  "upload/35.JPG",
+  "upload/36.JPG",
+  "upload/37.JPG",
+  "upload/38.JPG",
+  "upload/39.JPG",
+  "upload/40.JPG",
+  "upload/41.JPG",
+  "upload/42.JPG",
+  "upload/43.JPG",
+  "upload/44.JPG",
+  "upload/45.JPG",
+  "upload/46.JPG",
+  "upload/47.JPG",
+  "upload/48.JPG",
+  "upload/49.JPG",
+  "upload/50.JPG",
+  "upload/51.JPG",
+  "upload/52.JPG",
+  "upload/53.JPG",
+  "upload/54.JPG",
+  "upload/55.JPG",
+  "upload/56.JPG",
+  "upload/57.JPG",
+  "upload/58.JPG",
+];
+
+
+    const gallery = document.getElementById("gallery");
+    const overlay = document.getElementById("loadingOverlay");
+
+    function getPhotoID(filename) {
+      let hash = 0;
+      for (let i = 0; i < filename.length; i++) {
+        hash = (hash << 5) - hash + filename.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return Math.abs(hash % 90000) + 10000;
+    }
+
+    let loadedCount = 0;
+
+    function checkAllLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length) {
+        overlay.style.display = "none"; // hide overlay once all images loaded
+      }
+    }
+
+    images.forEach(src => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "watermark-container";
+
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "Protected Image";
+
+      // track loading
+      img.onload = checkAllLoaded;
+      img.onerror = checkAllLoaded; // also count if error, so overlay won't hang
+
+      const watermark = document.createElement("div");
+      watermark.className = "watermark";
+      watermark.innerText = `© Ethan Smith\nID: ${getPhotoID(src)}`;
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(watermark);
+      gallery.appendChild(wrapper);
+    });
+  </script>
+
+</body>
+</html>
