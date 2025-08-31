@@ -155,8 +155,22 @@
       color: #333;
     }
 
+    .fixed-logo {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 80px;   /* adjust size as needed */
+  height: auto;
+  z-index: 10001; /* make sure it stays above everything */
+  opacity: 0.8;   /* optional: slight transparency */
+}
+.fixed-logo:hover {
+  opacity: 1;
+}
+
   </style>
 </head>
+<img src="athletics.png" alt="Logo" class="fixed-logo" />
 <body oncontextmenu="return false">
   <!-- Loading overlay -->
   <div id="loadingOverlay">
