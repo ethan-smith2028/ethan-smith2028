@@ -89,6 +89,24 @@
     @keyframes spin {
       100% { transform: rotate(360deg); }
     }
+
+    .download-button {
+  display: block;
+  background: #007bff;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.download-button:hover {
+  background: #0056b3;
+}
+
   </style>
 </head>
 <body oncontextmenu="return false">
@@ -190,24 +208,34 @@ const images = [
   }
 
   // Build gallery
-  images.forEach(src => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "watermark-container";
+images.forEach(src => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "watermark-container";
 
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = "Protected Image";
-    img.onload = markImageLoaded;
-    img.onerror = markImageLoaded;
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "Protected Image";
+  img.onload = markImageLoaded;
+  img.onerror = markImageLoaded;
 
-   // const watermark = document.createElement("div");
-    //watermark.className = "watermark";
-    //watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
+  // Optional watermark code:
+  // const watermark = document.createElement("div");
+  // watermark.className = "watermark";
+  // watermark.innerText = `© Ethan Smith\nID: ${getCustomPhotoID(src)}`;
 
-    wrapper.appendChild(img);
-    wrapper.appendChild(watermark);
-    gallery.appendChild(wrapper);
-  });
+  // Create download button
+  const downloadButton = document.createElement("a");
+  downloadButton.href = src;
+  downloadButton.download = src.split("/").pop(); // Extracts filename
+  downloadButton.innerText = "Download";
+  downloadButton.className = "download-button";
+
+  wrapper.appendChild(img);
+  // wrapper.appendChild(watermark);
+  wrapper.appendChild(downloadButton);
+  gallery.appendChild(wrapper);
+});
+
   </script>
 
 </body>
