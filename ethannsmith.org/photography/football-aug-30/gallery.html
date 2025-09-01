@@ -252,138 +252,135 @@
 ];
 
     const VALID_USERS = {
-  "linslyFootball25": atob("d2h5bm90eW91MjUyNg=="),
-};
+    "linslyFootball25": atob("d2h5bm90eW91MjUyNg=="),
+  };
 
+  let isLoggedIn = false;
+  let downloadCallback = null;
 
-    let isLoggedIn = false;
-    let downloadCallback = null;
+  const gallery = document.getElementById("gallery");
+  const overlay = document.getElementById("loadingOverlay");
 
-    const gallery = document.getElementById("gallery");
-    const overlay = document.getElementById("loadingOverlay");
+  // Show login modal
+  function showLoginPopup(callback) {
+    downloadCallback = callback;
+    document.getElementById("loginModal").style.display = "flex";
+  }
 
-    // Show login modal
-    function showLoginPopup(callback) {
-      downloadCallback = callback;
-      document.getElementById("loginModal").style.display = "flex";
-    }
+  // Close login modal
+  function closeLoginModal() {
+    document.getElementById("loginModal").style.display = "none";
+    document.getElementById("loginError").innerText = "";
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+  }
 
-    // Close login modal
-    function closeLoginModal() {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("loginError").innerText = "";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-    }
+  // Login handler
+  function handleLogin() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorDisplay = document.getElementById("loginError");
 
-    // Login handler
-    function handleLogin() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const errorDisplay = document.getElementById("loginError");
-
-      if (VALID_USERS[username] && VALID_USERS[username] === password) {
-        isLoggedIn = true;
-        closeLoginModal();
-        if (downloadCallback) {
-          downloadCallback();
-          downloadCallback = null;
-        }
-      } else {
-        errorDisplay.innerText = "Invalid credentials.";
+    if (VALID_USERS[username] && VALID_USERS[username] === password) {
+      isLoggedIn = true;
+      closeLoginModal();
+      if (downloadCallback) {
+        downloadCallback();
+        downloadCallback = null;
       }
+    } else {
+      errorDisplay.innerText = "Invalid credentials.";
     }
+  }
 
-    // Mark image loaded for loader removal
-    let loadedCount = 0;
-    function markImageLoaded() {
-      loadedCount++;
-      if (loadedCount === images.length) {
-        overlay.style.opacity = "0";
-        setTimeout(() => {
-          overlay.style.display = "none";
-        }, 500);
-      }
+  // Overlay handling
+  let loadedCount = 0;
+  function markImageLoaded() {
+    loadedCount++;
+    if (loadedCount === 6) { // hide after first 6 images
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        overlay.style.display = "none";
+      }, 500);
     }
+  }
 
-    // Generate stable 5-digit number from filename
-    function generateStableID(filename) {
-      let hash = 0;
-      for (let i = 0; i < filename.length; i++) {
-        hash = (hash << 5) - hash + filename.charCodeAt(i);
-        hash |= 0;
-      }
-      return (Math.abs(hash) % 90000) + 10000;
+  // Generate stable 5-digit number from filename
+  function generateStableID(filename) {
+    let hash = 0;
+    for (let i = 0; i < filename.length; i++) {
+      hash = (hash << 5) - hash + filename.charCodeAt(i);
+      hash |= 0;
     }
+    return (Math.abs(hash) % 90000) + 10000;
+  }
 
-    // Build gallery
-    images.forEach(src => {
-      const filename = src.split("/").pop().split(".")[0];
-      const stableID = `${filename}-${generateStableID(filename)}`;
+  // Build gallery
+  images.forEach(src => {
+    const filename = src.split("/").pop().split(".")[0];
+    const stableID = `${filename}-${generateStableID(filename)}`;
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "watermark-container";
+    const wrapper = document.createElement("div");
+    wrapper.className = "watermark-container";
 
-      const img = document.createElement("img");
-      img.src = src;
-      img.alt = "Protected Image";
-      img.onload = markImageLoaded;
-      img.onerror = markImageLoaded;
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = "Protected Image";
+    img.loading = "lazy";   // 🚀 lazy load
+    img.onload = markImageLoaded;
+    img.onerror = markImageLoaded;
 
-      // Watermark element (not part of download)
-      const watermark = document.createElement("div");
-      watermark.className = "watermark";
-      watermark.innerText = `© Ethan Smith\nID: ${stableID}`;
+    // Watermark element
+    const watermark = document.createElement("div");
+    watermark.className = "watermark";
+    watermark.innerText = `© Ethan Smith\nID: ${stableID}`;
 
-      const downloadBtn = document.createElement("a");
-      downloadBtn.href = "#";
-      downloadBtn.innerText = "Download";
-      downloadBtn.className = "download-button";
+    // Download button
+    const downloadBtn = document.createElement("a");
+    downloadBtn.href = "#";
+    downloadBtn.innerText = "Download";
+    downloadBtn.className = "download-button";
 
-      downloadBtn.addEventListener("click", e => {
-        e.preventDefault();
+    downloadBtn.addEventListener("click", e => {
+      e.preventDefault();
 
-        const triggerDownload = () => {
-          // Create an off-screen canvas to draw the image *without* watermark
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          const image = new Image();
+      const triggerDownload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const image = new Image();
+        image.crossOrigin = "anonymous";
 
-          image.crossOrigin = "anonymous"; // Handle CORS if needed
-
-          image.onload = () => {
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
-            context.drawImage(image, 0, 0);
-
-            // Convert canvas to blob and trigger download
-            canvas.toBlob(blob => {
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = src.split("/").pop();
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-              URL.revokeObjectURL(url);
-            }, "image/jpeg", 0.92);
-          };
-          image.src = src;
+        image.onload = () => {
+          canvas.width = image.naturalWidth;
+          canvas.height = image.naturalHeight;
+          context.drawImage(image, 0, 0);
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = src.split("/").pop();
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          }, "image/jpeg", 0.92);
         };
+        image.src = src;
+      };
 
-        if (isLoggedIn) {
-          triggerDownload();
-        } else {
-          showLoginPopup(triggerDownload);
-        }
-      });
-
-      wrapper.appendChild(img);
-      wrapper.appendChild(watermark);
-      wrapper.appendChild(downloadBtn);
-
-      gallery.appendChild(wrapper);
+      if (isLoggedIn) {
+        triggerDownload();
+      } else {
+        showLoginPopup(triggerDownload);
+      }
     });
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(watermark);
+    wrapper.appendChild(downloadBtn);
+
+    gallery.appendChild(wrapper);
+  });
   </script>
 </body>
 </html>
