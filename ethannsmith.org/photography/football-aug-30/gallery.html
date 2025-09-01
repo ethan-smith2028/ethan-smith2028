@@ -105,55 +105,127 @@
       100% { transform: rotate(360deg); }
     }
 
-    #loginModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-    }
+    /* Modal Overlay */
+#loginModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease-in-out;
+}
 
-    #loginModalContent {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      width: 300px;
-      text-align: center;
-      position: relative;
-    }
+/* Modal Content */
+#loginModalContent {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 350px;
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  animation: fadeInScale 0.3s ease forwards;
+}
 
-    #loginModalContent input {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-    }
+/* Input Fields */
+#loginModalContent input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
 
-    #loginModalContent button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+#loginModalContent input:focus {
+  border-color: #f48126;
+  outline: none;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+}
 
-    #loginModalContent button:hover {
-      background: #0056b3;
-    }
+/* Buttons */
+#loginModalContent button {
+  background: linear-gradient(135deg, #f483268e, #f48126);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
 
-    #closeLoginModal {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.2rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #333;
-    }
+#loginModalContent button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f48126, #f483268e);
+}
+
+#loginModalContent button:active {
+  transform: translateY(0);
+}
+
+/* Close Button */
+#closeLoginModal {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+#closeLoginModal:hover {
+  color: #000;
+  transform: rotate(90deg);
+}
+
+/* Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply box-sizing globally inside the modal */
+#loginModalContent, 
+#loginModalContent * {
+  box-sizing: border-box;
+}
+
+/* Input Fields */
+#loginModalContent input {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+/* Focused Inputs */
+#loginModalContent input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+}
+
 
     .fixed-logo {
   position: fixed;
