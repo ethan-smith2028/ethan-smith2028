@@ -159,7 +159,7 @@
   position: fixed;
   bottom: 15px;
   right: 15px;
-  width: 80px;   /* adjust size as needed */
+  width: 100px;   /* adjust size as needed */
   height: auto;
   z-index: 10001; /* make sure it stays above everything */
   opacity: 0.8;   /* optional: slight transparency */
@@ -187,10 +187,14 @@
   <div id="loginModal">
     <div id="loginModalContent">
       <button id="closeLoginModal" onclick="closeLoginModal()">✖</button>
-      <img src="athletics.png" alt="Logo" style="width:80px; height:auto; margin-bottom:1rem;">
-      <h2>Cadets Login</h2>
-      <input type="text" id="username" placeholder="Username" autocomplete="off" />
-      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <img src="athletics.png" alt="Logo" style="width:140px; height:auto; margin-bottom:1rem;">
+<h2>Cadets Login</h2>
+<p style="font-size:0.8rem; color:#930000; margin-bottom:1rem;">
+**Not your Veracross credentials**
+</p>
+<input type="text" id="username" placeholder="Username" autocomplete="off" />
+<input type="password" id="password" placeholder="Password" autocomplete="off" />
+
       <button onclick="handleLogin()">Login</button>
       <p id="loginError" style="color:red; font-size:0.9rem; margin-top:0.5rem;"></p>
     </div>
