@@ -240,6 +240,18 @@
   opacity: 1;
 }
 
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #333;
+  margin-top: 0.5rem;
+}
+
   </style>
 </head>
 <img src="athletics.png" alt="Logo" class="fixed-logo" />
@@ -392,71 +404,79 @@
   }
 
   // Build gallery
-  images.forEach(src => {
-    const filename = src.split("/").pop().split(".")[0];
-    const stableID = `${filename}-${generateStableID(filename)}`;
+// Build gallery
+images.forEach(src => {
+  const filename = src.split("/").pop().split(".")[0];
+  const stableID = `${filename}-${generateStableID(filename)}`;
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "watermark-container";
+  const figure = document.createElement("figure");
+  figure.className = "watermark-container";
 
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = "Protected Image";
-    img.loading = "lazy";   // 🚀 lazy load
-    img.onload = markImageLoaded;
-    img.onerror = markImageLoaded;
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = `Photo ${filename}`;
+  img.loading = "lazy";   // 🚀 lazy load
+  img.onload = markImageLoaded;
+  img.onerror = markImageLoaded;
 
-    // Watermark element
-    const watermark = document.createElement("div");
-    watermark.className = "watermark";
-    watermark.innerText = `© Ethan Smith\nID: ${stableID}`;
+  // Watermark element
+  const watermark = document.createElement("div");
+  watermark.className = "watermark";
+  watermark.innerText = `© Ethan Smith\nID: ${stableID}`;
 
-    // Download button
-    const downloadBtn = document.createElement("a");
-    downloadBtn.href = "#";
-    downloadBtn.innerText = "Download";
-    downloadBtn.className = "download-button";
+  // Download button
+  const downloadBtn = document.createElement("a");
+  downloadBtn.href = "#";
+  downloadBtn.innerText = "Download";
+  downloadBtn.className = "download-button";
 
-    downloadBtn.addEventListener("click", e => {
-      e.preventDefault();
+  downloadBtn.addEventListener("click", e => {
+    e.preventDefault();
 
-      const triggerDownload = () => {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        const image = new Image();
-        image.crossOrigin = "anonymous";
+    const triggerDownload = () => {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const image = new Image();
+      image.crossOrigin = "anonymous";
 
-        image.onload = () => {
-          canvas.width = image.naturalWidth;
-          canvas.height = image.naturalHeight;
-          context.drawImage(image, 0, 0);
-          canvas.toBlob(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = src.split("/").pop();
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-          }, "image/jpeg", 0.92);
-        };
-        image.src = src;
+      image.onload = () => {
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        context.drawImage(image, 0, 0);
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = src.split("/").pop();
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        }, "image/jpeg", 0.92);
       };
+      image.src = src;
+    };
 
-      if (isLoggedIn) {
-        triggerDownload();
-      } else {
-        showLoginPopup(triggerDownload);
-      }
-    });
-
-    wrapper.appendChild(img);
-    wrapper.appendChild(watermark);
-    wrapper.appendChild(downloadBtn);
-
-    gallery.appendChild(wrapper);
+    if (isLoggedIn) {
+      triggerDownload();
+    } else {
+      showLoginPopup(triggerDownload);
+    }
   });
+
+  // Caption
+  const caption = document.createElement("figcaption");
+  caption.innerText = `Photo ${filename}`;
+
+  // Build DOM structure
+  figure.appendChild(img);
+  figure.appendChild(watermark);
+  figure.appendChild(downloadBtn);
+  figure.appendChild(caption);
+
+  gallery.appendChild(figure);
+});
+
   </script>
 </body>
 </html>
