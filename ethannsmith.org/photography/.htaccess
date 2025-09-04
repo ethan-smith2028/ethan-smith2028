@@ -1,0 +1,12 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Make index.html the default
+DirectoryIndex index.html
+
+# Redirect /photography to /photography/index.html
+RewriteRule ^$ index.html [L]
+
+# Pretty URLs (optional: so /gallery goes to gallery.html)
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^([^/]+)/?$ $1.html [L]
