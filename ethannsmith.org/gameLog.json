@@ -1,14 +1,14 @@
 {
     "games": [
         {
-            "date": "Off Season",
-            "awayTeam": { "name": "Off Season", "logo": "pics/away_jersey_placeholder.svg" },
-            "homeTeam": { "name": "Off Season", "logo": "pics/away_jersey_placeholder.svg" },
-            "decision": "TBD",
-            "shotsAgainst": 0,
-            "goalsAgainst": 0,
+            "date": "September 7th, 2025",
+            "awayTeam": { "name": "Wheeling Jr. Nailers", "logo": "pics/away_jersey_placeholder.svg" },
+            "homeTeam": { "name": "Pittsburgh Predators", "logo": "pics/away_jersey_placeholder.svg" },
+            "decision": "W",
+            "shotsAgainst": 23,
+            "goalsAgainst": 1,
             "savePercentage": "",
-            "minutesPlayed": "00:00"
+            "minutesPlayed": "48:00"
         }
     ]
 }
