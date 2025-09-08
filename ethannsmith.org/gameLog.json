@@ -2,8 +2,8 @@
     "games": [
         {
             "date": "September 7th, 2025",
-            "awayTeam": { "name": "Wheeling Jr. Nailers", "logo": "pics/away_jersey_placeholder.svg" },
-            "homeTeam": { "name": "Pittsburgh Predators", "logo": "pics/away_jersey_placeholder.svg" },
+            "awayTeam": { "name": "Wheeling Jr. Nailers", "logo": "pics/nailers.png" },
+            "homeTeam": { "name": "Pittsburgh Predators", "logo": "pics/predators.png" },
             "decision": "W",
             "shotsAgainst": 23,
             "goalsAgainst": 1,
