@@ -17,6 +17,30 @@
       color: white;
     }
 
+    /* Top bar with login */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      background: #111;
+      padding: 8px 12px;
+    }
+
+    .login-button {
+      background: #f48126;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .login-button:hover {
+      background: #c25e14;
+    }
+
     .viewer {
       flex: 1;
       display: flex;
@@ -76,10 +100,38 @@
       text-decoration: none;
       margin: 6px auto;
       max-width: 240px;
+      cursor: pointer;
     }
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  background: #111;
+  padding: 8px 12px;
+  gap: 10px;   /* 🔥 adds space between buttons */
+}
+
+.top-bar button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 
     .download-button:hover {
       background: #c25e14;
+    }
+
+    .helper-text {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #aaa;
+      background: #111;
+      padding: 4px;
     }
 
     .thumbnail-bar {
@@ -102,83 +154,146 @@
     .thumbnail-bar img.active {
       border: 2px solid #f48126;
     }
+
+    /* Login modal */
+    #loginModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #loginModalContent {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+    #closeLoginModal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.3rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #444;
+    }
+    #closeLoginModal:hover { color: #000; }
+    #loginModalContent input {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    #loginModalContent button {
+      background: #f48126;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    #loginError {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Login button -->
+  <div class="top-bar">
+    <button class="login-button" id="loginBtn"><i class="fas fa-user"></i> Login</button>
+    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
+  </div>
+
+  <!-- Main viewer -->
   <div class="viewer" id="viewer">
     <img id="mainImage" src="" alt="Main Photo" />
     <div class="watermark">© Ethan Smith</div>
   </div>
 
+  <div class="helper-text">Scroll sideways to see more images</div>
+
+  <!-- Purchase ID -->
   <div class="purchase-row">
     <i class="fas fa-ticket-alt"></i>
     <span id="purchaseId"></span>
   </div>
 
+  <!-- Download button -->
   <a href="#" class="download-button" id="downloadBtn">
     <i class="fas fa-download"></i> Download
   </a>
 
+  <!-- Helper text -->
+  <div class="helper-text">Scroll sideways to see more images</div>
+
+  <!-- Thumbnails -->
   <div class="thumbnail-bar" id="thumbnailBar"></div>
 
+  <!-- Login Modal -->
+  <div id="loginModal">
+    <div id="loginModalContent">
+      <button id="closeLoginModal">✖</button>
+      <h2>Cadets Login</h2>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Images**</p>
+      <input type="text" id="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginError"></p>
+    </div>
+  </div>
+
   <script>
-    const images = [
-  "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg",
-  "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
-  "upload/11.jpg", "upload/12.jpg", "upload/15.jpg",
-  "upload/16.jpg", "upload/17.jpg", "upload/19.jpg", "upload/20.jpg",
-  "upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/25.jpg",
-  "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg",
-  "upload/31.jpg", "upload/32.jpg", "upload/33.jpg", "upload/34.jpg", "upload/35.jpg",
-  "upload/36.jpg", "upload/37.jpg", "upload/38.jpg", "upload/39.jpg", "upload/40.jpg",
-  "upload/41.jpg", "upload/42.jpg", "upload/43.jpg", "upload/44.jpg", "upload/45.jpg",
-  "upload/46.jpg", "upload/47.jpg", "upload/48.jpg", "upload/49.jpg", "upload/50.jpg",
-  "upload/51.jpg", "upload/52.jpg", "upload/53.jpg", "upload/54.jpg", "upload/55.jpg",
-  "upload/56.jpg", "upload/57.jpg", "upload/58.jpg", "upload/59.jpg", "upload/60.jpg",
-  "upload/61.jpg", "upload/62.jpg", "upload/63.jpg", "upload/64.jpg", "upload/65.jpg",
-  "upload/66.jpg", "upload/67.jpg", "upload/68.jpg", "upload/69.jpg", "upload/70.jpg",
-  "upload/71.jpg", "upload/72.jpg", "upload/73.jpg", "upload/74.jpg", "upload/75.jpg",
-  "upload/76.jpg", "upload/77.jpg", "upload/78.jpg", "upload/79.jpg", "upload/80.jpg",
-  "upload/81.jpg", "upload/82.jpg", "upload/83.jpg", "upload/84.jpg", "upload/85.jpg",
-  "upload/86.jpg", "upload/87.jpg", "upload/88.jpg", "upload/89.jpg", "upload/90.jpg",
-  "upload/91.jpg", "upload/92.jpg", "upload/93.jpg", "upload/94.jpg", "upload/95.jpg",
-  "upload/96.jpg", "upload/97.jpg", "upload/98.jpg", "upload/99.jpg", "upload/100.jpg",
-  "upload/101.jpg", "upload/102.jpg", "upload/103.jpg", "upload/104.jpg", "upload/105.jpg",
-  "upload/106.jpg", "upload/107.jpg", "upload/108.jpg", "upload/109.jpg", "upload/110.jpg",
-  "upload/111.jpg", "upload/112.jpg", "upload/113.jpg", "upload/114.jpg", "upload/115.jpg",
-  "upload/116.jpg", "upload/117.jpg", "upload/118.jpg", "upload/119.jpg", "upload/120.jpg",
-  "upload/121.jpg", "upload/122.jpg", "upload/123.jpg", "upload/124.jpg", "upload/125.jpg",
-  "upload/126.jpg", "upload/127.jpg", "upload/128.jpg", "upload/129.jpg", "upload/130.jpg",
-  "upload/131.jpg", "upload/132.jpg", "upload/133.jpg", "upload/134.jpg", "upload/135.jpg",
-  "upload/136.jpg", "upload/137.jpg", "upload/138.jpg", "upload/139.jpg", "upload/140.jpg",
-  "upload/141.jpg", "upload/142.jpg", "upload/143.jpg", "upload/144.jpg", "upload/145.jpg",
-  "upload/146.jpg", "upload/147.jpg", "upload/148.jpg", "upload/149.jpg", "upload/150.jpg",
-  "upload/151.jpg", "upload/152.jpg", "upload/153.jpg", "upload/154.jpg", "upload/155.jpg",
-  "upload/156.jpg", "upload/157.jpg", "upload/158.jpg", "upload/159.jpg", "upload/160.jpg",
-  "upload/161.jpg", "upload/162.jpg", "upload/163.jpg", "upload/164.jpg", "upload/165.jpg",
-  "upload/166.jpg", "upload/167.jpg", "upload/168.jpg", "upload/169.jpg", "upload/170.jpg",
-  "upload/171.jpg", "upload/172.jpg", "upload/173.jpg", "upload/174.jpg", "upload/175.jpg",
-  "upload/176.jpg", "upload/177.jpg", "upload/178.jpg", "upload/179.jpg", "upload/180.jpg",
-  "upload/181.jpg", "upload/182.jpg", "upload/183.jpg", "upload/184.jpg", "upload/185.jpg",
-  "upload/186.jpg", "upload/187.jpg", "upload/188.jpg", "upload/189.jpg", "upload/190.jpg",
-  "upload/191.jpg", "upload/192.jpg", "upload/193.jpg", "upload/194.jpg", "upload/195.jpg",
-  "upload/196.jpg", "upload/197.jpg", "upload/198.jpg", "upload/199.jpg", "upload/200.jpg",
-  "upload/201.jpg", "upload/202.jpg", "upload/203.jpg", "upload/204.jpg", "upload/205.jpg",
-  "upload/206.jpg", "upload/207.jpg", "upload/208.jpg", "upload/209.jpg", "upload/210.jpg",
-  "upload/211.jpg", "upload/212.jpg", "upload/213.jpg", "upload/214.jpg", "upload/215.jpg",
-  "upload/216.jpg", "upload/217.jpg", "upload/218.jpg", "upload/219.jpg", "upload/220.jpg",
-  "upload/221.jpg", "upload/222.jpg", "upload/223.jpg", "upload/224.jpg", "upload/225.jpg",
-  "upload/226.jpg", "upload/227.jpg", "upload/228.jpg", "upload/229.jpg", "upload/230.jpg",
-  "upload/231.jpg", "upload/232.jpg", "upload/233.jpg", "upload/234.jpg", "upload/235.jpg",
-  "upload/236.jpg", "upload/237.jpg", "upload/238.jpg", "upload/239.jpg", "upload/240.jpg"
-];
+    const images = [ "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg", "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg", "upload/11.jpg", "upload/12.jpg", "upload/15.jpg", "upload/16.jpg", "upload/17.jpg", "upload/19.jpg", "upload/20.jpg", "upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/25.jpg", "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg", "upload/31.jpg", "upload/32.jpg", "upload/33.jpg", "upload/34.jpg", "upload/35.jpg", "upload/36.jpg", "upload/37.jpg", "upload/38.jpg", "upload/39.jpg", "upload/40.jpg", "upload/41.jpg", "upload/42.jpg", "upload/43.jpg", "upload/44.jpg", "upload/45.jpg", "upload/46.jpg", "upload/47.jpg", "upload/48.jpg", "upload/49.jpg", "upload/50.jpg", "upload/51.jpg", "upload/52.jpg", "upload/53.jpg", "upload/54.jpg", "upload/55.jpg", "upload/56.jpg", "upload/57.jpg", "upload/58.jpg", "upload/59.jpg", "upload/60.jpg", "upload/61.jpg", "upload/62.jpg", "upload/63.jpg", "upload/64.jpg", "upload/65.jpg", "upload/66.jpg", "upload/67.jpg", "upload/68.jpg", "upload/69.jpg", "upload/70.jpg", "upload/71.jpg", "upload/72.jpg", "upload/73.jpg", "upload/74.jpg", "upload/75.jpg", "upload/76.jpg", "upload/77.jpg", "upload/78.jpg", "upload/79.jpg", "upload/80.jpg", "upload/81.jpg", "upload/82.jpg", "upload/83.jpg", "upload/84.jpg", "upload/85.jpg", "upload/86.jpg", "upload/87.jpg", "upload/88.jpg", "upload/89.jpg", "upload/90.jpg", "upload/91.jpg", "upload/92.jpg", "upload/93.jpg", "upload/94.jpg", "upload/95.jpg", "upload/96.jpg", "upload/97.jpg", "upload/98.jpg", "upload/99.jpg", "upload/100.jpg", "upload/101.jpg", "upload/102.jpg", "upload/103.jpg", "upload/104.jpg", "upload/105.jpg", "upload/106.jpg", "upload/107.jpg", "upload/108.jpg", "upload/109.jpg", "upload/110.jpg", "upload/111.jpg", "upload/112.jpg", "upload/113.jpg", "upload/114.jpg", "upload/115.jpg", "upload/116.jpg", "upload/117.jpg", "upload/118.jpg", "upload/119.jpg", "upload/120.jpg", "upload/121.jpg", "upload/122.jpg", "upload/123.jpg", "upload/124.jpg", "upload/125.jpg", "upload/126.jpg", "upload/127.jpg", "upload/128.jpg", "upload/129.jpg", "upload/130.jpg", "upload/131.jpg", "upload/132.jpg", "upload/133.jpg", "upload/134.jpg", "upload/135.jpg", "upload/136.jpg", "upload/137.jpg", "upload/138.jpg", "upload/139.jpg", "upload/140.jpg", "upload/141.jpg", "upload/142.jpg", "upload/143.jpg", "upload/144.jpg", "upload/145.jpg", "upload/146.jpg", "upload/147.jpg", "upload/148.jpg", "upload/149.jpg", "upload/150.jpg", "upload/151.jpg", "upload/152.jpg", "upload/153.jpg", "upload/154.jpg", "upload/155.jpg", "upload/156.jpg", "upload/157.jpg", "upload/158.jpg", "upload/159.jpg", "upload/160.jpg", "upload/161.jpg", "upload/162.jpg", "upload/163.jpg", "upload/164.jpg", "upload/165.jpg", "upload/166.jpg", "upload/167.jpg", "upload/168.jpg", "upload/169.jpg", "upload/170.jpg", "upload/171.jpg", "upload/172.jpg", "upload/173.jpg", "upload/174.jpg", "upload/175.jpg", "upload/176.jpg", "upload/177.jpg", "upload/178.jpg", "upload/179.jpg", "upload/180.jpg", "upload/181.jpg", "upload/182.jpg", "upload/183.jpg", "upload/184.jpg", "upload/185.jpg", "upload/186.jpg", "upload/187.jpg", "upload/188.jpg", "upload/189.jpg", "upload/190.jpg", "upload/191.jpg", "upload/192.jpg", "upload/193.jpg", "upload/194.jpg", "upload/195.jpg", "upload/196.jpg", "upload/197.jpg", "upload/198.jpg", "upload/199.jpg", "upload/200.jpg", "upload/201.jpg", "upload/202.jpg", "upload/203.jpg", "upload/204.jpg", "upload/205.jpg", "upload/206.jpg", "upload/207.jpg", "upload/208.jpg", "upload/209.jpg", "upload/210.jpg", "upload/211.jpg", "upload/212.jpg", "upload/213.jpg", "upload/214.jpg", "upload/215.jpg", "upload/216.jpg", "upload/217.jpg", "upload/218.jpg", "upload/219.jpg", "upload/220.jpg", "upload/221.jpg", "upload/222.jpg", "upload/223.jpg", "upload/224.jpg", "upload/225.jpg", "upload/226.jpg", "upload/227.jpg", "upload/228.jpg", "upload/229.jpg", "upload/230.jpg", "upload/231.jpg", "upload/232.jpg", "upload/233.jpg", "upload/234.jpg", "upload/235.jpg", "upload/236.jpg", "upload/237.jpg", "upload/238.jpg", "upload/239.jpg", "upload/240.jpg" ];
 
     let currentIndex = 0;
+    let isLoggedIn = false;
 
     const mainImage = document.getElementById("mainImage");
     const purchaseId = document.getElementById("purchaseId");
     const thumbnailBar = document.getElementById("thumbnailBar");
+    const loginBtn = document.getElementById("loginBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const loginModal = document.getElementById("loginModal");
+    const loginError = document.getElementById("loginError");
+
+    const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
+
+    loginBtn.addEventListener("click", () => {
+      loginModal.style.display = "flex";
+    });
+
+    document.getElementById("closeLoginModal").addEventListener("click", () => {
+      loginModal.style.display = "none";
+      loginError.innerText = "";
+    });
+
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        isLoggedIn = true;
+        loginModal.style.display = "none";
+        loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
+      } else {
+        loginError.innerText = "Invalid credentials.";
+      }
+    }
 
     function generateStableID(filename) {
       let hash = 0;
@@ -200,14 +315,6 @@
       });
     }
 
-    function prevImage() {
-      updateViewer((currentIndex - 1 + images.length) % images.length);
-    }
-
-    function nextImage() {
-      updateViewer((currentIndex + 1) % images.length);
-    }
-
     function buildThumbnails() {
       images.forEach((src, index) => {
         const thumb = document.createElement("img");
@@ -218,8 +325,13 @@
       });
     }
 
-    document.getElementById("downloadBtn").addEventListener("click", e => {
+    // Download requires login
+    downloadBtn.addEventListener("click", e => {
       e.preventDefault();
+      if (!isLoggedIn) {
+        loginModal.style.display = "flex";
+        return;
+      }
       const src = images[currentIndex];
       const a = document.createElement("a");
       a.href = src;
@@ -235,8 +347,8 @@
     viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
     viewer.addEventListener("touchend", e => {
       const endX = e.changedTouches[0].clientX;
-      if (startX - endX > 50) nextImage();
-      if (endX - startX > 50) prevImage();
+      if (startX - endX > 50) updateViewer((currentIndex + 1) % images.length);
+      if (endX - startX > 50) updateViewer((currentIndex - 1 + images.length) % images.length);
     });
 
     buildThumbnails();
