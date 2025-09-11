@@ -4,77 +4,126 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <title>Photo Gallery Slider (Mobile)</title>
+  <title>Photo Gallery</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; overflow-x: hidden; }
-    header { background: #222; color: white; padding: 0.8rem; text-align: center; }
-    header h1 { margin: 0; font-size: 1rem; line-height: 1.3; }
-    header button { margin-top: 0.5rem; background: #444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-    header button:hover { background: #666; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: white;
+    }
 
-    .viewer { width: 100%; display: flex; align-items: center; justify-content: center; position: relative; background: #000; min-height: 250px; }
-    .viewer img { max-height: 70vh; max-width: 95%; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.6); user-select: none; pointer-events: none; }
+    .viewer {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
 
-    .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: bold; color: rgba(255,255,255,0.4); pointer-events: none; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); text-align: center; }
+    .viewer img {
+      max-height: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      user-select: none;
+      pointer-events: none;
+      transition: transform 0.2s ease;
+    }
 
-    .arrow { position: absolute; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: white; background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 50%; cursor: pointer; z-index: 10; user-select: none; }
-    .arrow.left { left: 8px; }
-    .arrow.right { right: 8px; }
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: rgba(255,255,255,0.3);
+      pointer-events: none;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+      text-align: center;
+    }
 
-    .sidebar { width: 100%; background: #fff; padding: 1rem; box-shadow: 0 -2px 6px rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; }
-    .sidebar img { width: 100%; max-width: 220px; margin-bottom: 0.8rem; border-radius: 8px; }
-    .purchase-id { margin: 0.3rem 0; font-weight: bold; font-size: 0.9rem; color: #333; text-align: center; }
-    .download-button { display: block; background: #f48126; color: white; text-align: center; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; text-decoration: none; margin-top: 0.5rem; width: 100%; }
-    .download-button:hover { background: #c25e14; }
+    .purchase-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #f5f5f5;
+      padding: 6px;
+      background: #111;
+    }
 
-    .thumbnail-bar { display: flex; overflow-x: auto; padding: 0.5rem; background: #333; align-items: center; }
-    .thumbnail-bar img { height: 55px; margin: 0 4px; cursor: pointer; border-radius: 6px; flex-shrink: 0; }
-    .thumbnail-bar img.active { border: 2px solid #f48126; }
+    .purchase-row i {
+      color: #f48126;
+    }
 
-    #loginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; display: flex; justify-content: center; align-items: center; }
-    #loginModalContent { background: #fff; padding: 1.2rem; border-radius: 12px; width: 90%; max-width: 320px; position: relative; text-align: center; }
-    #closeLoginModal { position: absolute; top: 10px; right: 15px; font-size: 1.2rem; border: none; background: none; cursor: pointer; color: #444; }
-    #loginModalContent input { display: block; width: 100%; margin: 0.4rem 0; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
-    #loginModalContent button { background: #f48126; border: none; color: #fff; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 0.5rem; width: 100%; }
-    #loginError { color: red; font-size: 0.85rem; margin-top: 0.4rem; }
+    .download-button {
+      display: block;
+      background: #f48126;
+      color: white;
+      text-align: center;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 6px auto;
+      max-width: 240px;
+    }
+
+    .download-button:hover {
+      background: #c25e14;
+    }
+
+    .thumbnail-bar {
+      display: flex;
+      overflow-x: auto;
+      padding: 0.4rem;
+      background: #222;
+      align-items: center;
+      scrollbar-width: thin;
+    }
+
+    .thumbnail-bar img {
+      height: 60px;
+      margin: 0 4px;
+      cursor: pointer;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .thumbnail-bar img.active {
+      border: 2px solid #f48126;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Linsly Football v. Westinghouse High School - Aug. 30</h1>
-    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
-  </header>
 
-  <div class="viewer">
-    <span class="arrow left" onclick="prevImage()"><i class="fas fa-chevron-left"></i></span>
+  <div class="viewer" id="viewer">
     <img id="mainImage" src="" alt="Main Photo" />
     <div class="watermark">© Ethan Smith</div>
-    <span class="arrow right" onclick="nextImage()"><i class="fas fa-chevron-right"></i></span>
   </div>
 
-  <aside class="sidebar">
-    <img src="linsly-athletics-banner.png" alt="Banner">
-    <div class="purchase-id" id="purchaseId">Purchase ID: </div>
-    <a href="#" class="download-button" id="downloadBtn"><i class="fas fa-download"></i> Download</a>
-  </aside>
+  <div class="purchase-row">
+    <i class="fas fa-ticket-alt"></i>
+    <span id="purchaseId"></span>
+  </div>
+
+  <a href="#" class="download-button" id="downloadBtn">
+    <i class="fas fa-download"></i> Download
+  </a>
 
   <div class="thumbnail-bar" id="thumbnailBar"></div>
 
-  <!-- Login Modal -->
-  <div id="loginModal">
-    <div id="loginModalContent">
-      <button id="closeLoginModal">✖</button>
-      <h2 style="margin-bottom:0.3rem;">Cadets Login</h2>
-      <p style="font-size:0.75rem; color:#930000; margin-top:0;">**Required to Download Images**</p>
-      <input type="text" id="username" placeholder="Username" autocomplete="off" />
-      <input type="password" id="password" placeholder="Password" autocomplete="off" />
-      <button onclick="handleLogin()">Login</button>
-      <p id="loginError"></p>
-    </div>
-  </div>
-
   <script>
-           const images = [
+    const images = [
   "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg",
   "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
   "upload/11.jpg", "upload/12.jpg", "upload/15.jpg",
@@ -124,16 +173,12 @@
   "upload/231.jpg", "upload/232.jpg", "upload/233.jpg", "upload/234.jpg", "upload/235.jpg",
   "upload/236.jpg", "upload/237.jpg", "upload/238.jpg", "upload/239.jpg", "upload/240.jpg"
 ];
+
     let currentIndex = 0;
-    let isLoggedIn = false;
 
     const mainImage = document.getElementById("mainImage");
     const purchaseId = document.getElementById("purchaseId");
     const thumbnailBar = document.getElementById("thumbnailBar");
-    const loginModal = document.getElementById("loginModal");
-    const loginError = document.getElementById("loginError");
-
-    const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
 
     function generateStableID(filename) {
       let hash = 0;
@@ -175,34 +220,24 @@
 
     document.getElementById("downloadBtn").addEventListener("click", e => {
       e.preventDefault();
-      if (isLoggedIn) {
-        const src = images[currentIndex];
-        const a = document.createElement("a");
-        a.href = src;
-        a.download = src.split("/").pop();
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      } else {
-        loginModal.style.display = "flex";
-      }
+      const src = images[currentIndex];
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = src.split("/").pop();
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     });
 
-    document.getElementById("closeLoginModal").addEventListener("click", () => {
-      loginModal.style.display = "none";
-      loginError.innerText = "";
+    // Swipe support
+    const viewer = document.getElementById("viewer");
+    let startX = 0;
+    viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+    viewer.addEventListener("touchend", e => {
+      const endX = e.changedTouches[0].clientX;
+      if (startX - endX > 50) nextImage();
+      if (endX - startX > 50) prevImage();
     });
-
-    function handleLogin() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      if (VALID_USERS[username] && VALID_USERS[username] === password) {
-        isLoggedIn = true;
-        loginModal.style.display = "none";
-      } else {
-        loginError.innerText = "Invalid credentials.";
-      }
-    }
 
     buildThumbnails();
     updateViewer(0);
