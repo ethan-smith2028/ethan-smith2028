@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>Photo Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: white;
+    }
+
+    /* Top bar with login */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      background: #111;
+      padding: 8px 12px;
+    }
+
+    .login-button {
+      background: #f48126;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .login-button:hover {
+      background: #c25e14;
+    }
+
+    .viewer {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .viewer img {
+      max-height: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      user-select: none;
+      pointer-events: none;
+      transition: transform 0.2s ease;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: rgba(255,255,255,0.3);
+      pointer-events: none;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+      text-align: center;
+    }
+
+    .purchase-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #f5f5f5;
+      padding: 6px;
+      background: #111;
+    }
+
+    .purchase-row i {
+      color: #f48126;
+    }
+
+    .download-button {
+      display: block;
+      background: #f48126;
+      color: white;
+      text-align: center;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 6px auto;
+      max-width: 240px;
+      cursor: pointer;
+    }
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  background: #111;
+  padding: 8px 12px;
+  gap: 10px;   /* 🔥 adds space between buttons */
+}
+
+.top-bar button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+    .download-button:hover {
+      background: #c25e14;
+    }
+
+    .helper-text {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #aaa;
+      background: #111;
+      padding: 4px;
+    }
+
+    .thumbnail-bar {
+      display: flex;
+      overflow-x: auto;
+      padding: 0.4rem;
+      background: #222;
+      align-items: center;
+      scrollbar-width: thin;
+    }
+
+    .thumbnail-bar img {
+      height: 60px;
+      margin: 0 4px;
+      cursor: pointer;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .thumbnail-bar img.active {
+      border: 2px solid #f48126;
+    }
+
+    /* Login modal */
+    #loginModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #loginModalContent {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+    #closeLoginModal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.3rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #444;
+    }
+    #closeLoginModal:hover { color: #000; }
+    #loginModalContent input {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    #loginModalContent button {
+      background: #f48126;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    #loginError {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+        /* Fullscreen Loading Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      z-index: 9999;
+    }
+
+    /* Optional spinner */
+    .spinner {
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login button -->
+  <div class="top-bar">
+    <button class="login-button" id="loginBtn"><i class="fas fa-user"></i> Login</button>
+    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
+  </div>
+
+    <!-- Loading overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div> Loading photos...
+  </div>
+
+  <!-- Main viewer -->
+  <div class="viewer" id="viewer">
+    <img id="mainImage" src="" alt="Main Photo" />
+    <div class="watermark">© Ethan Smith</div>
+  </div>
+
+  <div class="helper-text">Scroll sideways to see more images</div>
+
+  <!-- Purchase ID -->
+  <div class="purchase-row">
+    <i class="fas fa-ticket-alt"></i>
+    <span id="purchaseId"></span>
+  </div>
+
+  <!-- Download button -->
+  <a href="#" class="download-button" id="downloadBtn">
+    <i class="fas fa-download"></i> Download
+  </a>
+
+  <!-- Thumbnails -->
+  <div class="thumbnail-bar" id="thumbnailBar"></div>
+
+  <!-- Login Modal -->
+  <div id="loginModal">
+    <div id="loginModalContent">
+      <button id="closeLoginModal">✖</button>
+      <h2>Cadets Login</h2>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Images**</p>
+      <input type="text" id="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginError"></p>
+    </div>
+  </div>
+
+  <script>
+      const images = [
+"upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG",
+"upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG",
+"upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG",
+"upload/31.JPG", "upload/32.JPG", "upload/33.JPG", "upload/34.JPG", "upload/35.JPG", "upload/36.JPG", "upload/37.JPG", "upload/38.JPG", "upload/39.JPG", "upload/40.JPG",
+"upload/41.JPG", "upload/42.JPG", "upload/43.JPG", "upload/44.JPG", "upload/45.JPG", "upload/46.JPG", "upload/47.JPG", "upload/48.JPG", "upload/49.JPG", "upload/50.JPG",
+"upload/51.JPG", "upload/52.JPG", "upload/53.JPG", "upload/54.JPG", "upload/55.JPG", "upload/56.JPG", "upload/57.JPG", "upload/58.JPG", "upload/59.JPG", "upload/60.JPG",
+"upload/61.JPG", "upload/62.JPG", "upload/63.JPG", "upload/64.JPG", "upload/65.JPG", "upload/66.JPG", "upload/67.JPG", "upload/68.JPG", "upload/69.JPG", "upload/70.JPG",
+"upload/71.JPG", "upload/72.JPG", "upload/73.JPG", "upload/74.JPG", "upload/75.JPG", "upload/76.JPG", "upload/77.JPG", "upload/78.JPG", "upload/79.JPG", "upload/80.JPG",
+"upload/81.JPG", "upload/82.JPG", "upload/83.JPG", "upload/84.JPG", "upload/85.JPG", "upload/86.JPG", "upload/87.JPG", "upload/88.JPG", "upload/89.JPG", "upload/90.JPG",
+"upload/91.JPG", "upload/92.JPG", "upload/93.JPG", "upload/94.JPG", "upload/95.JPG", "upload/96.JPG", "upload/97.JPG", "upload/98.JPG", "upload/99.JPG", "upload/100.JPG",
+"upload/101.JPG", "upload/102.JPG", "upload/103.JPG", "upload/104.JPG", "upload/105.JPG", "upload/106.JPG", "upload/107.JPG", "upload/108.JPG", "upload/109.JPG", "upload/110.JPG",
+"upload/111.JPG", "upload/112.JPG", "upload/113.JPG", "upload/114.JPG", "upload/115.JPG", "upload/116.JPG", "upload/117.JPG", "upload/118.JPG", "upload/119.JPG", "upload/120.JPG",
+"upload/121.JPG", "upload/122.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
+"upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG", "upload/138.JPG", "upload/139.JPG", "upload/140.JPG",
+"upload/141.JPG", "upload/142.JPG", "upload/143.JPG", "upload/144.JPG", "upload/145.JPG", "upload/146.JPG", "upload/147.JPG", "upload/148.JPG", "upload/149.JPG", "upload/150.JPG",
+"upload/151.JPG", "upload/152.JPG", "upload/153.JPG", "upload/154.JPG", "upload/155.JPG", "upload/156.JPG", "upload/157.JPG", "upload/158.JPG", "upload/159.JPG", "upload/160.JPG",
+"upload/161.JPG", "upload/162.JPG", "upload/163.JPG", "upload/164.JPG", "upload/165.JPG", "upload/166.JPG", "upload/167.JPG", "upload/168.JPG", "upload/169.JPG", "upload/170.JPG",
+"upload/171.JPG", "upload/172.JPG", "upload/173.JPG", "upload/174.JPG", "upload/175.JPG", "upload/176.JPG", "upload/177.JPG", "upload/178.JPG", "upload/179.JPG", "upload/180.JPG",
+"upload/181.JPG", "upload/182.JPG", "upload/183.JPG", "upload/184.JPG", "upload/185.JPG", "upload/186.JPG", "upload/187.JPG", "upload/188.JPG", "upload/189.JPG", "upload/190.JPG",
+"upload/191.JPG", "upload/192.JPG", "upload/193.JPG", "upload/194.JPG", "upload/195.JPG", "upload/196.JPG", "upload/197.JPG", "upload/198.JPG", "upload/199.JPG", "upload/200.JPG",
+"upload/201.JPG", "upload/202.JPG", "upload/203.JPG", "upload/204.JPG", "upload/205.JPG", "upload/206.JPG", "upload/207.JPG", "upload/208.JPG", "upload/209.JPG", "upload/210.JPG",
+"upload/211.JPG", "upload/212.JPG", "upload/213.JPG", "upload/214.JPG", "upload/215.JPG", "upload/216.JPG", "upload/217.JPG", "upload/218.JPG", "upload/219.JPG", "upload/220.JPG",
+"upload/221.JPG", "upload/222.JPG", "upload/223.JPG", "upload/224.JPG", "upload/225.JPG", "upload/226.JPG", "upload/227.JPG", "upload/228.JPG", "upload/229.JPG", "upload/230.JPG",
+"upload/231.JPG", "upload/232.JPG", "upload/233.JPG", "upload/234.JPG", "upload/235.JPG", "upload/236.JPG", "upload/237.JPG", "upload/238.JPG", "upload/239.JPG", "upload/240.JPG",
+"upload/241.JPG", "upload/242.JPG", "upload/243.JPG", "upload/244.JPG", "upload/245.JPG", "upload/246.JPG", "upload/247.JPG", "upload/248.JPG", "upload/249.JPG", "upload/250.JPG",
+"upload/251.JPG", "upload/252.JPG", "upload/253.JPG", "upload/254.JPG", "upload/255.JPG", "upload/256.JPG", "upload/257.JPG", "upload/258.JPG", "upload/259.JPG", "upload/260.JPG",
+"upload/261.JPG", "upload/262.JPG", "upload/263.JPG", "upload/264.JPG", "upload/265.JPG", "upload/266.JPG", "upload/267.JPG", "upload/268.JPG", "upload/269.JPG", "upload/270.JPG",
+"upload/271.JPG", "upload/272.JPG", "upload/273.JPG", "upload/274.JPG", "upload/275.JPG", "upload/276.JPG", "upload/277.JPG", "upload/278.JPG", "upload/279.JPG", "upload/280.JPG",
+"upload/281.JPG", "upload/282.JPG", "upload/283.JPG", "upload/284.JPG", "upload/285.JPG", "upload/286.JPG", "upload/287.JPG", "upload/288.JPG", "upload/289.JPG", "upload/290.JPG",
+"upload/291.JPG", "upload/292.JPG", "upload/293.JPG", "upload/294.JPG", "upload/295.JPG", "upload/296.JPG", "upload/297.JPG", "upload/298.JPG", "upload/299.JPG", "upload/300.JPG",
+"upload/301.JPG", "upload/302.JPG", "upload/303.JPG", "upload/304.JPG", "upload/305.JPG", "upload/306.JPG", "upload/307.JPG", "upload/308.JPG", "upload/309.JPG", "upload/310.JPG",
+"upload/311.JPG", "upload/312.JPG", "upload/313.JPG", "upload/314.JPG", "upload/315.JPG", "upload/316.JPG", "upload/317.JPG", "upload/318.JPG", "upload/319.JPG", "upload/320.JPG",
+"upload/321.JPG", "upload/322.JPG", "upload/323.JPG", "upload/324.JPG", "upload/325.JPG", "upload/326.JPG", "upload/327.JPG", "upload/328.JPG",
+
+];
+
+  let currentIndex = 0;
+  let isLoggedIn = false;
+  const overlay = document.getElementById("loadingOverlay");
+  let loadedCount = 0;
+
+  const mainImage = document.getElementById("mainImage");
+  const purchaseId = document.getElementById("purchaseId");
+  const thumbnailBar = document.getElementById("thumbnailBar");
+  const loginBtn = document.getElementById("loginBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const loginModal = document.getElementById("loginModal");
+  const loginError = document.getElementById("loginError");
+
+  const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
+
+  loginBtn.addEventListener("click", () => {
+    loginModal.style.display = "flex";
+  });
+
+  document.getElementById("closeLoginModal").addEventListener("click", () => {
+    loginModal.style.display = "none";
+    loginError.innerText = "";
+  });
+
+  function handleLogin() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    if (VALID_USERS[username] && VALID_USERS[username] === password) {
+      isLoggedIn = true;
+      loginModal.style.display = "none";
+      loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
+    } else {
+      loginError.innerText = "Invalid credentials.";
+    }
+  }
+
+  function generateStableID(filename) {
+    let hash = 0;
+    for (let i = 0; i < filename.length; i++) {
+      hash = (hash << 5) - hash + filename.charCodeAt(i);
+      hash |= 0;
+    }
+    return (Math.abs(hash) % 90000) + 10000;
+  }
+
+  function updateViewer(index) {
+    currentIndex = index;
+    const src = images[currentIndex];
+    mainImage.src = src;
+    const filename = src.split("/").pop().split(".")[0];
+    purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
+    document.querySelectorAll(".thumbnail-bar img").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === currentIndex);
+    });
+  }
+
+  function buildThumbnails() {
+    images.forEach((src, index) => {
+      const thumb = document.createElement("img");
+      thumb.src = src;
+      thumb.alt = `Thumbnail ${index+1}`;
+      thumb.addEventListener("click", () => updateViewer(index));
+      thumbnailBar.appendChild(thumb);
+    });
+  }
+
+  // Download requires login
+  downloadBtn.addEventListener("click", e => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      loginModal.style.display = "flex";
+      return;
+    }
+    const src = images[currentIndex];
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = src.split("/").pop();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  // Swipe support
+  const viewer = document.getElementById("viewer");
+  let startX = 0;
+  viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+  viewer.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    if (startX - endX > 50) updateViewer((currentIndex + 1) % images.length);
+    if (endX - startX > 50) updateViewer((currentIndex - 1 + images.length) % images.length);
+  });
+
+  // === FIXED OVERLAY LOADING SCRIPT ===
+  function checkAllLoaded() {
+    loadedCount++;
+    if (loadedCount === images.length) {
+      overlay.style.display = "none"; // hide overlay once all images loaded
+    }
+  }
+
+  function preloadImages() {
+    images.forEach(src => {
+      const img = new Image();
+      img.onload = checkAllLoaded;
+      img.onerror = checkAllLoaded;
+      img.src = src;
+    });
+  }
+
+  // Initialize
+  preloadImages();
+  buildThumbnails();
+  updateViewer(0);
+</script>
+
+</body>
+</html>
