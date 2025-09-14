@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <title>Photo Gallery</title>
+  <title>Photo & Video Gallery</title>
   <style>
     body {
       margin: 0;
@@ -17,14 +17,14 @@
       color: white;
     }
 
-    /* Top bar with login */
+    /* Top bar */
     .top-bar {
       display: flex;
       justify-content: flex-end;
       background: #111;
       padding: 8px 12px;
+      gap: 10px;
     }
-
     .login-button {
       background: #f48126;
       color: white;
@@ -36,11 +36,18 @@
       cursor: pointer;
       border: none;
     }
-
-    .login-button:hover {
-      background: #c25e14;
+    .login-button:hover { background: #c25e14; }
+    .top-bar button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
+    /* Viewer */
     .viewer {
       flex: 1;
       display: flex;
@@ -50,20 +57,19 @@
       background: #000;
       overflow: hidden;
     }
-
-    .viewer img {
+    .viewer img, .viewer video {
       max-height: 100%;
       max-width: 100%;
       border-radius: 12px;
       user-select: none;
-      pointer-events: none;
-      transition: transform 0.2s ease;
+      -webkit-user-drag: none;
+      pointer-events: none; /* stops right-click save */
+      background: #000;
     }
 
     .watermark {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       font-size: 1.2rem;
       font-weight: bold;
@@ -84,10 +90,7 @@
       padding: 6px;
       background: #111;
     }
-
-    .purchase-row i {
-      color: #f48126;
-    }
+    .purchase-row i { color: #f48126; }
 
     .download-button {
       display: block;
@@ -102,29 +105,7 @@
       max-width: 240px;
       cursor: pointer;
     }
-
-.top-bar {
-  display: flex;
-  justify-content: flex-end;
-  background: #111;
-  padding: 8px 12px;
-  gap: 10px;   /* 🔥 adds space between buttons */
-}
-
-.top-bar button {
-  background: #444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-
-    .download-button:hover {
-      background: #c25e14;
-    }
+    .download-button:hover { background: #c25e14; }
 
     .helper-text {
       text-align: center;
@@ -134,6 +115,7 @@
       padding: 4px;
     }
 
+    /* Thumbnails */
     .thumbnail-bar {
       display: flex;
       overflow-x: auto;
@@ -142,16 +124,15 @@
       align-items: center;
       scrollbar-width: thin;
     }
-
-    .thumbnail-bar img {
+    .thumbnail-bar img, .thumbnail-bar video {
       height: 60px;
       margin: 0 4px;
       cursor: pointer;
       border-radius: 6px;
       flex-shrink: 0;
+      object-fit: cover;
     }
-
-    .thumbnail-bar img.active {
+    .thumbnail-bar img.active, .thumbnail-bar video.active {
       border: 2px solid #f48126;
     }
 
@@ -162,7 +143,6 @@
       inset: 0;
       background: rgba(0,0,0,0.75);
       z-index: 1000;
-      display: flex;
       justify-content: center;
       align-items: center;
     }
@@ -186,7 +166,6 @@
       cursor: pointer;
       color: #444;
     }
-    #closeLoginModal:hover { color: #000; }
     #loginModalContent input {
       display: block;
       width: 100%;
@@ -205,13 +184,9 @@
       font-weight: bold;
       margin-top: 0.5rem;
     }
-    #loginError {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
+    #loginError { color: red; font-size: 0.9rem; margin-top: 0.5rem; }
 
-        /* Fullscreen Loading Overlay */
+    /* Loading overlay */
     #loadingOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -224,42 +199,37 @@
       font-size: 2rem;
       z-index: 9999;
     }
-
-    /* Optional spinner */
     .spinner {
       border: 6px solid rgba(255,255,255,0.3);
       border-top: 6px solid white;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 50px; height: 50px;
       animation: spin 1s linear infinite;
       margin-right: 15px;
     }
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <!-- Login button -->
+  <!-- Top bar -->
   <div class="top-bar">
     <button class="login-button" id="loginBtn"><i class="fas fa-user"></i> Login</button>
     <button onclick="location.href='../index.html'">⬅ Back to Home</button>
   </div>
 
-    <!-- Loading overlay -->
+  <!-- Loading overlay -->
   <div id="loadingOverlay">
-    <div class="spinner"></div> Loading photos...
+    <div class="spinner"></div> Loading media...
   </div>
 
   <!-- Main viewer -->
   <div class="viewer" id="viewer">
-    <img id="mainImage" src="" alt="Main Photo" />
+    <div id="mediaContainer"></div>
     <div class="watermark">© Ethan Smith</div>
   </div>
 
-  <div class="helper-text">Scroll sideways to see more images</div>
+  <div class="helper-text">Scroll sideways to see more media</div>
 
   <!-- Purchase ID -->
   <div class="purchase-row">
@@ -280,7 +250,7 @@
     <div id="loginModalContent">
       <button id="closeLoginModal">✖</button>
       <h2>Cadets Login</h2>
-      <p style="font-size:0.8rem; color:#930000;">**Required to Download Images**</p>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Media**</p>
       <input type="text" id="username" placeholder="Username" autocomplete="off" />
       <input type="password" id="password" placeholder="Password" autocomplete="off" />
       <button onclick="handleLogin()">Login</button>
@@ -289,7 +259,7 @@
   </div>
 
   <script>
-      const images = [
+           const images = [
       "upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG",
 "upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG",
 "upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG",
@@ -302,126 +272,159 @@
 "upload/91.JPG", "upload/92.JPG", "upload/93.JPG", "upload/94.JPG", "upload/95.JPG", "upload/96.JPG", "upload/97.JPG", "upload/98.JPG", "upload/99.JPG", "upload/100.JPG",
 "upload/101.JPG", "upload/102.JPG", "upload/103.JPG", "upload/104.JPG", "upload/105.JPG", "upload/106.JPG", "upload/107.JPG", "upload/108.JPG", "upload/109.JPG", "upload/110.JPG",
 "upload/111.JPG", "upload/112.JPG", "upload/113.JPG", "upload/114.JPG", "upload/115.JPG", "upload/116.JPG", "upload/117.JPG", "upload/118.JPG", "upload/119.JPG", "upload/120.JPG",
-"upload/121.JPG", "upload/122.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
+"upload/121.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
 "upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG", "upload/138.JPG", "upload/139.JPG", "upload/140.JPG",
 "upload/141.JPG", "upload/142.JPG", "upload/143.JPG", "upload/144.JPG", "upload/145.JPG", "upload/146.JPG", "upload/147.JPG", "upload/148.JPG", "upload/149.JPG", "upload/150.JPG",
-"upload/151.JPG"
+"upload/151.JPG", "upload/152.mp4"
     ];
 
-  let currentIndex = 0;
-  let isLoggedIn = false;
-  const overlay = document.getElementById("loadingOverlay");
-  let loadedCount = 0;
+    let currentIndex = 0;
+    let isLoggedIn = false;
+    let loadedCount = 0;
 
-  const mainImage = document.getElementById("mainImage");
-  const purchaseId = document.getElementById("purchaseId");
-  const thumbnailBar = document.getElementById("thumbnailBar");
-  const loginBtn = document.getElementById("loginBtn");
-  const downloadBtn = document.getElementById("downloadBtn");
-  const loginModal = document.getElementById("loginModal");
-  const loginError = document.getElementById("loginError");
+    const overlay = document.getElementById("loadingOverlay");
+    const mediaContainer = document.getElementById("mediaContainer");
+    const purchaseId = document.getElementById("purchaseId");
+    const thumbnailBar = document.getElementById("thumbnailBar");
+    const loginBtn = document.getElementById("loginBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const loginModal = document.getElementById("loginModal");
+    const loginError = document.getElementById("loginError");
 
-  const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
+    const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
 
-  loginBtn.addEventListener("click", () => {
-    loginModal.style.display = "flex";
-  });
-
-  document.getElementById("closeLoginModal").addEventListener("click", () => {
-    loginModal.style.display = "none";
-    loginError.innerText = "";
-  });
-
-  function handleLogin() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    if (VALID_USERS[username] && VALID_USERS[username] === password) {
-      isLoggedIn = true;
-      loginModal.style.display = "none";
-      loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
-    } else {
-      loginError.innerText = "Invalid credentials.";
-    }
-  }
-
-  function generateStableID(filename) {
-    let hash = 0;
-    for (let i = 0; i < filename.length; i++) {
-      hash = (hash << 5) - hash + filename.charCodeAt(i);
-      hash |= 0;
-    }
-    return (Math.abs(hash) % 90000) + 10000;
-  }
-
-  function updateViewer(index) {
-    currentIndex = index;
-    const src = images[currentIndex];
-    mainImage.src = src;
-    const filename = src.split("/").pop().split(".")[0];
-    purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
-    document.querySelectorAll(".thumbnail-bar img").forEach((thumb, i) => {
-      thumb.classList.toggle("active", i === currentIndex);
+    loginBtn.addEventListener("click", () => loginModal.style.display = "flex");
+    document.getElementById("closeLoginModal").addEventListener("click", () => {
+      loginModal.style.display = "none"; loginError.innerText = "";
     });
-  }
 
-  function buildThumbnails() {
-    images.forEach((src, index) => {
-      const thumb = document.createElement("img");
-      thumb.src = src;
-      thumb.alt = `Thumbnail ${index+1}`;
-      thumb.addEventListener("click", () => updateViewer(index));
-      thumbnailBar.appendChild(thumb);
-    });
-  }
-
-  // Download requires login
-  downloadBtn.addEventListener("click", e => {
-    e.preventDefault();
-    if (!isLoggedIn) {
-      loginModal.style.display = "flex";
-      return;
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        isLoggedIn = true;
+        loginModal.style.display = "none";
+        loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
+      } else {
+        loginError.innerText = "Invalid credentials.";
+      }
     }
-    const src = images[currentIndex];
-    const a = document.createElement("a");
-    a.href = src;
-    a.download = src.split("/").pop();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
 
-  // Swipe support
-  const viewer = document.getElementById("viewer");
-  let startX = 0;
-  viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-  viewer.addEventListener("touchend", e => {
-    const endX = e.changedTouches[0].clientX;
-    if (startX - endX > 50) updateViewer((currentIndex + 1) % images.length);
-    if (endX - startX > 50) updateViewer((currentIndex - 1 + images.length) % images.length);
-  });
-
-  // === FIXED OVERLAY LOADING SCRIPT ===
-  function checkAllLoaded() {
-    loadedCount++;
-    if (loadedCount === images.length) {
-      overlay.style.display = "none"; // hide overlay once all images loaded
+    function generateStableID(filename) {
+      let hash = 0;
+      for (let i = 0; i < filename.length; i++) {
+        hash = (hash << 5) - hash + filename.charCodeAt(i);
+        hash |= 0;
+      }
+      return (Math.abs(hash) % 90000) + 10000;
     }
-  }
 
-  function preloadImages() {
-    images.forEach(src => {
-      const img = new Image();
-      img.onload = checkAllLoaded;
-      img.onerror = checkAllLoaded;
-      img.src = src;
+    function updateViewer(index) {
+      currentIndex = index;
+      const src = images[currentIndex];
+      mediaContainer.innerHTML = "";
+
+      if (src.toLowerCase().endsWith(".mp4")) {
+        const video = document.createElement("video");
+        video.src = src;
+        video.controls = true;
+        video.autoplay = true;
+        video.loop = true;
+        video.draggable = false;
+        mediaContainer.appendChild(video);
+      } else {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "Main Media";
+        img.draggable = false;
+        mediaContainer.appendChild(img);
+      }
+
+      const filename = src.split("/").pop().split(".")[0];
+      purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
+
+      document.querySelectorAll(".thumbnail-bar img, .thumbnail-bar video").forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === currentIndex);
+      });
+    }
+
+    function buildThumbnails() {
+      images.forEach((src, index) => {
+        let thumb;
+        if (src.toLowerCase().endsWith(".mp4")) {
+          thumb = document.createElement("video");
+          thumb.src = src;
+          thumb.muted = true;
+          thumb.loop = true;
+          thumb.playsInline = true;
+          thumb.draggable = false;
+          thumb.addEventListener("mouseenter", () => thumb.play());
+          thumb.addEventListener("mouseleave", () => thumb.pause());
+        } else {
+          thumb = document.createElement("img");
+          thumb.src = src;
+          thumb.alt = `Thumbnail ${index+1}`;
+          thumb.draggable = false;
+        }
+        thumb.addEventListener("click", () => updateViewer(index));
+        thumbnailBar.appendChild(thumb);
+      });
+    }
+
+    // Disable right-click save
+    document.addEventListener("contextmenu", e => {
+      if (e.target.tagName === "IMG" || e.target.tagName === "VIDEO") {
+        e.preventDefault();
+      }
     });
-  }
 
-  // Initialize
-  preloadImages();
-  buildThumbnails();
-  updateViewer(0);
-</script>
+    // Download requires login
+    downloadBtn.addEventListener("click", e => {
+      e.preventDefault();
+      if (!isLoggedIn) {
+        loginModal.style.display = "flex";
+        return;
+      }
+      const src = images[currentIndex];
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = src.split("/").pop();
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
 
+    // Swipe support
+    const viewer = document.getElementById("viewer");
+    let startX = 0;
+    viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+    viewer.addEventListener("touchend", e => {
+      const endX = e.changedTouches[0].clientX;
+      if (startX - endX > 50) updateViewer((currentIndex + 1) % images.length);
+      if (endX - startX > 50) updateViewer((currentIndex - 1 + images.length) % images.length);
+    });
+
+    // Preload images only
+    function preloadImages() {
+      images.forEach(src => {
+        if (src.toLowerCase().endsWith(".mp4")) { checkAllLoaded(); return; }
+        const img = new Image();
+        img.onload = checkAllLoaded;
+        img.onerror = checkAllLoaded;
+        img.src = src;
+      });
+    }
+    function checkAllLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length) {
+        overlay.style.display = "none";
+      }
+    }
+
+    // Init
+    preloadImages();
+    buildThumbnails();
+    updateViewer(0);
+  </script>
 </body>
 </html>
