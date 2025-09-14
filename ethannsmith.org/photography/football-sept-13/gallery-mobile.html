@@ -1,159 +1,78 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <title>Photo Gallery</title>
+  <title>Photo List</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #000;
-      height: 100vh;
+      color: white;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      color: white;
+      height: 100vh;
     }
 
-    /* Top bar with login */
     .top-bar {
       display: flex;
       justify-content: flex-end;
       background: #111;
       padding: 8px 12px;
+      gap: 10px;
+    }
+
+    .top-bar button,
+    .login-button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .login-button {
       background: #f48126;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border: none;
     }
-
     .login-button:hover {
       background: #c25e14;
     }
 
-    .viewer {
+    .list-container {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      background: #000;
-      overflow: hidden;
-    }
-
-    .viewer img {
-      max-height: 100%;
-      max-width: 100%;
-      border-radius: 12px;
-      user-select: none;
-      pointer-events: none;
-      transition: transform 0.2s ease;
-    }
-
-    .watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: rgba(255,255,255,0.3);
-      pointer-events: none;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-      text-align: center;
-    }
-
-    .purchase-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-weight: bold;
-      font-size: 0.95rem;
-      color: #f5f5f5;
-      padding: 6px;
+      overflow-y: auto;
+      padding: 1rem;
       background: #111;
     }
 
-    .purchase-row i {
-      color: #f48126;
+    .photo-item {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .photo-item img {
+      max-width: 100%;
+      border-radius: 12px;
     }
 
     .download-button {
-      display: block;
+      display: inline-block;
       background: #f48126;
       color: white;
       text-align: center;
-      padding: 0.8rem 1rem;
+      padding: 0.6rem 1rem;
       border-radius: 8px;
       font-weight: bold;
       text-decoration: none;
-      margin: 6px auto;
-      max-width: 240px;
+      margin-top: 0.5rem;
       cursor: pointer;
     }
-
-.top-bar {
-  display: flex;
-  justify-content: flex-end;
-  background: #111;
-  padding: 8px 12px;
-  gap: 10px;   /* 🔥 adds space between buttons */
-}
-
-.top-bar button {
-  background: #444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-
-    .download-button:hover {
-      background: #c25e14;
-    }
-
-    .helper-text {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #aaa;
-      background: #111;
-      padding: 4px;
-    }
-
-    .thumbnail-bar {
-      display: flex;
-      overflow-x: auto;
-      padding: 0.4rem;
-      background: #222;
-      align-items: center;
-      scrollbar-width: thin;
-    }
-
-    .thumbnail-bar img {
-      height: 60px;
-      margin: 0 4px;
-      cursor: pointer;
-      border-radius: 6px;
-      flex-shrink: 0;
-    }
-
-    .thumbnail-bar img.active {
-      border: 2px solid #f48126;
-    }
+    .download-button:hover { background: #c25e14; }
 
     /* Login modal */
     #loginModal {
@@ -174,7 +93,6 @@
       max-width: 90%;
       position: relative;
       text-align: center;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
     }
     #closeLoginModal {
       position: absolute;
@@ -186,7 +104,6 @@
       cursor: pointer;
       color: #444;
     }
-    #closeLoginModal:hover { color: #000; }
     #loginModalContent input {
       display: block;
       width: 100%;
@@ -211,7 +128,7 @@
       margin-top: 0.5rem;
     }
 
-        /* Fullscreen Loading Overlay */
+    /* Loading Overlay */
     #loadingOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -224,8 +141,6 @@
       font-size: 2rem;
       z-index: 9999;
     }
-
-    /* Optional spinner */
     .spinner {
       border: 6px solid rgba(255,255,255,0.3);
       border-top: 6px solid white;
@@ -242,38 +157,16 @@
 </head>
 <body>
 
-  <!-- Login button -->
   <div class="top-bar">
     <button class="login-button" id="loginBtn"><i class="fas fa-user"></i> Login</button>
     <button onclick="location.href='../index.html'">⬅ Back to Home</button>
   </div>
 
-    <!-- Loading overlay -->
   <div id="loadingOverlay">
     <div class="spinner"></div> Loading photos...
   </div>
 
-  <!-- Main viewer -->
-  <div class="viewer" id="viewer">
-    <img id="mainImage" src="" alt="Main Photo" />
-    <div class="watermark">© Ethan Smith</div>
-  </div>
-
-  <div class="helper-text">Scroll sideways to see more images</div>
-
-  <!-- Purchase ID -->
-  <div class="purchase-row">
-    <i class="fas fa-ticket-alt"></i>
-    <span id="purchaseId"></span>
-  </div>
-
-  <!-- Download button -->
-  <a href="#" class="download-button" id="downloadBtn">
-    <i class="fas fa-download"></i> Download
-  </a>
-
-  <!-- Thumbnails -->
-  <div class="thumbnail-bar" id="thumbnailBar"></div>
+  <div class="list-container" id="listContainer"></div>
 
   <!-- Login Modal -->
   <div id="loginModal">
@@ -289,7 +182,7 @@
   </div>
 
   <script>
-    const images = [
+        const images = [
 "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg", "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
 "upload/11.jpg", "upload/12.jpg", "upload/13.jpg", "upload/14.jpg", "upload/15.jpg", "upload/16.jpg", "upload/17.jpg", "upload/18.jpg", "upload/19.jpg", "upload/20.jpg",
 "upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/24.jpg", "upload/25.jpg", "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg",
@@ -324,120 +217,89 @@
 "upload/311.jpg", "upload/312.jpg", "upload/313.jpg", "upload/314.jpg", "upload/315.jpg", "upload/316.jpg", "upload/317.jpg", "upload/318.jpg", "upload/319.jpg", "upload/320.jpg",
 "upload/321.jpg", "upload/322.jpg", "upload/323.jpg", "upload/324.jpg", "upload/325.jpg", "upload/326.jpg", "upload/327.jpg", "upload/328.jpg",
 ];
-  let currentIndex = 0;
-  let isLoggedIn = false;
-  const overlay = document.getElementById("loadingOverlay");
-  let loadedCount = 0;
 
-  const mainImage = document.getElementById("mainImage");
-  const purchaseId = document.getElementById("purchaseId");
-  const thumbnailBar = document.getElementById("thumbnailBar");
-  const loginBtn = document.getElementById("loginBtn");
-  const downloadBtn = document.getElementById("downloadBtn");
-  const loginModal = document.getElementById("loginModal");
-  const loginError = document.getElementById("loginError");
+    let isLoggedIn = false;
+    const overlay = document.getElementById("loadingOverlay");
+    let loadedCount = 0;
 
-  const VALID_USERS = { "linslyFootball25": atob("d2h5bm90eW91MjUyNg==") };
+    const loginBtn = document.getElementById("loginBtn");
+    const loginModal = document.getElementById("loginModal");
+    const loginError = document.getElementById("loginError");
 
-  loginBtn.addEventListener("click", () => {
-    loginModal.style.display = "flex";
-  });
+    const VALID_USERS = { "linslyFootball25": atob("d2h5bm90eW91MjUyNg==") };
 
-  document.getElementById("closeLoginModal").addEventListener("click", () => {
-    loginModal.style.display = "none";
-    loginError.innerText = "";
-  });
-
-  function handleLogin() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    if (VALID_USERS[username] && VALID_USERS[username] === password) {
-      isLoggedIn = true;
-      loginModal.style.display = "none";
-      loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
-    } else {
-      loginError.innerText = "Invalid credentials.";
-    }
-  }
-
-  function generateStableID(filename) {
-    let hash = 0;
-    for (let i = 0; i < filename.length; i++) {
-      hash = (hash << 5) - hash + filename.charCodeAt(i);
-      hash |= 0;
-    }
-    return (Math.abs(hash) % 90000) + 10000;
-  }
-
-  function updateViewer(index) {
-    currentIndex = index;
-    const src = images[currentIndex];
-    mainImage.src = src;
-    const filename = src.split("/").pop().split(".")[0];
-    purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
-    document.querySelectorAll(".thumbnail-bar img").forEach((thumb, i) => {
-      thumb.classList.toggle("active", i === currentIndex);
-    });
-  }
-
-  function buildThumbnails() {
-    images.forEach((src, index) => {
-      const thumb = document.createElement("img");
-      thumb.src = src;
-      thumb.alt = `Thumbnail ${index+1}`;
-      thumb.addEventListener("click", () => updateViewer(index));
-      thumbnailBar.appendChild(thumb);
-    });
-  }
-
-  // Download requires login
-  downloadBtn.addEventListener("click", e => {
-    e.preventDefault();
-    if (!isLoggedIn) {
+    loginBtn.addEventListener("click", () => {
       loginModal.style.display = "flex";
-      return;
-    }
-    const src = images[currentIndex];
-    const a = document.createElement("a");
-    a.href = src;
-    a.download = src.split("/").pop();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
-
-  // Swipe support
-  const viewer = document.getElementById("viewer");
-  let startX = 0;
-  viewer.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-  viewer.addEventListener("touchend", e => {
-    const endX = e.changedTouches[0].clientX;
-    if (startX - endX > 50) updateViewer((currentIndex + 1) % images.length);
-    if (endX - startX > 50) updateViewer((currentIndex - 1 + images.length) % images.length);
-  });
-
-  // === FIXED OVERLAY LOADING SCRIPT ===
-  function checkAllLoaded() {
-    loadedCount++;
-    if (loadedCount === images.length) {
-      overlay.style.display = "none"; // hide overlay once all images loaded
-    }
-  }
-
-  function preloadImages() {
-    images.forEach(src => {
-      const img = new Image();
-      img.onload = checkAllLoaded;
-      img.onerror = checkAllLoaded;
-      img.src = src;
     });
-  }
 
-  // Initialize
-  preloadImages();
-  buildThumbnails();
-  updateViewer(0);
-</script>
+    document.getElementById("closeLoginModal").addEventListener("click", () => {
+      loginModal.style.display = "none";
+      loginError.innerText = "";
+    });
 
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        isLoggedIn = true;
+        loginModal.style.display = "none";
+        loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
+      } else {
+        loginError.innerText = "Invalid credentials.";
+      }
+    }
+
+    function buildList() {
+      const container = document.getElementById("listContainer");
+      images.forEach(src => {
+        const div = document.createElement("div");
+        div.className = "photo-item";
+
+        const img = document.createElement("img");
+        img.src = src;
+
+        const btn = document.createElement("a");
+        btn.href = "#";
+        btn.className = "download-button";
+        btn.innerHTML = '<i class="fas fa-download"></i> Download';
+        btn.addEventListener("click", e => {
+          e.preventDefault();
+          if (!isLoggedIn) {
+            loginModal.style.display = "flex";
+            return;
+          }
+          const a = document.createElement("a");
+          a.href = src;
+          a.download = src.split("/").pop();
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        });
+
+        div.appendChild(img);
+        div.appendChild(btn);
+        container.appendChild(div);
+      });
+    }
+
+    function checkAllLoaded() {
+      loadedCount++;
+      if (loadedCount === images.length) {
+        overlay.style.display = "none";
+      }
+    }
+
+    function preloadImages() {
+      images.forEach(src => {
+        const img = new Image();
+        img.onload = checkAllLoaded;
+        img.onerror = checkAllLoaded;
+        img.src = src;
+      });
+    }
+
+    preloadImages();
+    buildList();
+  </script>
 </body>
 </html>
