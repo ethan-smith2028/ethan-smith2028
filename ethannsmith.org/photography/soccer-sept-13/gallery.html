@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <title>Photo Gallery Slider</title>
+  <title>Photo & Video Gallery Slider</title>
   <script>
   // Redirect if on mobile
   if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
@@ -21,7 +22,7 @@
 
     .viewer-container { display: flex; height: calc(100vh - 150px); }
     .viewer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; overflow: hidden; }
-    .viewer img { max-height: 95%; max-width: 95%; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.6); user-select: none; pointer-events: none; }
+    .viewer img, .viewer video { max-height: 95%; max-width: 95%; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.6); background: #000; pointer-events: none; /* disables right-click save on video/image itself */ }
 
     .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-weight: bold; color: rgba(255,255,255,0.4); pointer-events: none; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); white-space: nowrap; }
 
@@ -38,9 +39,9 @@
     .download-button:hover { background: #c25e14; }
 
     .thumbnail-bar { display: flex; overflow-x: auto; padding: 0.5rem; background: #333; height: 100px; align-items: center; }
-    .thumbnail-bar img { height: 70px; margin: 0 5px; cursor: pointer; border-radius: 6px; transition: transform 0.2s ease, border 0.2s ease; }
-    .thumbnail-bar img:hover { transform: scale(1.1); border: 2px solid #f48126; }
-    .thumbnail-bar img.active { border: 2px solid #f48126; }
+    .thumbnail-bar img, .thumbnail-bar video { height: 70px; margin: 0 5px; cursor: pointer; border-radius: 6px; transition: transform 0.2s ease, border 0.2s ease; object-fit: cover; }
+    .thumbnail-bar img:hover, .thumbnail-bar video:hover { transform: scale(1.1); border: 2px solid #f48126; }
+    .thumbnail-bar img.active, .thumbnail-bar video.active { border: 2px solid #f48126; }
 
     /* Reusable modal styles */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; }
@@ -68,7 +69,7 @@
   <div class="viewer-container">
     <div class="viewer">
       <span class="arrow left" onclick="prevImage()"><i class="fas fa-chevron-left"></i></span>
-      <img id="mainImage" src="" alt="Main Photo" />
+      <div id="mediaContainer"></div>
       <div class="watermark">© Ethan Smith</div>
       <span class="arrow right" onclick="nextImage()"><i class="fas fa-chevron-right"></i></span>
     </div>
@@ -87,7 +88,7 @@
     <div class="modal-content">
       <button id="closeLoginModal" class="modal-close">✖</button>
       <h2><i class="fas fa-user-lock"></i> Cadets Login</h2>
-      <p style="font-size:0.8rem; color:#930000;">**Required to Download Images**</p>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Media**</p>
       <input type="text" id="username" placeholder="Username" autocomplete="off" />
       <input type="password" id="password" placeholder="Password" autocomplete="off" />
       <button onclick="handleLogin()" class="primary"><i class="fas fa-sign-in-alt"></i> Login</button>
@@ -115,7 +116,7 @@
   </div>
 
   <script>
-    const images = [
+       const images = [
       "upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG",
 "upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG",
 "upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG",
@@ -131,12 +132,11 @@
 "upload/121.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
 "upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG", "upload/138.JPG", "upload/139.JPG", "upload/140.JPG",
 "upload/141.JPG", "upload/142.JPG", "upload/143.JPG", "upload/144.JPG", "upload/145.JPG", "upload/146.JPG", "upload/147.JPG", "upload/148.JPG", "upload/149.JPG", "upload/150.JPG",
-"upload/151.JPG"
+"upload/151.JPG", "upload/152.mp4"
     ];
     let currentIndex = 0;
     let isLoggedIn = false;
 
-    const mainImage = document.getElementById("mainImage");
     const purchaseId = document.getElementById("purchaseId");
     const thumbnailBar = document.getElementById("thumbnailBar");
     const loginModal = document.getElementById("loginModal");
@@ -157,10 +157,27 @@
     function updateViewer(index) {
       currentIndex = index;
       const src = images[currentIndex];
-      mainImage.src = src;
+      const container = document.getElementById("mediaContainer");
+      container.innerHTML = "";
+
+      if (src.toLowerCase().endsWith(".mp4")) {
+        const video = document.createElement("video");
+        video.src = src;
+        video.controls = true;
+        video.autoplay = true;
+        video.loop = true;
+        container.appendChild(video);
+      } else {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "Main Media";
+        container.appendChild(img);
+      }
+
       const filename = src.split("/").pop().split(".")[0];
       purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
-      document.querySelectorAll(".thumbnail-bar img").forEach((thumb, i) => {
+
+      document.querySelectorAll(".thumbnail-bar img, .thumbnail-bar video").forEach((thumb, i) => {
         thumb.classList.toggle("active", i === currentIndex);
       });
     }
@@ -170,9 +187,20 @@
 
     function buildThumbnails() {
       images.forEach((src, index) => {
-        const thumb = document.createElement("img");
-        thumb.src = src;
-        thumb.alt = `Thumbnail ${index+1}`;
+        let thumb;
+        if (src.toLowerCase().endsWith(".mp4")) {
+          thumb = document.createElement("video");
+          thumb.src = src;
+          thumb.muted = true;
+          thumb.loop = true;
+          thumb.playsInline = true;
+          thumb.addEventListener("mouseenter", () => thumb.play());
+          thumb.addEventListener("mouseleave", () => thumb.pause());
+        } else {
+          thumb = document.createElement("img");
+          thumb.src = src;
+          thumb.alt = `Thumbnail ${index+1}`;
+        }
         thumb.addEventListener("click", () => updateViewer(index));
         thumbnailBar.appendChild(thumb);
       });
@@ -229,4 +257,3 @@
   </script>
 </body>
 </html>
-
