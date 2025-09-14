@@ -113,6 +113,21 @@
     #progressText { font-size: 0.95rem; }
     #etaText { font-size: 0.95rem; color: #ccc; }
 
+    .progress-container {
+      width: 70%;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #f48126;
+      transition: width 0.3s ease;
+    }
+
     /* LOGIN MODAL */
     #loginModal {
       display: none;
@@ -174,6 +189,7 @@
   <div id="loadingOverlay">
     <div id="loadingMessage">Preparing your gallery...</div>
     <div id="progressText">0 / 0 loaded</div>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
     <div id="etaText">Estimating time...</div>
   </div>
 
@@ -193,9 +209,7 @@
   </div>
 
   <script>
-    const images = [ /* same list as before */ 
-      "upload/1.JPG","upload/2.JPG","upload/3.JPG", /* ... */ "upload/152.mp4"
-    ];
+    const images = [ "upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG", "upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG", "upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG", "upload/31.JPG", "upload/32.JPG", "upload/33.JPG", "upload/34.JPG", "upload/35.JPG", "upload/36.JPG", "upload/37.JPG", "upload/38.JPG", "upload/39.JPG", "upload/40.JPG", "upload/41.JPG", "upload/42.JPG", "upload/43.JPG", "upload/44.JPG", "upload/45.JPG", "upload/46.JPG", "upload/47.JPG", "upload/48.JPG", "upload/49.JPG", "upload/50.JPG", "upload/51.JPG", "upload/52.JPG", "upload/53.JPG", "upload/54.JPG", "upload/55.JPG", "upload/56.JPG", "upload/57.JPG", "upload/58.JPG", "upload/59.JPG", "upload/60.JPG", "upload/61.JPG", "upload/62.JPG", "upload/63.JPG", "upload/64.JPG", "upload/65.JPG", "upload/66.JPG", "upload/67.JPG", "upload/68.JPG", "upload/69.JPG", "upload/70.JPG", "upload/71.JPG", "upload/72.JPG", "upload/73.JPG", "upload/74.JPG", "upload/75.JPG", "upload/76.JPG", "upload/77.JPG", "upload/78.JPG", "upload/79.JPG", "upload/80.JPG", "upload/81.JPG", "upload/82.JPG", "upload/83.JPG", "upload/84.JPG", "upload/85.JPG", "upload/86.JPG", "upload/87.JPG", "upload/88.JPG", "upload/89.JPG", "upload/90.JPG", "upload/91.JPG", "upload/92.JPG", "upload/93.JPG", "upload/94.JPG", "upload/95.JPG", "upload/96.JPG", "upload/97.JPG", "upload/98.JPG", "upload/99.JPG", "upload/100.JPG", "upload/101.JPG", "upload/102.JPG", "upload/103.JPG", "upload/104.JPG", "upload/105.JPG", "upload/106.JPG", "upload/107.JPG", "upload/108.JPG", "upload/109.JPG", "upload/110.JPG", "upload/111.JPG", "upload/112.JPG", "upload/113.JPG", "upload/114.JPG", "upload/115.JPG", "upload/116.JPG", "upload/117.JPG", "upload/118.JPG", "upload/119.JPG", "upload/120.JPG", "upload/121.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG", "upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG", "upload/138.JPG", "upload/139.JPG", "upload/140.JPG", "upload/141.JPG", "upload/142.JPG", "upload/143.JPG", "upload/144.JPG", "upload/145.JPG", "upload/146.JPG", "upload/147.JPG", "upload/148.JPG", "upload/149.JPG", "upload/150.JPG", "upload/151.JPG", "upload/152.mp4" ];
 
     let isLoggedIn = false;
     const gallery = document.getElementById("gallery");
@@ -207,6 +221,7 @@
     const loadingMessage = document.getElementById("loadingMessage");
     const progressText = document.getElementById("progressText");
     const etaText = document.getElementById("etaText");
+    const progressBar = document.getElementById("progressBar");
 
     const messages = [
       "Warming up the servers...",
@@ -307,8 +322,11 @@
       const elapsed = (Date.now() - startTime) / 1000; // seconds
       const avgTime = elapsed / loadedCount;
       const remaining = (totalAssets - loadedCount) * avgTime;
+
       progressText.textContent = `${loadedCount} / ${totalAssets} loaded`;
+      progressBar.style.width = `${(loadedCount / totalAssets) * 100}%`;
       etaText.textContent = `Estimated time left: ${remaining.toFixed(1)}s`;
+
       if (loadedCount === totalAssets) {
         finishLoading();
       }
