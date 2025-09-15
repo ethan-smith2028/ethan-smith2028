@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Football Viewer</title>
+  <style>
+    html,body {
+      margin:0; padding:0;
+      height:100%; width:100%;
+      background:transparent;
+      overflow:hidden;
+    }
+
+    /* Floating scoreboard container */
+    #scoreboard {
+      position:absolute;
+      bottom:30px; left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:center;
+      font-family:Arial, sans-serif;
+      font-weight:bold;
+      font-size:22px;
+      color:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 4px 20px rgba(0,0,0,0.6);
+    }
+
+    .team {
+      display:flex;
+      align-items:center;
+      padding:10px 20px;
+      min-width:200px;
+      justify-content:space-between;
+    }
+
+    .team img {
+      height:40px; width:40px;
+      border-radius:50%;
+      background:#fff;
+      margin-right:10px;
+    }
+
+    .teamInfo {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .teamName {
+      font-size:14px;
+      opacity:0.9;
+    }
+
+    .score {
+      font-size:32px;
+      font-weight:900;
+    }
+
+    /* Center info panel */
+    #centerInfo {
+      background:rgba(0,0,0,0.85);
+      padding:10px 20px;
+      text-align:center;
+      font-size:18px;
+      min-width:120px;
+      border-left:2px solid rgba(255,255,255,0.2);
+      border-right:2px solid rgba(255,255,255,0.2);
+    }
+    #clock {
+      font-size:20px;
+      font-weight:bold;
+    }
+    #quarter {
+      font-size:14px;
+      opacity:0.8;
+    }
+
+    /* Flag overlay */
+    #flag {
+      position:absolute;
+      top:30%; left:50%;
+      transform:translateX(-50%);
+      background:yellow; color:black;
+      font-size:64px;
+      font-weight:bold;
+      padding:20px 50px;
+      border-radius:16px;
+      opacity:0;
+      transition:opacity 0.5s ease-in-out;
+      box-shadow:0 0 20px rgba(0,0,0,0.7);
+    }
+    #flag.show { opacity:1; }
+  </style>
+</head>
+<body>
+  <div id="scoreboard">
+    <!-- Home side -->
+    <div class="team" id="homeTeam">
+      <div class="teamInfo">
+        <img id="homeLogo" src="home.png" alt="Home Logo">
+        <div>
+          <div id="homeName">HOME</div>
+          <div class="teamName" id="homeRecord">--</div>
+        </div>
+      </div>
+      <div class="score" id="homeScore">0</div>
+    </div>
+
+    <!-- Center info -->
+    <div id="centerInfo">
+      <div id="clock">15:00</div>
+      <div>Q<span id="quarter">1</span></div>
+    </div>
+
+    <!-- Away side -->
+    <div class="team" id="awayTeam">
+      <div class="score" id="awayScore">0</div>
+      <div class="teamInfo">
+        <div>
+          <div id="awayName">AWAY</div>
+          <div class="teamName" id="awayRecord">--</div>
+        </div>
+        <img id="awayLogo" src="away.png" alt="Away Logo">
+      </div>
+    </div>
+  </div>
+
+  <div id="flag">FLAG</div>
+
+<script>
+  function formatClock(sec){
+    const m=Math.floor(sec/60).toString().padStart(2,"0");
+    const s=(sec%60).toString().padStart(2,"0");
+    return `${m}:${s}`;
+  }
+
+  function showFlag(){
+    const f=document.getElementById("flag");
+    f.classList.add("show");
+    setTimeout(()=>f.classList.remove("show"),7000);
+  }
+
+  function updateViewer(state){
+    document.getElementById("homeName").textContent=state.home;
+    document.getElementById("awayName").textContent=state.away;
+    document.getElementById("homeScore").textContent=state.score.home;
+    document.getElementById("awayScore").textContent=state.score.away;
+    document.getElementById("quarter").textContent=state.quarter;
+    document.getElementById("clock").textContent=formatClock(state.clock);
+
+    // If you want team records/ranks, add them to state
+    if(state.homeRecord) document.getElementById("homeRecord").textContent = state.homeRecord;
+    if(state.awayRecord) document.getElementById("awayRecord").textContent = state.awayRecord;
+
+    // Team colors as background
+    document.getElementById("homeTeam").style.background = state.colors?.home || "#900";
+    document.getElementById("awayTeam").style.background = state.colors?.away || "#009";
+
+    if(state.flag){ showFlag(); }
+
+    // Logos (if provided in state)
+    if(state.homeLogo) document.getElementById("homeLogo").src = state.homeLogo;
+    if(state.awayLogo) document.getElementById("awayLogo").src = state.awayLogo;
+  }
+
+  // BroadcastChannel for updates
+  const channel = new BroadcastChannel("footballGame");
+  channel.onmessage = (e)=>{
+    updateViewer(e.data);
+  };
+</script>
+</body>
+</html>
