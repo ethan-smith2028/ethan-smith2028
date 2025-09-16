@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>Photo & Video Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: white;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      background: #111;
+      padding: 8px 12px;
+      gap: 10px;
+      z-index: 10;
+      position: relative;
+    }
+
+    .login-button {
+      background: #f48126;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+    }
+    .login-button:hover { background: #c25e14; }
+    .top-bar button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #gallery {
+      display: none; /* hidden until loaded */
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .media-item {
+      background: #111;
+      border-radius: 12px;
+      padding: 15px;
+      width: 100%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    .media-item img, .media-item video {
+      max-width: 100%;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .purchase-id {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #f5f5f5;
+    }
+
+    .download-button {
+      display: block;
+      background: #f48126;
+      color: white;
+      text-align: center;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 10px auto 0;
+      max-width: 200px;
+      cursor: pointer;
+    }
+    .download-button:hover { background: #c25e14; }
+
+    /* LOADING OVERLAY */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      z-index: 2000;
+      font-size: 1.2rem;
+    }
+    #loadingMessage { font-size: 1.1rem; color: #f48126; }
+    #progressText { font-size: 0.95rem; }
+    #etaText { font-size: 0.95rem; color: #ccc; }
+
+    .progress-container {
+      width: 70%;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #f48126;
+      transition: width 0.3s ease;
+    }
+
+    /* LOGIN MODAL */
+    #loginModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    #loginModalContent {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+    #closeLoginModal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.3rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #444;
+    }
+    #loginModalContent input {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    #loginModalContent button {
+      background: #f48126;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    #loginError { color: red; font-size: 0.9rem; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button class="login-button" id="loginBtn"><i class="fas fa-user"></i> Login</button>
+    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay">
+    <div id="loadingMessage">Preparing your gallery...</div>
+    <div id="progressText">0 / 0 loaded</div>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="etaText">Estimating time...</div>
+  </div>
+
+  <div id="gallery"></div>
+
+  <!-- Login Modal -->
+  <div id="loginModal">
+    <div id="loginModalContent">
+      <button id="closeLoginModal">✖</button>
+      <h2>Cadets Login</h2>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Media**</p>
+      <input type="text" id="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginError"></p>
+    </div>
+  </div>
+
+  <script>
+    const images = [
+      "upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG",
+"upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG",
+"upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG",
+"upload/31.JPG", "upload/32.JPG", "upload/33.JPG", "upload/34.JPG", "upload/35.JPG", "upload/36.JPG", "upload/37.JPG", "upload/38.JPG", "upload/39.JPG", "upload/40.JPG",
+"upload/41.JPG", "upload/42.JPG", "upload/43.JPG", "upload/44.JPG", "upload/45.JPG", "upload/46.JPG", "upload/47.JPG", "upload/48.JPG", "upload/49.JPG", "upload/50.JPG",
+"upload/51.JPG", "upload/52.JPG", "upload/53.JPG", "upload/54.JPG", "upload/55.JPG", "upload/56.JPG", "upload/57.JPG", "upload/58.JPG", "upload/59.JPG", "upload/60.JPG",
+"upload/61.JPG", "upload/62.JPG", "upload/63.JPG", "upload/64.JPG", "upload/65.JPG", "upload/66.JPG", "upload/67.JPG", "upload/68.JPG", "upload/69.JPG", "upload/70.JPG",
+"upload/71.JPG", "upload/72.JPG", "upload/73.JPG", "upload/74.JPG", "upload/75.JPG", "upload/76.JPG", "upload/77.JPG", "upload/78.JPG", "upload/79.JPG", "upload/80.JPG",
+"upload/81.JPG", "upload/82.JPG", "upload/83.JPG", "upload/84.JPG", "upload/85.JPG", "upload/86.JPG", "upload/87.JPG", "upload/88.JPG", "upload/89.JPG", "upload/90.JPG",
+"upload/91.JPG", "upload/92.JPG", "upload/93.JPG", "upload/94.JPG", "upload/95.JPG", "upload/96.JPG", "upload/97.JPG", "upload/98.JPG", "upload/99.JPG", "upload/100.JPG",
+"upload/101.JPG", "upload/102.JPG", "upload/103.JPG", "upload/104.JPG", "upload/105.JPG", "upload/106.JPG", "upload/107.JPG", "upload/108.JPG", "upload/109.JPG", "upload/110.JPG",
+"upload/111.JPG", "upload/112.JPG", "upload/113.JPG", "upload/114.JPG", "upload/115.JPG", "upload/116.JPG", "upload/117.JPG", "upload/118.JPG", "upload/119.JPG", "upload/120.JPG",
+"upload/121.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
+"upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG"
+    ];
+    let isLoggedIn = false;
+    const gallery = document.getElementById("gallery");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginModal = document.getElementById("loginModal");
+    const loginError = document.getElementById("loginError");
+
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const progressText = document.getElementById("progressText");
+    const etaText = document.getElementById("etaText");
+    const progressBar = document.getElementById("progressBar");
+
+    const messages = [
+      "Warming up the servers...",
+      "Fetching awesome photos...",
+      "Almost there, sit tight...",
+      "Good things take time...",
+      "Loading memories..."
+    ];
+    let msgIndex = 0;
+    setInterval(() => {
+      loadingMessage.textContent = messages[msgIndex % messages.length];
+      msgIndex++;
+    }, 5000);
+
+    const VALID_USERS = { "linslySoccer25": atob("d2h5bm90eW91MjUyNg==") };
+
+    loginBtn.addEventListener("click", () => loginModal.style.display = "flex");
+    document.getElementById("closeLoginModal").addEventListener("click", () => {
+      loginModal.style.display = "none"; loginError.innerText = "";
+    });
+
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        isLoggedIn = true;
+        loginModal.style.display = "none";
+        loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Logged In';
+      } else {
+        loginError.innerText = "Invalid credentials.";
+      }
+    }
+
+    function generateStableID(filename) {
+      let hash = 0;
+      for (let i = 0; i < filename.length; i++) {
+        hash = (hash << 5) - hash + filename.charCodeAt(i);
+        hash |= 0;
+      }
+      return (Math.abs(hash) % 90000) + 10000;
+    }
+
+    function buildGallery() {
+      images.forEach(src => {
+        const item = document.createElement("div");
+        item.className = "media-item";
+
+        if (src.toLowerCase().endsWith(".mp4")) {
+          const video = document.createElement("video");
+          video.src = src;
+          video.controls = true;
+          video.loop = true;
+          item.appendChild(video);
+        } else {
+          const img = document.createElement("img");
+          img.src = src;
+          item.appendChild(img);
+        }
+
+        const filename = src.split("/").pop().split(".")[0];
+        const purchaseId = document.createElement("div");
+        purchaseId.className = "purchase-id";
+        purchaseId.innerText = `Purchase ID: ${filename}-${generateStableID(filename)}`;
+        item.appendChild(purchaseId);
+
+        const downloadBtn = document.createElement("a");
+        downloadBtn.href = "#";
+        downloadBtn.className = "download-button";
+        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+        downloadBtn.addEventListener("click", e => {
+          e.preventDefault();
+          if (!isLoggedIn) {
+            loginModal.style.display = "flex";
+            return;
+          }
+          const a = document.createElement("a");
+          a.href = src;
+          a.download = src.split("/").pop();
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        });
+        item.appendChild(downloadBtn);
+
+        gallery.appendChild(item);
+      });
+    }
+
+    // PRELOADING
+    let loadedCount = 0;
+    const totalAssets = images.length;
+    let startTime = Date.now();
+
+    progressText.textContent = `0 / ${totalAssets} loaded`;
+
+    function updateProgress() {
+      loadedCount++;
+      const elapsed = (Date.now() - startTime) / 1000; // seconds
+      const avgTime = elapsed / loadedCount;
+      const remaining = (totalAssets - loadedCount) * avgTime;
+
+      progressText.textContent = `${loadedCount} / ${totalAssets} loaded`;
+      progressBar.style.width = `${(loadedCount / totalAssets) * 100}%`;
+      etaText.textContent = `Estimated time left: ${remaining.toFixed(1)}s`;
+
+      if (loadedCount === totalAssets) {
+        finishLoading();
+      }
+    }
+
+    function finishLoading() {
+      loadingOverlay.style.display = "none";
+      gallery.style.display = "flex";
+      buildGallery();
+    }
+
+    // Preload all images and videos
+    images.forEach(src => {
+      if (src.toLowerCase().endsWith(".mp4")) {
+        const video = document.createElement("video");
+        video.src = src;
+        video.preload = "auto";
+        video.oncanplaythrough = updateProgress;
+        video.onerror = updateProgress; // count failures too
+      } else {
+        const img = new Image();
+        img.src = src;
+        img.onload = updateProgress;
+        img.onerror = updateProgress;
+      }
+    });
+
+    // Prevent right-click save
+    document.addEventListener("contextmenu", e => {
+      if (e.target.tagName === "IMG" || e.target.tagName === "VIDEO") {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
