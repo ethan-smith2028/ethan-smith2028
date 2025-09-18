@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,6 +72,29 @@
       cursor: pointer;
     }
     .download-button:hover { background: #c25e14; }
+
+    /* Gold Image Glow */
+    .gold-glow {
+      border: 4px solid gold;
+      border-radius: 12px;
+      box-shadow: 0 0 25px gold, 0 0 50px gold, 0 0 75px gold;
+      animation: glowPulse 2s infinite alternate;
+    }
+    @keyframes glowPulse {
+      from { box-shadow: 0 0 15px gold, 0 0 30px gold; }
+      to { box-shadow: 0 0 30px gold, 0 0 60px gold; }
+    }
+
+    /* Gold Box */
+    .gold-box {
+      margin-top: 0.5rem;
+      padding: 0.8rem;
+      border: 2px solid gold;
+      border-radius: 12px;
+      background: #fffbea;
+      color: #000;
+      font-weight: bold;
+    }
 
     /* Login modal */
     #loginModal {
@@ -153,6 +175,21 @@
     @keyframes spin {
       100% { transform: rotate(360deg); }
     }
+
+        .purchase-button {
+      background: gold;
+      color: black;
+      font-weight: bold;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .purchase-button:hover {
+      background: #d4af37;
+    }
+
   </style>
 </head>
 <body>
@@ -182,41 +219,44 @@
   </div>
 
   <script>
-        const images = [
-"upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg", "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
-"upload/11.jpg", "upload/12.jpg", "upload/13.jpg", "upload/14.jpg", "upload/15.jpg", "upload/16.jpg", "upload/17.jpg", "upload/18.jpg", "upload/19.jpg", "upload/20.jpg",
-"upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/24.jpg", "upload/25.jpg", "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg",
-"upload/31.jpg", "upload/32.jpg", "upload/33.jpg", "upload/34.jpg", "upload/35.jpg", "upload/36.jpg", "upload/37.jpg", "upload/38.jpg", "upload/39.jpg", "upload/40.jpg",
-"upload/41.jpg", "upload/42.jpg", "upload/43.jpg", "upload/44.jpg", "upload/45.jpg", "upload/46.jpg", "upload/47.jpg", "upload/48.jpg", "upload/49.jpg", "upload/50.jpg",
-"upload/51.jpg", "upload/52.jpg", "upload/53.jpg", "upload/54.jpg", "upload/55.jpg", "upload/56.jpg", "upload/57.jpg", "upload/58.jpg", "upload/59.jpg", "upload/60.jpg",
-"upload/61.jpg", "upload/62.jpg", "upload/63.jpg", "upload/64.jpg", "upload/65.jpg", "upload/66.jpg", "upload/67.jpg", "upload/68.jpg", "upload/69.jpg", "upload/70.jpg",
-"upload/71.jpg", "upload/72.jpg", "upload/73.jpg", "upload/74.jpg", "upload/75.jpg", "upload/76.jpg", "upload/77.jpg", "upload/78.jpg", "upload/79.jpg", "upload/80.jpg",
-"upload/81.jpg", "upload/82.jpg", "upload/83.jpg", "upload/84.jpg", "upload/85.jpg", "upload/86.jpg", "upload/87.jpg", "upload/88.jpg", "upload/89.jpg", "upload/90.jpg",
-"upload/91.jpg", "upload/92.jpg", "upload/93.jpg", "upload/94.jpg", "upload/95.jpg", "upload/96.jpg", "upload/97.jpg", "upload/98.jpg", "upload/99.jpg", "upload/100.jpg",
-"upload/101.jpg", "upload/102.jpg", "upload/103.jpg", "upload/104.jpg", "upload/105.jpg", "upload/106.jpg", "upload/107.jpg", "upload/108.jpg", "upload/109.jpg", "upload/110.jpg",
-"upload/111.jpg", "upload/112.jpg", "upload/113.jpg", "upload/114.jpg", "upload/115.jpg", "upload/116.jpg", "upload/117.jpg", "upload/118.jpg", "upload/119.jpg", "upload/120.jpg",
-"upload/121.jpg", "upload/122.jpg", "upload/123.jpg", "upload/124.jpg", "upload/125.jpg", "upload/126.jpg", "upload/127.jpg", "upload/128.jpg", "upload/129.jpg", "upload/130.jpg",
-"upload/131.jpg", "upload/132.jpg", "upload/133.jpg", "upload/134.jpg", "upload/135.jpg", "upload/136.jpg", "upload/137.jpg", "upload/138.jpg", "upload/139.jpg", "upload/140.jpg",
-"upload/141.jpg", "upload/142.jpg", "upload/143.jpg", "upload/144.jpg", "upload/145.jpg", "upload/146.jpg", "upload/147.jpg", "upload/148.jpg", "upload/149.jpg", "upload/150.jpg",
-"upload/151.jpg", "upload/152.jpg", "upload/153.jpg", "upload/154.jpg", "upload/155.jpg", "upload/156.jpg", "upload/157.jpg", "upload/158.jpg", "upload/159.jpg", "upload/160.jpg",
-"upload/161.jpg", "upload/162.jpg", "upload/163.jpg", "upload/164.jpg", "upload/165.jpg", "upload/166.jpg", "upload/167.jpg", "upload/168.jpg", "upload/169.jpg", "upload/170.jpg",
-"upload/171.jpg", "upload/172.jpg", "upload/173.jpg", "upload/174.jpg", "upload/175.jpg", "upload/176.jpg", "upload/177.jpg", "upload/178.jpg", "upload/179.jpg", "upload/180.jpg",
-"upload/181.jpg", "upload/182.jpg", "upload/183.jpg", "upload/184.jpg", "upload/185.jpg", "upload/186.jpg", "upload/187.jpg", "upload/188.jpg", "upload/189.jpg", "upload/190.jpg",
-"upload/191.jpg", "upload/192.jpg", "upload/193.jpg", "upload/194.jpg", "upload/195.jpg", "upload/196.jpg", "upload/197.jpg", "upload/198.jpg", "upload/199.jpg", "upload/200.jpg",
-"upload/201.jpg", "upload/202.jpg", "upload/203.jpg", "upload/204.jpg", "upload/205.jpg", "upload/206.jpg", "upload/207.jpg", "upload/208.jpg", "upload/209.jpg", "upload/210.jpg",
-"upload/211.jpg", "upload/212.jpg", "upload/213.jpg", "upload/214.jpg", "upload/215.jpg", "upload/216.jpg", "upload/217.jpg", "upload/218.jpg", "upload/219.jpg", "upload/220.jpg",
-"upload/221.jpg", "upload/222.jpg", "upload/223.jpg", "upload/224.jpg", "upload/225.jpg", "upload/226.jpg", "upload/227.jpg", "upload/228.jpg", "upload/229.jpg", "upload/230.jpg",
-"upload/231.jpg", "upload/232.jpg", "upload/233.jpg", "upload/234.jpg", "upload/235.jpg", "upload/236.jpg", "upload/237.jpg", "upload/238.jpg", "upload/239.jpg", "upload/240.jpg",
-"upload/241.jpg", "upload/242.jpg", "upload/243.jpg", "upload/244.jpg", "upload/245.jpg", "upload/246.jpg", "upload/247.jpg", "upload/248.jpg", "upload/249.jpg", "upload/250.jpg",
-"upload/251.jpg", "upload/252.jpg", "upload/253.jpg", "upload/254.jpg", "upload/255.jpg", "upload/256.jpg", "upload/257.jpg", "upload/258.jpg", "upload/259.jpg", "upload/260.jpg",
-"upload/261.jpg", "upload/262.jpg", "upload/263.jpg", "upload/264.jpg", "upload/265.jpg", "upload/266.jpg", "upload/267.jpg", "upload/268.jpg", "upload/269.jpg", "upload/270.jpg",
-"upload/271.jpg", "upload/272.jpg", "upload/273.jpg", "upload/274.jpg", "upload/275.jpg", "upload/276.jpg", "upload/277.jpg", "upload/278.jpg", "upload/279.jpg", "upload/280.jpg",
-"upload/281.jpg", "upload/282.jpg", "upload/283.jpg", "upload/284.jpg", "upload/285.jpg", "upload/286.jpg", "upload/287.jpg", "upload/288.jpg", "upload/289.jpg", "upload/290.jpg",
-"upload/291.jpg", "upload/292.jpg", "upload/293.jpg", "upload/294.jpg", "upload/295.jpg", "upload/296.jpg", "upload/297.jpg", "upload/298.jpg", "upload/299.jpg", "upload/300.jpg",
-"upload/301.jpg", "upload/302.jpg", "upload/303.jpg", "upload/304.jpg", "upload/305.jpg", "upload/306.jpg", "upload/307.jpg", "upload/308.jpg", "upload/309.jpg", "upload/310.jpg",
-"upload/311.jpg", "upload/312.jpg", "upload/313.jpg", "upload/314.jpg", "upload/315.jpg", "upload/316.jpg", "upload/317.jpg", "upload/318.jpg", "upload/319.jpg", "upload/320.jpg",
-"upload/321.jpg", "upload/322.jpg", "upload/323.jpg", "upload/324.jpg", "upload/325.jpg", "upload/326.jpg", "upload/327.jpg", "upload/328.jpg",
-];
+         const images = [
+        "upload/1.jpg","upload/2.jpg","upload/3.jpg","upload/4.jpg","upload/5.jpg","upload/6.jpg","upload/7.jpg","upload/8.jpg","upload/9.jpg","upload/10.jpg",
+        "upload/11.jpg","upload/12.jpg","upload/13.jpg","upload/14.jpg","upload/15.jpg","upload/16.jpg","upload/17.jpg","upload/18.jpg","upload/19.jpg","upload/20.jpg",
+        "upload/21.jpg","upload/22.jpg","upload/23.jpg","upload/24.jpg","upload/25.jpg","upload/26.jpg","upload/27.jpg","upload/28.jpg","upload/29.jpg","upload/30.jpg",
+        "upload/31.jpg","upload/32.jpg","upload/33.jpg","upload/34.jpg","upload/35.jpg","upload/36.jpg","upload/37.jpg","upload/38.jpg","upload/39.jpg","upload/40.jpg",
+        "upload/41.jpg","upload/42.jpg","upload/43.jpg","upload/44.jpg","upload/45.jpg","upload/46.jpg","upload/47.jpg","upload/48.jpg","upload/49.jpg","upload/50.jpg",
+        "upload/51.jpg","upload/52.jpg","upload/53.jpg","upload/54.jpg","upload/55.jpg","upload/56.jpg","upload/57.jpg","upload/58.jpg","upload/59.jpg","upload/60.jpg",
+        "upload/61.jpg","upload/62.jpg","upload/63.jpg","upload/64.jpg","upload/65.jpg","upload/66.jpg","upload/67.jpg","upload/68.jpg","upload/69.jpg","upload/70.jpg",
+        "upload/71.jpg","upload/72.jpg","upload/73.jpg","upload/74.jpg","upload/75.jpg","upload/76.jpg","upload/77.jpg","upload/78.jpg","upload/79.jpg","upload/80.jpg",
+        "upload/81.jpg","upload/82.jpg","upload/83.jpg","upload/84.jpg","upload/85.jpg","upload/86.jpg","upload/87.jpg","upload/88.jpg","upload/89.jpg","upload/90.jpg",
+        "upload/91.jpg","upload/92.jpg","upload/93.jpg","upload/94.jpg","upload/95.jpg","upload/96.jpg","upload/97.jpg","upload/98.jpg","upload/99.jpg","upload/100.jpg",
+        "upload/101.jpg","upload/102.jpg","upload/103.jpg","upload/104.jpg","upload/105.jpg","upload/106.jpg","upload/107.jpg","upload/108.jpg","upload/109.jpg","upload/110.jpg",
+        "upload/111.jpg","upload/112.jpg","upload/113.jpg","upload/114.jpg","upload/115.jpg","upload/116.jpg","upload/117.jpg","upload/118.jpg","upload/119.jpg","upload/120.jpg",
+        "upload/121.jpg","upload/122.jpg","upload/123.jpg","upload/124.jpg","upload/125.jpg","upload/126.jpg","upload/127.jpg","upload/128.jpg","upload/129.jpg","upload/130.jpg",
+        "upload/131.jpg","upload/132.jpg","upload/133.jpg","upload/134.jpg","upload/135.jpg","upload/136.jpg","upload/137.jpg","upload/138.jpg","upload/139.jpg","upload/140.jpg",
+        "upload/141.jpg","upload/142.jpg","upload/143.jpg","upload/144.jpg","upload/145.jpg","upload/146.jpg","upload/147.jpg","upload/148.jpg","upload/149.jpg","upload/150.jpg",
+        "upload/151.jpg","upload/152.jpg","upload/153.jpg","upload/154.jpg","upload/155.jpg","upload/156.jpg","upload/157.jpg","upload/158.jpg","upload/159.jpg","upload/160.jpg",
+        "upload/161.jpg","upload/162.jpg","upload/163.jpg","upload/164.jpg","upload/165.jpg","upload/166.jpg","upload/167.jpg","upload/168.jpg","upload/169.jpg","upload/170.jpg",
+        "upload/171.jpg","upload/172.jpg","upload/173.jpg","upload/174.jpg","upload/175.jpg","upload/176.jpg","upload/177.jpg","upload/178.jpg","upload/179.jpg","upload/180.jpg",
+        "upload/181.jpg","upload/182.jpg","upload/183.jpg","upload/184.jpg","upload/185.jpg","upload/186.jpg","upload/187.jpg","upload/188.jpg","upload/189.jpg","upload/190.jpg",
+        "upload/191.jpg","upload/192.jpg","upload/193.jpg","upload/194.jpg","upload/195.jpg","upload/196.jpg","upload/197.jpg","upload/198.jpg","upload/199.jpg","upload/200.jpg",
+        "upload/201.jpg","upload/202.jpg","upload/203.jpg","upload/204.jpg","upload/205.jpg","upload/206.jpg","upload/207.jpg","upload/208.jpg","upload/209.jpg","upload/210.jpg",
+        "upload/211.jpg","upload/212.jpg","upload/213.jpg","upload/214.jpg","upload/215.jpg","upload/216.jpg","upload/217.jpg","upload/218.jpg","upload/219.jpg","upload/220.jpg",
+        "upload/221.jpg","upload/222.jpg","upload/223.jpg","upload/224.jpg","upload/225.jpg","upload/226.jpg","upload/227.jpg","upload/228.jpg","upload/229.jpg","upload/230.jpg",
+        "upload/231.jpg","upload/232.jpg","upload/233.jpg","upload/234.jpg","upload/235.jpg","upload/236.jpg","upload/237.jpg","upload/238.jpg","upload/239.jpg","upload/240.jpg",
+        "upload/241.jpg","upload/242.jpg","upload/243.jpg","upload/244.jpg","upload/245.jpg","upload/246.jpg","upload/247.jpg","upload/248.jpg","upload/249.jpg","upload/250.jpg",
+        "upload/251.jpg","upload/252.jpg","upload/253.jpg","upload/254.jpg","upload/255.jpg","upload/256.jpg","upload/257.jpg","upload/258.jpg","upload/259.jpg","upload/260.jpg",
+        "upload/261.jpg","upload/262.jpg","upload/263.jpg","upload/264.jpg","upload/265.jpg","upload/266.jpg","upload/267.jpg","upload/268.jpg","upload/269.jpg","upload/270.jpg",
+        "upload/271.jpg","upload/272.jpg","upload/273.jpg","upload/274.jpg","upload/275.jpg","upload/276.jpg","upload/277.jpg","upload/278.jpg","upload/279.jpg","upload/280.jpg",
+        "upload/281.jpg","upload/282.jpg","upload/283.jpg","upload/284.jpg","upload/285.jpg","upload/286.jpg","upload/287.jpg","upload/288.jpg","upload/289.jpg","upload/290.jpg",
+        "upload/291.jpg","upload/292.jpg","upload/293.jpg","upload/294.jpg","upload/295.jpg","upload/296.jpg","upload/297.jpg","upload/298.jpg","upload/299.jpg","upload/300.jpg",
+        "upload/301.jpg","upload/302.jpg","upload/303.jpg","upload/304.jpg","upload/305.jpg","upload/306.jpg","upload/307.jpg","upload/308.jpg","upload/309.jpg","upload/310.jpg",
+        "upload/311.jpg","upload/312.jpg","upload/313.jpg","upload/314.jpg","upload/315.jpg","upload/316.jpg","upload/317.jpg","upload/318.jpg","upload/319.jpg","upload/320.jpg",
+        "upload/321.jpg","upload/322.jpg","upload/323.jpg","upload/324.jpg","upload/325.jpg","upload/326.jpg","upload/327.jpg","upload/328.jpg"
+      ];
+
+    // Special Gold Images
+     const goldImages = ["upload/25.jpg", "upload/70.jpg", "upload/104.jpg", "upload/154.jpg", "upload/233.jpg", "upload/245.jpg", "upload/292.jpg"];
 
     let isLoggedIn = false;
     const overlay = document.getElementById("loadingOverlay");
@@ -262,22 +302,44 @@
         btn.href = "#";
         btn.className = "download-button";
         btn.innerHTML = '<i class="fas fa-download"></i> Download';
-        btn.addEventListener("click", e => {
-          e.preventDefault();
-          if (!isLoggedIn) {
-            loginModal.style.display = "flex";
-            return;
-          }
-          const a = document.createElement("a");
-          a.href = src;
-          a.download = src.split("/").pop();
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
 
-        div.appendChild(img);
-        div.appendChild(btn);
+        // Gold image logic
+        // Gold image logic
+        if (goldImages.includes(src.toLowerCase())) {
+          img.classList.add("gold-glow");
+
+          const goldBox = document.createElement("div");
+          goldBox.className = "gold-box";
+          goldBox.innerHTML = `
+            Gold Image - $5 <br><br>
+            <button class="purchase-button">💳 Purchase Now</button>
+          `;
+
+          // Button click → redirect to purchase page
+          goldBox.querySelector(".purchase-button").addEventListener("click", () => {
+            window.location.href = "https://your-purchase-link.com"; // <-- replace with your real purchase link
+          });
+
+          div.appendChild(img);
+          div.appendChild(goldBox);
+        } else {
+          btn.addEventListener("click", e => {
+            e.preventDefault();
+            if (!isLoggedIn) {
+              loginModal.style.display = "flex";
+              return;
+            }
+            const a = document.createElement("a");
+            a.href = src;
+            a.download = src.split("/").pop();
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          });
+          div.appendChild(img);
+          div.appendChild(btn);
+        }
+
         container.appendChild(div);
       });
     }
