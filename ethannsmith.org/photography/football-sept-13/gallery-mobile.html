@@ -190,6 +190,29 @@
       background: #d4af37;
     }
 
+  .photo-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .photo-wrapper img {
+    display: block;
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    white-space: nowrap;
+  }
   </style>
 </head>
 <body>
@@ -290,59 +313,68 @@
     }
 
     function buildList() {
-      const container = document.getElementById("listContainer");
-      images.forEach(src => {
-        const div = document.createElement("div");
-        div.className = "photo-item";
+  const container = document.getElementById("listContainer");
+  images.forEach(src => {
+    const div = document.createElement("div");
+    div.className = "photo-item";
 
-        const img = document.createElement("img");
-        img.src = src;
+    const wrapper = document.createElement("div");
+    wrapper.className = "photo-wrapper";
 
-        const btn = document.createElement("a");
-        btn.href = "#";
-        btn.className = "download-button";
-        btn.innerHTML = '<i class="fas fa-download"></i> Download';
+    const img = document.createElement("img");
+    img.src = src;
 
-        // Gold image logic
-        // Gold image logic
-        if (goldImages.includes(src.toLowerCase())) {
-          img.classList.add("gold-glow");
+    const watermark = document.createElement("div");
+    watermark.className = "watermark";
+    watermark.innerText = "© Ethan Smith";
 
-          const goldBox = document.createElement("div");
-          goldBox.className = "gold-box";
-          goldBox.innerHTML = `
-            Gold Image - $5 <br><br>
-            <button class="purchase-button">💳 Purchase Now</button>
-          `;
+    wrapper.appendChild(img);
+    wrapper.appendChild(watermark);
 
-          // Button click → redirect to purchase page
-          goldBox.querySelector(".purchase-button").addEventListener("click", () => {
-            window.location.href = "https://your-purchase-link.com"; // <-- replace with your real purchase link
-          });
+    if (goldImages.includes(src.toLowerCase())) {
+      img.classList.add("gold-glow");
 
-          div.appendChild(img);
-          div.appendChild(goldBox);
-        } else {
-          btn.addEventListener("click", e => {
-            e.preventDefault();
-            if (!isLoggedIn) {
-              loginModal.style.display = "flex";
-              return;
-            }
-            const a = document.createElement("a");
-            a.href = src;
-            a.download = src.split("/").pop();
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-          });
-          div.appendChild(img);
-          div.appendChild(btn);
-        }
+      const goldBox = document.createElement("div");
+      goldBox.className = "gold-box";
+      goldBox.innerHTML = `
+        Gold Image - $5 <br><br>
+        <button class="purchase-button">💳 Purchase Now</button>
+      `;
 
-        container.appendChild(div);
+      goldBox.querySelector(".purchase-button").addEventListener("click", () => {
+        window.location.href = "https://your-purchase-link.com"; 
       });
+
+      div.appendChild(wrapper);
+      div.appendChild(goldBox);
+    } else {
+      const btn = document.createElement("a");
+      btn.href = "#";
+      btn.className = "download-button";
+      btn.innerHTML = '<i class="fas fa-download"></i> Download';
+
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        if (!isLoggedIn) {
+          loginModal.style.display = "flex";
+          return;
+        }
+        const a = document.createElement("a");
+        a.href = src;
+        a.download = src.split("/").pop();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+
+      div.appendChild(wrapper);
+      div.appendChild(btn);
     }
+
+    container.appendChild(div);
+  });
+}
+
 
     function checkAllLoaded() {
       loadedCount++;
