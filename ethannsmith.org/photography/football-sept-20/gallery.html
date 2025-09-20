@@ -222,6 +222,7 @@ const goldImages = [
   "upload/14.JPG", "upload/20.JPG", "upload/33.JPG", "upload/47.JPG", "upload/62.JPG", "upload/72.JPG", "upload/88.JPG", "upload/99.JPG", "upload/128.JPG", "upload/138.JPG", "upload/183.JPG", "upload/202.JPG", "upload/205.JPG", "upload/212.JPG", 
 ];
 
+  const VALID_USERS = { "linslyFootball25": atob("d2h5bm90eW91MjUyNg==") };
 let currentIndex = 0;
 let isLoggedIn = false;
 
@@ -289,13 +290,13 @@ function handleLogin(){
   const u=document.getElementById("username").value;
   const p=document.getElementById("password").value;
   const err=document.getElementById("loginError");
-  if(u==="cadet" && p==="football"){
-    isLoggedIn=true;
-    document.getElementById("loginModal").style.display="none";
+  if (VALID_USERS[u] && p === VALID_USERS[u]) {
+    isLoggedIn = true;
+    document.getElementById("loginModal").style.display = "none";
     alert("✅ Login successful!");
-  } else {
-    err.innerText="❌ Invalid username or password.";
-  }
+} else {
+    err.innerText = "❌ Invalid username or password.";
+}
 }
 window.handleLogin = handleLogin;
 
