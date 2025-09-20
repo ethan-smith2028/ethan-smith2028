@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>Photo Gallery Slider</title>
+  <script>
+  // Redirect if on mobile
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    window.location.href = "gallery-mobile.html";
+  }
+  </script>
+
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; overflow: hidden; }
+    header { background: #222; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 1.2rem; }
+    header button { background: #444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    header button:hover { background: #666; }
+
+    .viewer.gold-glow {
+  box-shadow: 0 0 25px gold, 0 0 50px gold, 0 0 75px gold;
+  animation: glowPulse 2s infinite alternate;
+}
+
+
+    .viewer-container { display: flex; height: calc(100vh - 150px); }
+    .viewer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; overflow: hidden; }
+    .viewer img { max-height: 95%; max-width: 95%; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.6); user-select: none; pointer-events: none; transition: box-shadow 0.3s ease; }
+
+    .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-weight: bold; color: rgba(255,255,255,0.4); pointer-events: none; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); white-space: nowrap; }
+
+    .arrow { position: absolute; top: 50%; transform: translateY(-50%); font-size: 2rem; color: white; background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 50%; cursor: pointer; z-index: 10; user-select: none; }
+    .arrow:hover { background: rgba(0,0,0,0.7); }
+    .arrow.left { left: 20px; }
+    .arrow.right { right: 20px; }
+
+    .sidebar { width: 280px; background: #fff; padding: 1rem; box-shadow: -2px 0 8px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; }
+    .sidebar img { width: 100%; max-width: 240px; margin-bottom: 1rem; border-radius: 8px; }
+    .purchase-id { margin: 1rem 0; font-weight: bold; font-size: 1rem; color: #333; text-align: center; }
+
+    .download-button { display: block; background: #f48126; color: white; text-align: center; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; text-decoration: none; margin-top: 0.5rem; transition: background 0.3s ease; }
+    .download-button:hover { background: #c25e14; }
+
+    .thumbnail-bar { display: flex; overflow-x: auto; padding: 0.5rem; background: #333; height: 100px; align-items: center; }
+    .thumbnail-bar img { height: 70px; margin: 0 5px; cursor: pointer; border-radius: 6px; transition: transform 0.2s ease, border 0.2s ease; }
+    .thumbnail-bar img:hover { transform: scale(1.1); border: 2px solid #f48126; }
+    .thumbnail-bar img.active { border: 2px solid #f48126; }
+
+    /* Reusable modal styles */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: #fff; padding: 2rem; border-radius: 16px; width: 420px; max-width: 90%; position: relative; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+    .modal-content h2 { margin-bottom: 0.5rem; }
+    .modal-content p { margin: 0.5rem 0; font-size: 0.95rem; }
+    .modal-content button { margin: 0.4rem; padding: 0.6rem 1rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+    .modal-content .primary { background: #f48126; color: #fff; }
+    .modal-content .primary:hover { background: #c25e14; }
+    .modal-content .secondary { background: #ddd; color: #333; }
+    .modal-content .secondary:hover { background: #bbb; }
+
+    .modal-close { position: absolute; top: 10px; right: 15px; font-size: 1.3rem; border: none; background: none; cursor: pointer; color: #444; }
+    .modal-close:hover { color: #000; }
+
+    #loginError { color: red; font-size: 0.9rem; margin-top: 0.5rem; }
+
+    .gold-outline { border: 4px solid gold !important; box-shadow: 0 0 20px gold, 0 0 40px gold; }
+
+   .gold-box { 
+  margin-top: 1rem; 
+  padding: 1rem; 
+  border: 2px solid gold; 
+  border-radius: 12px; 
+  background: #fffbea; 
+  text-align: center; 
+  display: none; 
+  box-shadow: 0 0 20px gold, 0 0 40px gold, 0 0 60px gold; 
+  animation: glowPulse 2s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from {
+    box-shadow: 0 0 15px gold, 0 0 30px gold, 0 0 45px gold;
+  }
+  to {
+    box-shadow: 0 0 25px gold, 0 0 50px gold, 0 0 75px gold;
+  }
+}
+
+#mainImage.gold-glow {
+  border: 4px solid gold;
+  border-radius: 12px;
+  box-shadow: 0 0 25px gold, 0 0 50px gold, 0 0 75px gold;
+  animation: glowPulse 2s infinite alternate;
+}
+
+    .gold-box h3 { color: #b8860b; margin: 0 0 0.5rem; }
+    .gold-box p { margin: 0.3rem 0; font-weight: bold; }
+    .gold-box button { background: gold; border: none; padding: 0.6rem 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    .gold-box button:hover { background: #e6c200; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Linsly Football v. St. Clairsville - Sept. 12</h1>
+    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
+  </header>
+
+  <div class="viewer-container">
+    <div class="viewer">
+      <span class="arrow left" onclick="prevImage()"><i class="fas fa-chevron-left"></i></span>
+      <img id="mainImage" src="" alt="Main Photo" />
+      <div class="watermark">© Ethan Smith</div>
+      <span class="arrow right" onclick="nextImage()"><i class="fas fa-chevron-right"></i></span>
+    </div>
+
+    <aside class="sidebar">
+      <img src="linsly-athletics-banner.png" alt="Banner">
+      <div class="purchase-id" id="purchaseId">Purchase ID: </div>
+      <a href="#" class="download-button" id="downloadBtn"><i class="fas fa-download"></i> Download</a>
+
+      <div class="gold-box" id="goldBox">
+        <h3>🌟 Gold Image</h3>
+        <p>Price: $5</p>
+        <button id="purchaseBtn" onclick="window.location.href='https://tally.so/r/3jNZ9R'">Purchase Now</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="thumbnail-bar" id="thumbnailBar"></div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <button id="closeLoginModal" class="modal-close">✖</button>
+      <h2><i class="fas fa-user-lock"></i> Cadets Login</h2>
+      <p style="font-size:0.8rem; color:#930000;">**Required to Download Images**</p>
+      <input type="text" id="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <button onclick="handleLogin()" class="primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <p id="loginError"></p>
+    </div>
+  </div>
+
+  <!-- Experimental Notice Modal -->
+  <div id="experimentalModal" class="modal">
+    <div class="modal-content">
+      <button id="closeExperimentalModal" class="modal-close">✖</button>
+      <i class="fas fa-flask" style="font-size:2rem; color:#f48126;"></i>
+      <h2>Experimental Page</h2>
+      <p style="font-size:0.9rem; color:#444; margin:1rem 0;">
+        This page is experimental and may contain errors, bugs, or incomplete features.<br>
+        Please be patient and report any issues you encounter.
+      </p>
+      <button id="gotItBtn" class="primary"><i class="fas fa-check-circle"></i> Okay, Got It</button>
+      <button id="reportBtn" class="secondary"><i class="fas fa-bug"></i> Report Issue</button>
+    </div>
+  </div>
+
+    <!-- 🔔 Update Signup Modal -->
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <button id="closeSignupModal" class="modal-close">✖</button>
+      <h2><i class="fas fa-bell"></i> Stay Updated!</h2>
+      <p>Would you like to receive update notifications?</p>
+      <input type="email" id="signupEmail" placeholder="Enter your email" autocomplete="off" style="width:90%;padding:0.5rem;margin:0.5rem 0;" />
+      <button id="signupBtn" class="primary">Sign Up</button>
+      <button id="skipSignupBtn" class="secondary">Not Now</button>
+      <p id="signupError"></p>
+    </div>
+  </div>
+  
+
+<script type="module">
+/* ------------------ Firebase Setup ------------------ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.appspot.com",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f",
+  measurementId: "G-3X5TK2WYBF"
+};
+
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+const db = getFirestore(app);
+
+/* ------------------ Image Viewer ------------------ */
+      const images = [
+"upload/1.JPG", "upload/2.JPG", "upload/3.JPG", "upload/4.JPG", "upload/5.JPG", "upload/6.JPG", "upload/7.JPG", "upload/8.JPG", "upload/9.JPG", "upload/10.JPG",
+"upload/11.JPG", "upload/12.JPG", "upload/13.JPG", "upload/14.JPG", "upload/15.JPG", "upload/16.JPG", "upload/17.JPG", "upload/18.JPG", "upload/19.JPG", "upload/20.JPG",
+"upload/21.JPG", "upload/22.JPG", "upload/23.JPG", "upload/24.JPG", "upload/25.JPG", "upload/26.JPG", "upload/27.JPG", "upload/28.JPG", "upload/29.JPG", "upload/30.JPG",
+"upload/31.JPG", "upload/32.JPG", "upload/33.JPG", "upload/34.JPG", "upload/35.JPG", "upload/36.JPG", "upload/37.JPG", "upload/38.JPG", "upload/39.JPG", "upload/40.JPG",
+"upload/41.JPG", "upload/42.JPG", "upload/43.JPG", "upload/44.JPG", "upload/45.JPG", "upload/46.JPG", "upload/47.JPG", "upload/48.JPG", "upload/49.JPG", "upload/50.JPG",
+"upload/51.JPG", "upload/52.JPG", "upload/53.JPG", "upload/54.JPG", "upload/55.JPG", "upload/56.JPG", "upload/57.JPG", "upload/58.JPG", "upload/59.JPG", "upload/60.JPG",
+"upload/61.JPG", "upload/62.JPG", "upload/63.JPG", "upload/64.JPG", "upload/65.JPG", "upload/66.JPG", "upload/67.JPG", "upload/68.JPG", "upload/69.JPG", "upload/70.JPG",
+"upload/71.JPG", "upload/72.JPG", "upload/73.JPG", "upload/74.JPG", "upload/75.JPG", "upload/76.JPG", "upload/77.JPG", "upload/78.JPG", "upload/79.JPG", "upload/80.JPG",
+"upload/81.JPG", "upload/82.JPG", "upload/83.JPG", "upload/84.JPG", "upload/85.JPG", "upload/86.JPG", "upload/87.JPG", "upload/88.JPG", "upload/89.JPG", "upload/90.JPG",
+"upload/91.JPG", "upload/92.JPG", "upload/93.JPG", "upload/94.JPG", "upload/95.JPG", "upload/96.JPG", "upload/97.JPG", "upload/98.JPG", "upload/99.JPG", "upload/100.JPG",
+"upload/101.JPG", "upload/102.JPG", "upload/103.JPG", "upload/104.JPG", "upload/105.JPG", "upload/106.JPG", "upload/107.JPG", "upload/108.JPG", "upload/109.JPG", "upload/110.JPG",
+"upload/111.JPG", "upload/112.JPG", "upload/113.JPG", "upload/114.JPG", "upload/115.JPG", "upload/116.JPG", "upload/117.JPG", "upload/118.JPG", "upload/119.JPG", "upload/120.JPG",
+"upload/121.JPG", "upload/122.JPG", "upload/123.JPG", "upload/124.JPG", "upload/125.JPG", "upload/126.JPG", "upload/127.JPG", "upload/128.JPG", "upload/129.JPG", "upload/130.JPG",
+"upload/131.JPG", "upload/132.JPG", "upload/133.JPG", "upload/134.JPG", "upload/135.JPG", "upload/136.JPG", "upload/137.JPG", "upload/138.JPG", "upload/139.JPG", "upload/140.JPG",
+"upload/141.JPG", "upload/142.JPG", "upload/143.JPG", "upload/144.JPG", "upload/145.JPG", "upload/146.JPG", "upload/147.JPG", "upload/148.JPG", "upload/149.JPG", "upload/150.JPG",
+"upload/151.JPG", "upload/152.JPG", "upload/153.JPG", "upload/154.JPG", "upload/155.JPG", "upload/156.JPG", "upload/157.JPG", "upload/158.JPG", "upload/159.JPG", "upload/160.JPG",
+"upload/161.JPG", "upload/162.JPG", "upload/163.JPG", "upload/164.JPG", "upload/165.JPG", "upload/166.JPG", "upload/167.JPG", "upload/168.JPG", "upload/169.JPG", "upload/170.JPG",
+"upload/171.JPG", "upload/172.JPG", "upload/173.JPG", "upload/174.JPG", "upload/175.JPG", "upload/176.JPG", "upload/177.JPG", "upload/178.JPG", "upload/179.JPG", "upload/180.JPG",
+"upload/181.JPG", "upload/182.JPG", "upload/183.JPG", "upload/184.JPG", "upload/185.JPG", "upload/186.JPG", "upload/187.JPG", "upload/188.JPG", "upload/189.JPG", "upload/190.JPG",
+"upload/191.JPG", "upload/192.JPG", "upload/193.JPG", "upload/194.JPG", "upload/195.JPG", "upload/196.JPG", "upload/197.JPG", "upload/198.JPG", "upload/199.JPG", "upload/200.JPG",
+"upload/201.JPG", "upload/202.JPG", "upload/203.JPG", "upload/204.JPG", "upload/205.JPG", "upload/206.JPG", "upload/207.JPG", "upload/208.JPG", "upload/209.JPG", "upload/210.JPG",
+"upload/211.JPG", "upload/212.JPG", "upload/213.JPG", "upload/214.JPG", "upload/215.JPG", "upload/216.JPG", "upload/217.JPG", "upload/218.JPG", "upload/219.JPG", "upload/220.JPG",
+"upload/221.JPG", "upload/222.JPG", "upload/223.JPG", "upload/224.JPG"
+      ];
+
+const goldImages = [
+  "upload/14.JPG", "upload/20.JPG", "upload/33.JPG", "upload/47.JPG", "upload/62.JPG", "upload/72.JPG", "upload/88.JPG", "upload/99.JPG", "upload/128.JPG", "upload/138.JPG", "upload/183.JPG", "upload/202.JPG", "upload/205.JPG", "upload/212.JPG", 
+];
+
+let currentIndex = 0;
+let isLoggedIn = false;
+
+const mainImage   = document.getElementById("mainImage");
+const purchaseId  = document.getElementById("purchaseId");
+const thumbnailBar= document.getElementById("thumbnailBar");
+const downloadBtn = document.getElementById("downloadBtn");
+const goldBox     = document.getElementById("goldBox");
+
+function generateStableID(filename){
+  let hash=0;
+  for(let i=0;i<filename.length;i++){
+    hash=(hash<<5)-hash+filename.charCodeAt(i);
+    hash|=0;
+  }
+  return Math.abs(hash).toString().slice(0,6);
+}
+
+function updateViewer(i){
+  currentIndex = (i + images.length) % images.length;
+  const src = images[currentIndex];
+  mainImage.src = src;
+
+  const fn = src.split("/").pop().split(".")[0];
+  purchaseId.innerText = `Purchase ID: ${fn}-${generateStableID(fn)}`;
+
+  document.querySelectorAll(".thumbnail-bar img").forEach((thumb, idx) => {
+    thumb.classList.toggle("active", idx === currentIndex);
+    thumb.classList.toggle("gold-outline", goldImages.includes(images[idx]));
+  });
+
+  if (goldImages.includes(src)) {
+    mainImage.classList.add("gold-glow");
+    goldBox.style.display = "block";
+    downloadBtn.style.display = "none";
+  } else {
+    mainImage.classList.remove("gold-glow");
+    goldBox.style.display = "none";
+    downloadBtn.style.display = "block";
+  }
+}
+
+function initThumbnails(){
+  images.forEach((src,i)=>{
+    const img=document.createElement("img");
+    img.src=src;
+    if (goldImages.includes(src)) img.classList.add("gold-outline");
+    img.addEventListener("click",()=>updateViewer(i));
+    thumbnailBar.appendChild(img);
+  });
+}
+
+/* ---------- Arrow Navigation (FIXED) ---------- */
+function prevImage(){
+  updateViewer(currentIndex - 1);
+}
+function nextImage(){
+  updateViewer(currentIndex + 1);
+}
+window.prevImage = prevImage;
+window.nextImage = nextImage;
+
+/* ------------------ Auth & Modals ------------------ */
+function handleLogin(){
+  const u=document.getElementById("username").value;
+  const p=document.getElementById("password").value;
+  const err=document.getElementById("loginError");
+  if(u==="cadet" && p==="football"){
+    isLoggedIn=true;
+    document.getElementById("loginModal").style.display="none";
+    alert("✅ Login successful!");
+  } else {
+    err.innerText="❌ Invalid username or password.";
+  }
+}
+window.handleLogin = handleLogin;
+
+document.getElementById("closeLoginModal").onclick =
+  ()=>document.getElementById("loginModal").style.display="none";
+document.getElementById("closeExperimentalModal").onclick =
+  ()=>document.getElementById("experimentalModal").style.display="none";
+document.getElementById("reportBtn").onclick =
+  ()=>window.location.href="mailto:ethan@example.com?subject=Bug Report";
+
+/* ------------------ Download Button ------------------ */
+downloadBtn.addEventListener("click",e=>{
+  e.preventDefault();
+  if(!isLoggedIn){
+    document.getElementById("loginModal").style.display="flex";
+  } else {
+    const link=document.createElement("a");
+    link.href=images[currentIndex];
+    link.download=images[currentIndex].split("/").pop();
+    link.click();
+  }
+});
+
+/* ------------------ Signup ------------------ */
+document.getElementById("gotItBtn").onclick=()=>{
+  document.getElementById("experimentalModal").style.display="none";
+  document.getElementById("signupModal").style.display="flex";
+};
+
+async function handleSignup(){
+  const email=document.getElementById("signupEmail").value.trim().toLowerCase();
+  const err=document.getElementById("signupError");
+  err.style.color="red";
+
+  if(!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)){
+    err.innerText="❌ Please enter a valid email.";
+    return;
+  }
+  try{
+    const ref=doc(db,"subscribers",email);
+    const snap=await getDoc(ref);
+    if(snap.exists()){
+      err.innerText="⚠️ This email is already subscribed.";
+    } else {
+      await setDoc(ref,{email,created:Date.now()});
+      err.style.color="green";
+      err.innerText="✅ Subscribed successfully!";
+      setTimeout(()=>document.getElementById("signupModal").style.display="none",1200);
+    }
+  }catch(e){
+    err.innerText="❌ Error: "+e.message;
+  }
+}
+document.getElementById("signupBtn").onclick = handleSignup;
+document.getElementById("skipSignupBtn").onclick =
+  ()=>document.getElementById("signupModal").style.display="none";
+document.getElementById("closeSignupModal").onclick =
+  ()=>document.getElementById("signupModal").style.display="none";
+
+/* ------------------ Page Init ------------------ */
+window.addEventListener("load",()=>{
+  initThumbnails();
+  updateViewer(0);
+  document.getElementById("experimentalModal").style.display="flex";
+});
+</script>
+
+</body>
+</html>
