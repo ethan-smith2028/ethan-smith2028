@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<title>Photo Gallery Slider</title>
+
+<script>
+  // Redirect if on mobile
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    window.location.href = "gallery-mobile.html";
+  }
+</script>
+
+<style>
+/* --- your original styles --- */
+body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; overflow: hidden; }
+header { background: #222; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+header h1 { margin: 0; font-size: 1.1rem; }
+header .header-buttons { display: flex; gap: 0.5rem; }
+header button { background: #444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+header button:hover:not([disabled]) { background: #666; }
+header button[disabled] { background: #2c7a2c; cursor: default; }
+
+.viewer-container { display: flex; height: calc(100vh - 150px); }
+.viewer { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; overflow: hidden; }
+.viewer img { max-height: 95%; max-width: 95%; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.6); user-select: none; pointer-events: none; }
+
+.watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5.5rem; font-weight: bold; color: rgba(255, 255, 255, 0.606); pointer-events: none; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); white-space: nowrap; }
+
+.arrow { position: absolute; top: 50%; transform: translateY(-50%); font-size: 2rem; color: white; background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 50%; cursor: pointer; z-index: 10; }
+.arrow.left { left: 20px; }
+.arrow.right { right: 20px; }
+.arrow:hover { background: rgba(0,0,0,0.7); }
+
+.sidebar { width: 280px; background: #fff; padding: 1rem; box-shadow: -2px 0 8px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
+.sidebar img { width: 100%; max-width: 240px; margin-bottom: 1rem; border-radius: 8px; }
+.purchase-id { margin: 1rem 0; font-weight: bold; font-size: 1rem; color: #333; text-align: center; }
+
+.download-button { display: none; background: #f48126; color: white; text-align: center; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; text-decoration: none; margin-top: 0.5rem; transition: background 0.3s ease; }
+.download-button:hover { background: #c25e14; }
+
+.thumbnail-bar { display: flex; overflow-x: auto; padding: 0.5rem; background: #333; height: 100px; align-items: center; }
+.thumbnail-wrapper { position: relative; margin: 0 5px; display: inline-block; }
+.thumbnail-bar img { height: 70px; border-radius: 6px; cursor: pointer; transition: transform 0.2s ease, border 0.2s ease; }
+.thumbnail-bar img:hover { transform: scale(1.1); border: 2px solid #f48126; }
+.thumbnail-bar img.active { border: 2px solid #f48126; }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; justify-content: center; align-items: center; }
+.modal-content { background: #fff; padding: 2rem; border-radius: 16px; width: 420px; max-width: 90%; position: relative; text-align: center; }
+.modal-content h2 { margin-bottom: 0.5rem; }
+.modal-content p { margin: 0.5rem 0; font-size: 0.95rem; }
+.modal-content button { margin-top: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+.modal-content .primary { background: #f48126; color: #fff; }
+.modal-content .primary:hover { background: #c25e14; }
+.modal-close { position: absolute; top: 10px; right: 15px; font-size: 1.3rem; border: none; background: none; cursor: pointer; color: #444; }
+.modal-close:hover { color: #000; }
+
+.password-wrapper { position: relative; display: flex; align-items: center; margin-top: 0.5rem; }
+.password-wrapper input { width: 100%; padding-right: 2.5rem; }
+.password-wrapper .toggle-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; }
+.password-wrapper .toggle-eye:hover { color: #000; }
+
+.password-rules { text-align:left; font-size:0.85rem; margin-top:0.5rem; list-style:none; padding:0; }
+.password-rules li { margin: 0.3rem 0; }
+.password-rules i { margin-right: 6px; }
+.rule-valid { color: green; }
+.rule-invalid { color: red; }
+
+/* ✨ Sign Up Modal Styling */
+#signupModal .modal-content {
+  background: #fdfdfd;
+  border-radius: 18px;
+  padding: 2rem;
+  max-width: 460px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  text-align: center;
+  animation: slideDown 0.3s ease-out;
+}
+
+#signupModal h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #222;
+}
+
+#signupModal input {
+  width: 100%;
+  padding: 0.8rem 2.5rem 0.8rem 2.5rem;
+  margin-top: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+#signupModal input:focus {
+  border-color: #f48126;
+  box-shadow: 0 0 6px rgba(244,129,38,0.6);
+  outline: none;
+}
+
+/* Wrapper for icon + input */
+.signup-wrapper {
+  position: relative;
+  margin-top: 1rem;
+}
+.signup-wrapper i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #888;
+}
+.signup-wrapper input {
+  padding-left: 2.2rem;
+}
+
+/* Password rules list */
+#passwordRules {
+  text-align: left;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+#passwordRules li {
+  margin: 0.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #a33;
+}
+#passwordRules li.valid {
+  color: #2c7a2c;
+}
+#passwordRules li i {
+  width: 18px;
+  text-align: center;
+}
+
+/* Sign up button */
+#signupModal button.primary {
+  margin-top: 1.2rem;
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#f48126,#d46616);
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.25s ease;
+}
+#signupModal button.primary:hover {
+  background: linear-gradient(135deg,#d46616,#b44f12);
+  transform: scale(1.03);
+}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Linsly Football v. Barnesville - Sept. 20</h1>
+  <div class="header-buttons">
+    <button onclick="location.href='../index.html'">⬅ Back to Home</button>
+    <button id="signInBtn" onclick="openLoginModal()">Sign In</button>
+    <button onclick="openSignupModal()"><i class="fas fa-user-plus"></i> Sign Up</button>
+    <button id="buyIdBtn" onclick="window.location.href='https://tally.so/r/w5RVOv'">💳 Buy ID</button>
+  </div>
+</header>
+
+<div class="viewer-container">
+  <div class="viewer">
+    <span class="arrow left" onclick="prevImage()"><i class="fas fa-chevron-left"></i></span>
+    <img id="mainImage" src="" alt="Main Photo" />
+    <div class="watermark" id="watermark">© Ethan Smith</div>
+    <span class="arrow right" onclick="nextImage()"><i class="fas fa-chevron-right"></i></span>
+  </div>
+  <aside class="sidebar">
+    <img src="linsly-athletics-banner.png" alt="Banner">
+    <div class="purchase-id" id="purchaseId">Purchase ID: </div>
+    <a href="#" class="download-button" id="downloadBtn"><i class="fas fa-download"></i> Download</a>
+  </aside>
+</div>
+
+<div class="thumbnail-bar" id="thumbnailBar"></div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <button id="closeLoginModal" class="modal-close">✖</button>
+    <h2><i class="fas fa-user-lock"></i> Cadets Login</h2>
+    <input type="text" id="username" placeholder="Email" autocomplete="off" />
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      <i class="fas fa-eye toggle-eye" id="togglePassword"></i>
+    </div>
+    <button onclick="handleLogin()" class="primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+</div>
+
+<!-- Sign Up Modal -->
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="document.getElementById('signupModal').style.display='none'">✖</button>
+    <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+    <input type="email" id="signupEmail" placeholder="Email" autocomplete="off" />
+    <input type="text" id="signupAuth" placeholder="Authentication (e.g. Student ID)" autocomplete="off" />
+    <div class="password-wrapper">
+      <input type="password" id="signupPassword" placeholder="Password" autocomplete="off" />
+      <i class="fas fa-eye toggle-eye" onclick="toggleVisibility('signupPassword', this)"></i>
+    </div>
+    <div class="password-wrapper">
+      <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" autocomplete="off" />
+      <i class="fas fa-eye toggle-eye" onclick="toggleVisibility('signupConfirmPassword', this)"></i>
+    </div>
+    <ul class="password-rules">
+      <li id="ruleLength"><i class="fas fa-times-circle rule-invalid"></i> At least 6 characters</li>
+      <li id="ruleUnique"><i class="fas fa-times-circle rule-invalid"></i> At least 1 special character</li>
+      <li id="ruleNumber"><i class="fas fa-times-circle rule-invalid"></i> At least 1 number</li>
+    </ul>
+    <button onclick="handleSignup()" class="primary"><i class="fas fa-user-check"></i> Sign Up</button>
+    <p id="signupError" style="color:red;"></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.appspot.com",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+let isLoggedIn = false;
+
+/* toggle password field visibility */
+function toggleVisibility(id, el){
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+  el.classList.toggle("fa-eye");
+  el.classList.toggle("fa-eye-slash");
+}
+window.toggleVisibility = toggleVisibility;
+
+function openSignupModal(){ document.getElementById("signupModal").style.display="flex"; }
+window.openSignupModal = openSignupModal;
+
+function openLoginModal(){ if (!isLoggedIn) document.getElementById("loginModal").style.display="flex"; }
+window.openLoginModal = openLoginModal;
+
+document.getElementById("closeLoginModal").onclick = ()=>document.getElementById("loginModal").style.display="none";
+
+/* live password rules */
+const passInput = document.getElementById("signupPassword");
+passInput?.addEventListener("input", () => {
+  const val = passInput.value;
+  updateRule("ruleLength", val.length >= 6);
+  updateRule("ruleUnique", /[^A-Za-z0-9]/.test(val));
+  updateRule("ruleNumber", /\d/.test(val));
+});
+function updateRule(id, valid){
+  const el = document.getElementById(id);
+  const icon = el.querySelector("i");
+  if(valid){
+    icon.className = "fas fa-check-circle rule-valid";
+  } else {
+    icon.className = "fas fa-times-circle rule-invalid";
+  }
+}
+
+/* signup */
+async function handleSignup(){
+  const email = document.getElementById("signupEmail").value.trim();
+  const auth  = document.getElementById("signupAuth").value.trim();
+  const pass  = document.getElementById("signupPassword").value.trim();
+  const pass2 = document.getElementById("signupConfirmPassword").value.trim();
+  const error = document.getElementById("signupError");
+
+  if(!email || !auth || !pass){ error.textContent = "All fields required."; return; }
+  if(pass !== pass2){ error.textContent = "Passwords do not match."; return; }
+  if(pass.length < 6 || !/\d/.test(pass) || !/[^A-Za-z0-9]/.test(pass)){ error.textContent = "Password does not meet requirements."; return; }
+
+  try {
+    await setDoc(doc(db, "accounts", email), {
+      email, auth, password: pass,
+      approvalStatus: "pending",
+      createdAt: Date.now()
+    });
+    error.style.color = "green";
+    error.textContent = "Account created ✅ awaiting admin approval.";
+  } catch (e) {
+    console.error(e);
+    error.textContent = "Error creating account.";
+  }
+}
+window.handleSignup = handleSignup;
+
+
+
+/* login */
+async function handleLogin(){
+  const u=document.getElementById("username").value.trim();
+  const p=document.getElementById("password").value.trim();
+  const err=document.getElementById("loginError");
+
+  try {
+    const docRef = doc(db, "accounts", u);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()){ err.textContent="❌ Invalid email or password."; return; }
+    const data = snap.data();
+    if(data.password !== p){ err.textContent="❌ Invalid email or password."; return; }
+    if(data.approvalStatus !== "approved"){ err.textContent="⚠️ Account not yet approved."; return; }
+
+    isLoggedIn = true;
+    document.getElementById("loginModal").style.display="none";
+    document.getElementById("signInBtn").textContent = "Signed In ✅";
+    document.getElementById("signInBtn").disabled = true;
+    document.getElementById("watermark").style.display="none";
+    updateViewer(currentIndex);
+  } catch (e) {
+    console.error(e);
+    err.textContent="⚠️ Login failed.";
+  }
+}
+window.handleLogin = handleLogin;
+
+/* gallery functions */
+const allImages = [
+  "upload/1.jpg", "upload/2.jpg", "upload/3.jpg", "upload/4.jpg", "upload/5.jpg", 
+  "upload/6.jpg", "upload/7.jpg", "upload/8.jpg", "upload/9.jpg", "upload/10.jpg",
+  "upload/11.jpg", "upload/12.jpg", "upload/13.jpg", "upload/14.jpg", "upload/15.jpg", 
+  "upload/16.jpg", "upload/17.jpg", "upload/18.jpg", "upload/19.jpg", "upload/20.jpg",
+  "upload/21.jpg", "upload/22.jpg", "upload/23.jpg", "upload/24.jpg", "upload/25.jpg", 
+  "upload/26.jpg", "upload/27.jpg", "upload/28.jpg", "upload/29.jpg", "upload/30.jpg",
+  "upload/31.jpg", "upload/32.jpg", "upload/33.jpg", "upload/34.jpg", "upload/35.jpg", 
+  "upload/36.jpg", "upload/37.jpg", "upload/38.jpg", "upload/39.jpg", "upload/40.jpg",
+  "upload/41.jpg", "upload/42.jpg", "upload/43.jpg", "upload/44.jpg", "upload/45.jpg", 
+  "upload/46.jpg", "upload/47.jpg", "upload/48.jpg", "upload/49.jpg", "upload/50.jpg",
+  "upload/51.jpg", "upload/52.jpg", "upload/53.jpg", "upload/54.jpg", "upload/55.jpg", 
+  "upload/56.jpg", "upload/57.jpg", "upload/58.jpg", "upload/59.jpg", "upload/60.jpg",
+  "upload/61.jpg", "upload/62.jpg", "upload/63.jpg", "upload/64.jpg", "upload/65.jpg", 
+  "upload/66.jpg", "upload/67.jpg", "upload/68.jpg", "upload/69.jpg", "upload/70.jpg",
+  "upload/71.jpg", "upload/72.jpg", "upload/73.jpg", "upload/74.jpg", "upload/75.jpg", 
+  "upload/76.jpg", "upload/77.jpg", "upload/78.jpg", "upload/79.jpg", "upload/80.jpg",
+  "upload/81.jpg", "upload/82.jpg", "upload/83.jpg", "upload/84.jpg", "upload/85.jpg", 
+  "upload/86.jpg", "upload/87.jpg", "upload/88.jpg", "upload/89.jpg", "upload/90.jpg",
+  "upload/91.jpg", "upload/92.jpg", "upload/93.jpg", "upload/94.jpg", "upload/95.jpg", 
+  "upload/96.jpg", "upload/97.jpg", "upload/98.jpg", "upload/99.jpg", "upload/100.jpg",
+  "upload/101.jpg", "upload/102.jpg", "upload/103.jpg", "upload/104.jpg", "upload/105.jpg", 
+  "upload/106.jpg", "upload/107.jpg", "upload/108.jpg", "upload/109.jpg", "upload/110.jpg",
+  "upload/111.jpg", "upload/112.jpg", "upload/113.jpg", "upload/114.jpg", "upload/115.jpg", 
+  "upload/116.jpg", "upload/117.jpg", "upload/118.jpg", "upload/119.jpg", "upload/120.jpg",
+  "upload/121.jpg", "upload/122.jpg", "upload/123.jpg", "upload/124.jpg", "upload/125.jpg", 
+  "upload/126.jpg", "upload/127.jpg", "upload/128.jpg", "upload/129.jpg", "upload/130.jpg",
+  "upload/131.jpg", "upload/132.jpg", "upload/133.jpg", "upload/134.jpg", "upload/135.jpg", 
+  "upload/136.jpg", "upload/137.jpg", "upload/138.jpg", "upload/139.jpg", "upload/140.jpg",
+  "upload/141.jpg", "upload/142.jpg", "upload/143.jpg", "upload/144.jpg", "upload/145.jpg", 
+  "upload/146.jpg", "upload/147.jpg", "upload/148.jpg", "upload/149.jpg", "upload/150.jpg",
+  "upload/151.jpg", "upload/152.jpg", "upload/153.jpg", "upload/154.jpg", "upload/155.jpg", 
+  "upload/156.jpg", "upload/157.jpg", "upload/158.jpg", "upload/159.jpg", "upload/160.jpg",
+  "upload/161.jpg", "upload/162.jpg", "upload/163.jpg", "upload/164.jpg", "upload/165.jpg", 
+  "upload/166.jpg", "upload/167.jpg", "upload/168.jpg", "upload/169.jpg", "upload/170.jpg",
+  "upload/171.jpg", "upload/172.jpg", "upload/173.jpg", "upload/174.jpg", "upload/175.jpg", 
+  "upload/176.jpg", "upload/177.jpg"
+];
+let currentIndex=0;
+const mainImage=document.getElementById("mainImage");
+const purchaseId=document.getElementById("purchaseId");
+const downloadBtn=document.getElementById("downloadBtn");
+const thumbnailBar=document.getElementById("thumbnailBar");
+
+function generateStableID(filename){
+  let hash=0; for(let i=0;i<filename.length;i++){ hash=(hash<<5)-hash+filename.charCodeAt(i); hash|=0; }
+  return Math.abs(hash).toString().slice(0,6);
+}
+function updateViewer(i){
+  currentIndex=(i+allImages.length)%allImages.length;
+  const src=allImages[currentIndex];
+  mainImage.src=src;
+  const fn=src.split("/").pop().split(".")[0];
+  purchaseId.innerText=`Purchase ID: ${fn}-${generateStableID(fn)}`;
+  downloadBtn.style.display=isLoggedIn?"block":"none";
+  document.querySelectorAll(".thumbnail-bar img").forEach((thumb, idx)=>
+    thumb.classList.toggle("active", idx===currentIndex)
+  );
+}
+function initThumbnails(){
+  thumbnailBar.innerHTML="";
+  allImages.forEach((src,i)=>{
+    const wrap=document.createElement("div");
+    wrap.className="thumbnail-wrapper";
+    const img=document.createElement("img");
+    img.src=src;
+    img.addEventListener("click",()=>updateViewer(i));
+    wrap.appendChild(img);
+    thumbnailBar.appendChild(wrap);
+  });
+}
+function prevImage(){ updateViewer(currentIndex-1); }
+function nextImage(){ updateViewer(currentIndex+1); }
+window.prevImage=prevImage; window.nextImage=nextImage;
+
+downloadBtn.addEventListener("click",e=>{
+  e.preventDefault();
+  if(isLoggedIn){
+    const link=document.createElement("a");
+    link.href=allImages[currentIndex];
+    link.download=allImages[currentIndex].split("/").pop();
+    link.click();
+  } else {
+    openLoginModal();
+  }
+});
+
+window.addEventListener("load",()=>{ initThumbnails(); updateViewer(0); });
+</script>
+</body>
+</html>
