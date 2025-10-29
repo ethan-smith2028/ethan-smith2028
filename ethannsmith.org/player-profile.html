@@ -38,7 +38,7 @@
     <div class="profile-container">
         <div class="profile-header">
             <div class="profile-picture">
-                <img src="pics/010290DA-4B18-4D59-B554-DB8A28B793D5_1_105_c.jpeg" alt="Player Image">
+                <img src="pics/2024-11-23 Vancouver Rangers-110.jpg" alt="Player Image">
             </div>
             <div class="player-info">
                 <h1>Ethan Smith</h1>
@@ -180,6 +180,7 @@
     };
 
     const updateStats = (seasonStats, careerStats) => {
+      // Career totals
       document.getElementById('GamesPlayed').innerText = careerStats.gamesPlayed;
       document.getElementById('wins').innerText = careerStats.wins;
       document.getElementById('loss').innerText = careerStats.losses;
@@ -187,11 +188,23 @@
       document.getElementById('gaa1').innerText = calculateGAA(careerStats.goalsAgainst, careerStats.gamesPlayed);
       document.getElementById('sv%1').innerText = calculateSavePercentage(careerStats.shotsAgainst, careerStats.goalsAgainst);
 
+      // Season totals
       document.getElementById('GamesPlayed-season').innerText = seasonStats.gamesPlayed;
       document.getElementById('wins-season').innerText = seasonStats.wins;
       document.getElementById('loss-season').innerText = seasonStats.losses;
       document.getElementById('gaa').innerText = calculateGAA(seasonStats.goalsAgainst, seasonStats.gamesPlayed);
       document.getElementById('sv%').innerText = calculateSavePercentage(seasonStats.shotsAgainst, seasonStats.goalsAgainst);
+    };
+
+    // ===== Base Career Totals BEFORE 2025–26 =====
+    // (Manually edit these numbers for past career data)
+    const baseCareerStats = {
+      gamesPlayed: 27,
+      wins: 17,
+      losses: 10,
+      shutouts: 1,
+      shotsAgainst: 555,
+      goalsAgainst: 54
     };
 
     // ===== Load Game Data =====
@@ -202,14 +215,14 @@
 
         querySnapshot.forEach((doc) => games.push(doc.data()));
 
-        // Sort games (newest first)
+        // Sort newest first
         games.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         const tableBody = document.getElementById('game-log-body');
         const previousGameContainer = document.getElementById('previousGameDetails');
 
         let seasonStats = { gamesPlayed: 0, wins: 0, losses: 0, shutouts: 0, shotsAgainst: 0, goalsAgainst: 0 };
-        let careerStats = { ...seasonStats };
+        let careerStats = { ...baseCareerStats };
 
         // ===== Previous Game Card =====
         const latestGame = games[0];
@@ -270,21 +283,23 @@
           `;
           tableBody.appendChild(row);
 
-          // Aggregate stats
+          // Aggregate season stats
           seasonStats.gamesPlayed++;
           if (game.decision === "W") seasonStats.wins++;
           if (game.decision === "L") seasonStats.losses++;
           seasonStats.shotsAgainst += game.shotsAgainst;
           seasonStats.goalsAgainst += game.goalsAgainst;
-
-          careerStats.gamesPlayed++;
-          careerStats.wins = seasonStats.wins;
-          careerStats.losses = seasonStats.losses;
-          careerStats.shotsAgainst = seasonStats.shotsAgainst;
-          careerStats.goalsAgainst = seasonStats.goalsAgainst;
         });
 
-        // ===== Update Totals =====
+        // ===== Combine Season + Career Totals =====
+        careerStats.gamesPlayed = baseCareerStats.gamesPlayed + seasonStats.gamesPlayed;
+        careerStats.wins = baseCareerStats.wins + seasonStats.wins;
+        careerStats.losses = baseCareerStats.losses + seasonStats.losses;
+        careerStats.shutouts = baseCareerStats.shutouts + seasonStats.shutouts;
+        careerStats.shotsAgainst = baseCareerStats.shotsAgainst + seasonStats.shotsAgainst;
+        careerStats.goalsAgainst = baseCareerStats.goalsAgainst + seasonStats.goalsAgainst;
+
+        // ===== Update Totals on Page =====
         updateStats(seasonStats, careerStats);
       } catch (error) {
         console.error("Error loading games:", error);
@@ -294,6 +309,7 @@
     loadGameLog();
   });
 </script>
+
 
 
 
