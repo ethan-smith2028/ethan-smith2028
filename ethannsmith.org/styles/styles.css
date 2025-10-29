@@ -813,39 +813,77 @@ table td {
 }
 
 
+/* ======= GAME LOG + PREVIOUS GAME LAYOUT ======= */
+.game-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Game log table takes more width */
+.game-log {
+  flex: 3;
+}
+
+/* Previous game card beside it */
 .previous-game {
-    margin: 30px 0;
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1.5;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-light);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--shadow-light);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 300px;
 }
 
-.previous-game-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+.previous-game:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
 }
 
-.video-container {
-    flex: 1 1 45%;
-    max-width: 100%;
+/* Matchup layout inside previous game card */
+.previous-game .matchup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 10px;
 }
 
-.video-container video {
+.previous-game .team {
+  text-align: center;
+}
+
+.previous-game .team-logo {
+  width: 60px;
+  height: auto;
+  margin: 6px 0;
+}
+
+.previous-game h4 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  color: var(--accent-color);
+}
+
+.previous-game p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 4px 0;
+}
+
+@media (max-width: 900px) {
+  .game-section {
+    flex-direction: column;
+  }
+
+  .previous-game {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
 }
-
-#previousGameDetails {
-    flex: 1 1 45%;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-}
-
-#previousGameDetails p {
-    margin: 5px 0;
-}
-
