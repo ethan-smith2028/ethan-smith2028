@@ -1,202 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peak Frame Photography</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beyond the Lens</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2525125129404364"
-     crossorigin="anonymous"></script>
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CGT8KVV8YF');
-    </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+html, body { background: #0b0b0b; color: #f2f2f2; overflow-x: hidden; scroll-behavior: smooth; }
 
-    /* Header */
-    header {
-      background: linear-gradient(135deg, #1f1f1f, #3c3c3c);
-      color: #fff;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    header h1 {
-      font-size: 1.8rem;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    nav button {
-      background: #555;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      margin-left: 0.8rem;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
-    }
-    nav button:hover {
-      background: #037bff;
-      transform: translateY(-2px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
+:root {
+  --accent: #f48126;
+  --accent-light: #ffa75a;
+  --dark: #121212;
+  --darker: #0b0b0b;
+  --light: #f5f5f5;
+  --gray: #888;
+}
 
-    /* Homepage Folders */
-    .folders {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-      gap: 2rem;
-      padding: 3rem 2rem;
-    }
-    .folder {
-      background: linear-gradient(135deg, #1f1f1f, #3c3c3c);
-      padding: 2.5rem 1.5rem;
-      border-radius: 15px;
-      text-align: center;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .folder:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .folder-icon-van {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #FFD700;
-    }
-    .folder-icon-sea {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #e6dec4;
-    }
-    .folder-icon-linsly {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #dd6b12;
-    }
-    .folder-icon-vball {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #fff;
-    }
-    .folder-icon-soccer {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #ffff19;
-    }
-    .folder-icon-football {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      color: #ab8a75;
-    }
-    .folder h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: white;
-    }
-    .folder button {
-      margin-top: 1rem;
-      background: white;
-      color: #333;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
-    .folder button:hover {
-      background: #666;
-      transform: scale(1.05);
-    }
+header {
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+}
+header h1 { font-size: 1.9rem; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+#userWelcome { color: var(--accent-light); font-size: 1rem; margin-right: 1rem; }
+nav { display: flex; gap: 0.8rem; align-items: center; }
+nav button {
+  background: transparent;
+  border: 1px solid #333;
+  color: var(--light);
+  padding: 0.55rem 1.3rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+nav button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(244,129,38,0.4);
+  transform: translateY(-2px);
+}
 
-    /* Responsive improvements */
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      nav button {
-        margin: 0.5rem 0 0 0;
-      }
-    }
-  </style>
+.hero { text-align: center; padding: 5rem 1rem 3rem; }
+.hero h2 { font-size: 2.3rem; color: var(--accent-light); margin-bottom: 1rem; animation: fadeIn 1s ease forwards; }
+.hero p { color: #ccc; max-width: 700px; margin: auto; font-size: 1.05rem; line-height: 1.6; }
+
+.folders {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 3rem 2rem 5rem;
+}
+.folder {
+  background: linear-gradient(145deg, #1a1a1a, #222);
+  padding: 2rem;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.folder:hover { transform: translateY(-8px); }
+.folder i { font-size: 3.2rem; margin-bottom: 1rem; color: var(--accent); }
+.folder h3 { font-size: 1.1rem; margin-bottom: 0.7rem; color: #fff; }
+.folder button {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 0.7rem 1.3rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+.folder button:hover { background: var(--accent-light); transform: scale(1.05); }
+
+.modal, .auth-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modal-content, .auth-content {
+  background: #161616;
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 15px;
+  text-align: center;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+.auth-content input {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.7rem;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #222;
+  color: white;
+  font-size: 0.95rem;
+}
+.auth-content .switch {
+  margin-top: 1rem;
+  color: #aaa;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.auth-content .switch:hover { color: var(--accent-light); }
+
+@media (max-width: 600px) {
+  header { flex-direction: column; align-items: flex-start; }
+  nav { flex-wrap: wrap; }
+  .folder { padding: 1.5rem; }
+}
+
+/* ===== Modal Buttons ===== */
+.modal-content button,
+.auth-content button {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  margin-top: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 260px;
+}
+
+.modal-content button:hover,
+.auth-content button:hover {
+  background: var(--accent-light);
+  box-shadow: 0 0 15px rgba(244, 129, 38, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Special styling for view/login choice buttons in the access modal */
+.modal-content .view-btn {
+  background: #333;
+  border: 1px solid #444;
+  color: #fff;
+}
+
+.modal-content .view-btn:hover {
+  background: #444;
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+/* Login button (primary) */
+.modal-content .login-btn {
+  background: var(--accent);
+}
+
+.modal-content .login-btn:hover {
+  background: var(--accent-light);
+}
+
+/* Error text styling inside modals */
+#loginError,
+#authError {
+  font-size: 0.9rem;
+  color: #f55;
+  margin-top: 0.8rem;
+}
+
+</style>
 </head>
+
 <body>
+<header>
+  <h1>Beyond the Lens</h1>
+  <nav>
+    <span id="userWelcome"></span>
+    <button onclick="scrollToHome()">Home</button>
+    <button onclick="location.href='https://tally.so/r/31e5ob'">Book Now</button>
+    <button onclick="location.href='https://tally.so/r/wzkY9R'">Purchase Photos</button>
+    <button id="authButton" onclick="openAuthModal('signup')">Sign Up</button>
+  </nav>
+</header>
 
-  <!-- Header -->
-  <header>
-    <h1>Peak Frame Photography</h1>
-    <nav>
-      <button onclick="goHome()">Home</button>
-      <button onclick="location.href='https://tally.so/r/31e5ob'">Book Now</button>
-      <button onclick="location.href='https://tally.so/r/wzkY9R'">Purchase Photos</button>
-    </nav>
-  </header>
+<section class="hero">
+  <h2>Capturing Every Moment, Frame by Frame</h2>
+  <p>Browse through our galleries, view moments, and log in to download your high-quality shots. Once you’re logged in, enjoy full access across all folders.</p>
+</section>
 
-  <!-- Homepage Folders -->
-  <section class="folders" id="folderSection">
-    <div class="folder">
-      <div class="folder-icon-football"><i class="fa-solid fa-football"></i></div>
-      <h3>Linsly Football vs. Steubenville - Sept. 20</h3>
-      <button onclick="location.href='football-sept-20/gallery.html'">Open</button>
-    </div>
-    <div class="folder">
-      <div class="folder-icon-vball"><i class="fa-solid fa-volleyball"></i></div>
-      <h3>Linsly Volleyball vs. Weir - Sept. 19</h3>
-      <button onclick="location.href='vball-sept-19/gallery.html'">Open</button>
-    </div>
-    <div class="folder">
-      <div class="folder-icon-football"><i class="fa-solid fa-football"></i></div>
-      <h3>Linsly Football vs. New Philadelphia - Sept. 26</h3>
-      <button onclick="location.href='football-sept-27/gallery.html'">Open</button>
-    </div>
-    <div class="folder">
-      <div class="folder-icon-football"><i class="fa-solid fa-football"></i></div>
-      <h3>Linsly Football Pregame - Sept. 20</h3>
-      <button onclick="location.href='football-pregame-sept-20/gallery.html'">Open</button>
-    </div>
-    <div class="folder">
-    <div class="folder-icon-soccer"><i class="fa-solid fa-futbol"></i></div>
-      <h3>Linsly Boys Soccer Ovacs</h3>
-      <button onclick="location.href='boys-ovacs/gallery.html'">Open</button>
-    </div>
-        <div class="folder">
-    <div class="folder-icon-football"><i class="fa-solid fa-football"></i></div>
-      <h3>Linsly Football vs. Barnseville - Oct. 10</h3>
-      <button onclick="location.href='football-oct-10/gallery.html'">Open</button>
-    </div>
-  </section>
+<section class="folders" id="folderSection">
+  <div class="folder">
+    <i class="fa-solid fa-football"></i>
+    <h3>Linsly Boys Football vs. South Parkersburg - Oct. 24</h3>
+    <button onclick="handleFolderAccess('https://drive.google.com/drive/folders/1vNCtHq_E8aq-oH99jbiSebAleSCsv8Ym?usp=sharing', 'https://drive.google.com/drive/folders/1sjI54DZGCwX4oI3wv0naQHAzq4mRwLXI?usp=sharing')">Open</button>
+  </div>
+</section>
 
-  <script>
-    function goHome() {
-      document.getElementById("folderSection").scrollIntoView({ behavior: "smooth" });
+<div class="modal" id="accessModal">
+  <div class="modal-content">
+    <h2>Choose Access</h2>
+    <p>View the gallery or log in to download full-resolution photos.</p>
+    <button class="view-btn" id="viewBtn">👀 View Only</button>
+    <button class="login-btn" id="loginBtn">🔒 Login to Download</button>
+    <p id="loginError" style="color:#f55; margin-top:1rem;"></p>
+  </div>
+</div>
+
+<div class="auth-modal" id="authModal">
+  <div class="auth-content">
+    <h2 id="authTitle">Create Account</h2>
+    <input type="text" id="authName" placeholder="Full Name" style="display:none;" />
+    <input type="email" id="authEmail" placeholder="Email" />
+    <input type="password" id="authPassword" placeholder="Password" />
+    <button id="authSubmit">Sign Up</button>
+    <p class="switch" id="switchAuth">Already have an account? Log in</p>
+    <p id="authError" style="color:#f55; margin-top:0.5rem;"></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.appspot.com",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f",
+  measurementId: "G-3X5TK2WYBF"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let currentViewLink = "";
+let currentDownloadLink = "";
+let loggedIn = false;
+
+// ---------- HANDLE FOLDER ACCESS ----------
+window.handleFolderAccess = function(viewLink, downloadLink) {
+  currentViewLink = viewLink;
+  currentDownloadLink = downloadLink;
+  if(loggedIn) window.location.href = downloadLink;
+  else document.getElementById("accessModal").style.display = "flex";
+};
+
+// ---------- MODAL BUTTONS ----------
+document.getElementById("viewBtn").addEventListener("click", () => window.location.href = currentViewLink);
+document.getElementById("loginBtn").addEventListener("click", () => {
+  document.getElementById("accessModal").style.display = "none";
+  openAuthModal("login");
+});
+
+// ---------- AUTH MODAL ----------
+let authMode = "signup";
+const authModal = document.getElementById("authModal");
+const authTitle = document.getElementById("authTitle");
+const authSubmit = document.getElementById("authSubmit");
+const switchAuth = document.getElementById("switchAuth");
+const authError = document.getElementById("authError");
+const nameInput = document.getElementById("authName");
+
+window.openAuthModal = function(mode) {
+  authMode = mode;
+  authModal.style.display = "flex";
+  nameInput.style.display = mode==="signup"?"block":"none";
+  authTitle.textContent = mode==="signup"?"Create Account":"Welcome Back";
+  authSubmit.textContent = mode==="signup"?"Sign Up":"Log In";
+  switchAuth.textContent = mode==="signup"?"Already have an account? Log in":"Need an account? Sign up";
+};
+
+switchAuth.addEventListener("click", ()=>openAuthModal(authMode==="signup"?"login":"signup"));
+
+authSubmit.addEventListener("click", async () => {
+  const name = nameInput.value.trim();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  authError.textContent = "";
+  if (!email || !password || (authMode === "signup" && !name)) {
+    authError.textContent = "Please fill in all fields.";
+    return;
+  }
+
+  try {
+    if (authMode === "signup") {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
     }
+    authModal.style.display = "none";
+  } catch (error) {
+    // Map Firebase error codes to friendly messages
+    const errorMessages = {
+      "auth/email-already-in-use": "This email is already registered. Please log in.",
+      "auth/invalid-email": "The email address is not valid.",
+      "auth/weak-password": "Password should be at least 6 characters.",
+      "auth/user-not-found": "No account found with this email.",
+      "auth/wrong-password": "Incorrect password. Please try again.",
+      "auth/too-many-requests": "Too many attempts. Please try again later."
+    };
 
-    // Example: Automatically give each photo in a gallery page a unique ID
-    // This script is meant to be reused inside gallery pages
-    function assignPhotoIDs() {
-      const photos = document.querySelectorAll('.gallery img');
-      photos.forEach((photo, index) => {
-        photo.id = `photo-${index + 1}`;
-      });
-    }
-  </script>
+    const friendlyMessage = errorMessages[error.code] || "Something went wrong. Please try again.";
+    authError.textContent = friendlyMessage;
+  }
+});
 
+
+// ---------- AUTH STATE ----------
+onAuthStateChanged(auth,(user)=>{
+  const userWelcome = document.getElementById("userWelcome");
+  const authButton = document.getElementById("authButton");
+  loggedIn = !!user;
+
+  if(loggedIn){
+    userWelcome.textContent=`Welcome, ${user.displayName||"User"}!`;
+    authButton.textContent="Log Out";
+    authButton.onclick = ()=>signOut(auth);
+  } else {
+    userWelcome.textContent="";
+    authButton.textContent="Sign Up";
+    authButton.onclick = ()=>openAuthModal("signup");
+  }
+});
+
+// ---------- CLOSE MODALS ON OUTSIDE CLICK ----------
+window.addEventListener("click", (e)=>{
+  const accessModal = document.getElementById("accessModal");
+  if(e.target===accessModal) accessModal.style.display="none";
+  if(e.target===authModal) authModal.style.display="none";
+});
+
+// ---------- SCROLL ----------
+window.scrollToHome = ()=>document.getElementById("folderSection").scrollIntoView({behavior:"smooth"});
+</script>
 </body>
 </html>
