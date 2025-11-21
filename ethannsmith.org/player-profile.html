@@ -6,54 +6,265 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player - Ethan Smith</title>
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/ZRtZB2Kb/ES-Final-2.png">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="styles/styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CGT8KVV8YF');
-    </script>
+<style>
+/* -------------------------
+   GENERAL PAGE STYLE
+-------------------------- */
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: #ffffff;
+    color: #222;
+}
+
+/* -------------------------
+   NAVIGATION BAR
+-------------------------- */
+.navbar {
+    background: #111;
+    color: white;
+    padding: 15px 0;
+}
+
+.nav-container {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* -------------------------
+   PROFILE HEADER
+-------------------------- */
+.profile-container {
+    width: 90%;
+    margin: 40px auto;
+}
+
+.profile-header {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.profile-header img {
+    width: 220px;
+    height: 220px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 3px solid #e6e6e6;
+}
+
+.player-info h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.player-info h2 {
+    margin-top: 5px;
+    color: #666;
+    font-weight: 500;
+}
+
+.player-details {
+    padding: 0;
+    margin-top: 10px;
+    list-style: none;
+    line-height: 1.7em;
+}
+
+/* -------------------------
+   STATS + PREVIOUS GAME LAYOUT
+-------------------------- */
+.stats-flex {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-top: 40px;
+}
+
+/* left column (season + career stats) */
+.stats-column {
+    flex: 1;
+}
+
+/* right column */
+.previous-game {
+    width: 350px;
+    padding: 20px;
+    border-radius: 6px;
+    border-left: 5px solid rgb(241, 194, 50);
+    background: #fff9e6;
+    margin-top: 0;
+}
+
+/* -------------------------
+   SECTION HEADERS
+-------------------------- */
+.stats-section h3,
+.game-log h3,
+.previous-game h4 {
+    border-bottom: 2px solid #f1c232;
+    padding-bottom: 5px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* -------------------------
+   TABLE STYLING
+-------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+th {
+    background: #f8f8f8;
+    font-weight: 700;
+    color: #444;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+tr:hover {
+    background: #fafafa;
+}
+
+/* -------------------------
+   GAME LOG MATCHUP STYLE
+-------------------------- */
+.matchup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.team {
+    text-align: center;
+}
+
+.team-logo {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 3px;
+}
+
+.team-name {
+    font-size: 12px;
+}
+
+/* -------------------------
+   DOWNLOAD BUTTON
+-------------------------- */
+.download-btn {
+    background: #f1c232;
+    border: none;
+    padding: 7px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.download-btn:hover {
+    background: #e0b020;
+}
+
+/* -------------------------
+   RESPONSIVE
+-------------------------- */
+@media (max-width: 900px) {
+    .stats-flex {
+        flex-direction: column;
+    }
+
+    .previous-game {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 800px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+
 </head>
 
-<body class="light-mode">
-    <nav class="navbar" id="navbar">
-        <div class="container nav-container">
-            <h1 class="logo"><a href="index.html">Ethan Smith</a></h1>
-            <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about/about-me.html">About Me</a></li>
-                <li><a href="../index.html#hockey-videos">Hockey Videos</a></li>
-                <li><a href="../player-profile.html">Player Profile</a></li>
-                <li><a href="../index.html#contact">Contact</a></li>
+<body>
+
+<!-- Google Tag Manager -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CGT8KVV8YF');
+</script>
+
+<div class="profile-container">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <div class="profile-picture">
+            <img src="pics/2024-11-23 Vancouver Rangers-110.jpg" alt="Player Image">
+        </div>
+        <div class="player-info">
+            <h1>Ethan Smith</h1>
+            <h2>#73 G</h2>
+            <ul class="player-details">
+                <li><strong>Height:</strong> 5'9"</li>
+                <li><strong>Weight:</strong> 182 lb</li>
+                <li><strong>Born:</strong> 12/21/2009 (Age: 15)</li>
+                <li><strong>Birthplace:</strong> Columbus, OH</li>
+                <li><strong>Catches:</strong> Left</li>
             </ul>
         </div>
-    </nav>
+    </div>
 
-    <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-picture">
-                <img src="pics/2024-11-23 Vancouver Rangers-110.jpg" alt="Player Image">
-            </div>
-            <div class="player-info">
-                <h1>Ethan Smith</h1>
-                <h2>#73 G</h2>
-                <ul class="player-details">
-                    <li><strong>Height:</strong> 5'9"</li>
-                    <li><strong>Weight:</strong> 182 lb</li>
-                    <li><strong>Born:</strong> 12/21/2009 (Age: 15)</li>
-                    <li><strong>Birthplace:</strong> Columbus, OH</li>
-                    <li><strong>Catches:</strong> Left</li>
-                </ul>
-            </div>
-        </div>
+    <!-- STATS + PREVIOUS GAME SIDE BY SIDE -->
+    <div class="stats-flex">
 
-        <div class="stats-section">
+        <div class="stats-column">
             <div class="season-stats">
                 <h3>2025-26 Season - Linsly/Nailers</h3>
                 <table>
@@ -97,32 +308,35 @@
             </div>
         </div>
 
-        <div class="game-section">
-            <div class="game-log">
-                <h3>Game Log</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Matchup</th>
-                            <th>Decision</th>
-                            <th>SA</th>
-                            <th>GA</th>
-                            <th>SV%</th>
-                            <th>TOI</th>
-                            <th>Scoresheet</th>
-                        </tr>
-                    </thead>
-                    <tbody id="game-log-body"></tbody>
-                </table>
-            </div>
+        <div class="previous-game">
+            <h4>Previous Game</h4>
+            <div id="previousGameDetails"></div>
+        </div>
 
-            <div class="previous-game">
-                <h4>Previous Game</h4>
-                <div id="previousGameDetails"></div>
-            </div>
+    </div>
+
+    <!-- GAME LOG -->
+    <div class="game-section">
+        <div class="game-log">
+            <h3>Game Log</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Matchup</th>
+                        <th>Decision</th>
+                        <th>SA</th>
+                        <th>GA</th>
+                        <th>SV%</th>
+                        <th>TOI</th>
+                        <th>Scoresheet</th>
+                    </tr>
+                </thead>
+                <tbody id="game-log-body"></tbody>
+            </table>
         </div>
     </div>
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -227,8 +441,8 @@
           `;
 
           const prevGameDiv = document.querySelector('.previous-game');
-          if (latestGame.decision === "W") prevGameDiv.style.boxShadow = "0 0 20px rgba(0, 255, 100, 0.4)";
-          if (latestGame.decision === "L") prevGameDiv.style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.4)";
+          if (latestGame.decision === "W") prevGameDiv.style.boxShadow = "0 0 20px rgb(241, 194, 50);)";
+          if (latestGame.decision === "L") prevGameDiv.style.boxShadow = "0 0 20px rgb(241, 194, 50);";
         }
 
         // ====== Game Log Table ======
@@ -318,7 +532,6 @@ Minutes Played: ${game.minutesPlayed}
     loadGameLog();
   });
 </script>
-
 
 </body>
 </html>
