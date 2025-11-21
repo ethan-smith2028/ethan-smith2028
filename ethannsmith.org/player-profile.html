@@ -500,16 +500,33 @@ tr:hover {
             btn.addEventListener("click", () => {
               const game = JSON.parse(btn.dataset.game);
 
-              const text = `
-Date: ${formatDate(game.date)}
-Matchup: ${game.awayTeam.name} @ ${game.homeTeam.name}
+             const text = 
+`HOCKEY GOALIE PERFORMANCE SHEET
+================================
 
-Decision: ${game.decision}
-Shots Against: ${game.shotsAgainst}
-Goals Against: ${game.goalsAgainst}
-Save Percentage: ${calculateSavePercentage(game.shotsAgainst, game.goalsAgainst)}
-Minutes Played: ${game.minutesPlayed}
+Date: ${formatDate(game.date)}
+
+Matchup (Team vs. Team):
+${game.awayTeam.name} @ ${game.homeTeam.name}
+
+Decision (W / L / OTL):
+${game.decision}
+
+--------------------------------------------
+
+Shots Against:      ${game.shotsAgainst}
+Goals Against:      ${game.goalsAgainst}
+Save Percentage:    ${calculateSavePercentage(game.shotsAgainst, game.goalsAgainst)}
+Minutes Played:     ${game.minutesPlayed}
+
+--------------------------------------------
+
+Scouting Notes:
+____________________________________________
+____________________________________________
+____________________________________________
 `;
+
 
               const blob = new Blob([text], { type: "text/plain" });
               const url = URL.createObjectURL(blob);
