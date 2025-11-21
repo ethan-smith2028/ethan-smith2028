@@ -887,3 +887,26 @@ table td {
     width: 100%;
   }
 }
+
+.download-btn {
+    background: linear-gradient(135deg, #ff3b3b, #b80000);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: 0.25s;
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, #ff5555, #cc0000);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+
+.download-btn:active {
+    transform: scale(0.96);
+}
