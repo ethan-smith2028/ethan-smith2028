@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- ===== REPLACE IN OFFICIAL POST ===== -->
-    <link rel="stylesheet" href="styles/styles.css"> 
+    <link rel="stylesheet" href="styles.css"> 
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CGT8KVV8YF"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -53,24 +53,6 @@
             </div>
         </div>
 
-        <!-- Previous Game Section -->
-<!-- <div class="previous-game">
-    <h3>Previous Game</h3>
-    <div class="previous-game-content">
-        
-        <div id="previousGameDetails">
-            <p><strong>Date:</strong> <span id="previousGameDate"></span></p>
-            <p><strong>Opponent:</strong> <span id="previousGameOpponent"></span></p>
-            <p><strong>Decision:</strong> <span id="previousGameDecision"></span></p>
-            <p><strong>Shots Against:</strong> <span id="previousGameSA"></span></p>
-            <p><strong>Goals Against:</strong> <span id="previousGameGA"></span></p>
-            <p><strong>Save Percentage:</strong> <span id="previousGameSV"></span></p>
-            <p><strong>Minutes Played:</strong> <span id="previousGameMinutes"></span></p>
-        </div>
-    </div>
-</div> -->
-
-        <!-- Stats Section -->
         <div class="stats-section">
             <div class="season-stats">
                 <h3>2025-26 Season - Linsly/Nailers</h3>
@@ -91,6 +73,7 @@
                     </tr>
                 </table>
             </div>
+
             <div class="career-stats">
                 <h3>Career</h3>
                 <table>
@@ -113,44 +96,38 @@
                 </table>
             </div>
         </div>
-                
-                    
-                <!-- Game Log Section -->
-               <div class="game-section">
-  <div class="game-log">
-    <h3>Game Log</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Matchup</th>
-          <th>Decision</th>
-          <th>SA</th>
-          <th>GA</th>
-          <th>SV%</th>
-          <th>TOI</th>
-        </tr>
-      </thead>
-      <tbody id="game-log-body"></tbody>
-    </table>
-  </div>
 
-  <div class="previous-game">
-    <h4>Previous Game</h4>
-    <div id="previousGameDetails">
-      <!-- Filled by JavaScript -->
+        <div class="game-section">
+            <div class="game-log">
+                <h3>Game Log</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Matchup</th>
+                            <th>Decision</th>
+                            <th>SA</th>
+                            <th>GA</th>
+                            <th>SV%</th>
+                            <th>TOI</th>
+                            <th>Scoresheet</th>
+                        </tr>
+                    </thead>
+                    <tbody id="game-log-body"></tbody>
+                </table>
+            </div>
+
+            <div class="previous-game">
+                <h4>Previous Game</h4>
+                <div id="previousGameDetails"></div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-                
-
-    
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  // ==== Firebase Config ====
   const firebaseConfig = {
     apiKey: "AIzaSyDytzq8LrMWFsMw11nfu9xMjFxQTsepzUo",
     authDomain: "player-profile-5b21d.firebaseapp.com",
@@ -164,9 +141,18 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // 🔥 Date formatting helper
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+
   document.addEventListener("DOMContentLoaded", async function () {
 
-    // ===== Helper Functions =====
     const calculateSavePercentage = (shotsAgainst, goalsAgainst) => {
       return shotsAgainst > 0
         ? ((shotsAgainst - goalsAgainst) / shotsAgainst).toFixed(3)
@@ -180,7 +166,6 @@
     };
 
     const updateStats = (seasonStats, careerStats) => {
-      // Career totals
       document.getElementById('GamesPlayed').innerText = careerStats.gamesPlayed;
       document.getElementById('wins').innerText = careerStats.wins;
       document.getElementById('loss').innerText = careerStats.losses;
@@ -188,7 +173,6 @@
       document.getElementById('gaa1').innerText = calculateGAA(careerStats.goalsAgainst, careerStats.gamesPlayed);
       document.getElementById('sv%1').innerText = calculateSavePercentage(careerStats.shotsAgainst, careerStats.goalsAgainst);
 
-      // Season totals
       document.getElementById('GamesPlayed-season').innerText = seasonStats.gamesPlayed;
       document.getElementById('wins-season').innerText = seasonStats.wins;
       document.getElementById('loss-season').innerText = seasonStats.losses;
@@ -196,8 +180,6 @@
       document.getElementById('sv%').innerText = calculateSavePercentage(seasonStats.shotsAgainst, seasonStats.goalsAgainst);
     };
 
-    // ===== Base Career Totals BEFORE 2025–26 =====
-    // (Manually edit these numbers for past career data)
     const baseCareerStats = {
       gamesPlayed: 27,
       wins: 17,
@@ -207,15 +189,12 @@
       goalsAgainst: 54
     };
 
-    // ===== Load Game Data =====
     async function loadGameLog() {
       try {
         const querySnapshot = await getDocs(collection(db, "games"));
         const games = [];
 
         querySnapshot.forEach((doc) => games.push(doc.data()));
-
-        // Sort newest first
         games.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         const tableBody = document.getElementById('game-log-body');
@@ -224,7 +203,7 @@
         let seasonStats = { gamesPlayed: 0, wins: 0, losses: 0, shutouts: 0, shotsAgainst: 0, goalsAgainst: 0 };
         let careerStats = { ...baseCareerStats };
 
-        // ===== Previous Game Card =====
+        // ====== Previous Game Box ======
         const latestGame = games[0];
         if (latestGame) {
           previousGameContainer.innerHTML = `
@@ -239,7 +218,7 @@
                 <p class="team-name">${latestGame.homeTeam.name}</p>
               </div>
             </div>
-            <p><strong>Date:</strong> ${latestGame.date}</p>
+            <p><strong>Date:</strong> ${formatDate(latestGame.date)}</p>
             <p><strong>Decision:</strong> ${latestGame.decision}</p>
             <p><strong>Shots Against:</strong> ${latestGame.shotsAgainst}</p>
             <p><strong>Goals Against:</strong> ${latestGame.goalsAgainst}</p>
@@ -247,21 +226,18 @@
             <p><strong>Minutes Played:</strong> ${latestGame.minutesPlayed}</p>
           `;
 
-          // Add visual glow if win/loss
           const prevGameDiv = document.querySelector('.previous-game');
-          if (latestGame.decision === "W") {
-            prevGameDiv.style.boxShadow = "0 0 20px rgba(0, 255, 100, 0.4)";
-          } else if (latestGame.decision === "L") {
-            prevGameDiv.style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.4)";
-          }
+          if (latestGame.decision === "W") prevGameDiv.style.boxShadow = "0 0 20px rgba(0, 255, 100, 0.4)";
+          if (latestGame.decision === "L") prevGameDiv.style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.4)";
         }
 
-        // ===== Populate Game Log =====
+        // ====== Game Log Table ======
         games.forEach((game) => {
           const savePercentage = calculateSavePercentage(game.shotsAgainst, game.goalsAgainst);
           const row = document.createElement('tr');
+
           row.innerHTML = `
-            <td>${game.date}</td>
+            <td>${formatDate(game.date)}</td>
             <td>
               <div class="matchup">
                 <div class="team">
@@ -280,10 +256,13 @@
             <td>${game.goalsAgainst}</td>
             <td>${savePercentage}</td>
             <td>${game.minutesPlayed}</td>
+            <td>
+                <button class="download-btn" data-game='${JSON.stringify(game)}'>Download</button>
+            </td>
           `;
+
           tableBody.appendChild(row);
 
-          // Aggregate season stats
           seasonStats.gamesPlayed++;
           if (game.decision === "W") seasonStats.wins++;
           if (game.decision === "L") seasonStats.losses++;
@@ -291,7 +270,7 @@
           seasonStats.goalsAgainst += game.goalsAgainst;
         });
 
-        // ===== Combine Season + Career Totals =====
+        // ====== Recalculate Career ======
         careerStats.gamesPlayed = baseCareerStats.gamesPlayed + seasonStats.gamesPlayed;
         careerStats.wins = baseCareerStats.wins + seasonStats.wins;
         careerStats.losses = baseCareerStats.losses + seasonStats.losses;
@@ -299,8 +278,38 @@
         careerStats.shotsAgainst = baseCareerStats.shotsAgainst + seasonStats.shotsAgainst;
         careerStats.goalsAgainst = baseCareerStats.goalsAgainst + seasonStats.goalsAgainst;
 
-        // ===== Update Totals on Page =====
         updateStats(seasonStats, careerStats);
+
+        // ====== DOWNLOAD SCORESHEET ======
+        setTimeout(() => {
+          document.querySelectorAll(".download-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+              const game = JSON.parse(btn.dataset.game);
+
+              const text = `
+Date: ${formatDate(game.date)}
+Matchup: ${game.awayTeam.name} @ ${game.homeTeam.name}
+
+Decision: ${game.decision}
+Shots Against: ${game.shotsAgainst}
+Goals Against: ${game.goalsAgainst}
+Save Percentage: ${calculateSavePercentage(game.shotsAgainst, game.goalsAgainst)}
+Minutes Played: ${game.minutesPlayed}
+`;
+
+              const blob = new Blob([text], { type: "text/plain" });
+              const url = URL.createObjectURL(blob);
+
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `scoresheet_${game.date}.txt`;
+              a.click();
+
+              URL.revokeObjectURL(url);
+            });
+          });
+        }, 200);
+
       } catch (error) {
         console.error("Error loading games:", error);
       }
@@ -309,8 +318,6 @@
     loadGameLog();
   });
 </script>
-
-
 
 
 </body>
