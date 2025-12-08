@@ -207,6 +207,38 @@ tr:hover {
 }
 
 /* -------------------------
+   GAME STATS COLLAPSIBLE
+-------------------------- */
+.game-stats-toggle {
+    background: #f1c232;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.game-stats-toggle:hover {
+    background: #e0b020;
+}
+
+.game-stats-panel {
+    display: none;
+    background: #fffbea;
+    border-left: 4px solid #f1c232;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.game-stats-panel table {
+    width: 70%;
+    margin-top: 5px;
+}
+
+/* -------------------------
    RESPONSIVE
 -------------------------- */
 @media (max-width: 900px) {
@@ -355,7 +387,6 @@ tr:hover {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 🔥 Date formatting helper
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
     return date.toLocaleDateString("en-US", {
@@ -439,10 +470,6 @@ tr:hover {
             <p><strong>Save %:</strong> ${calculateSavePercentage(latestGame.shotsAgainst, latestGame.goalsAgainst)}</p>
             <p><strong>Minutes Played:</strong> ${latestGame.minutesPlayed}</p>
           `;
-
-          const prevGameDiv = document.querySelector('.previous-game');
-          if (latestGame.decision === "W") prevGameDiv.style.boxShadow = "0 0 20px rgb(241, 194, 50);)";
-          if (latestGame.decision === "L") prevGameDiv.style.boxShadow = "0 0 20px rgb(241, 194, 50);";
         }
 
         // ====== Game Log Table ======
@@ -472,6 +499,32 @@ tr:hover {
             <td>${game.minutesPlayed}</td>
             <td>
                 <button class="download-btn" data-game='${JSON.stringify(game)}'>Download</button>
+                <button class="game-stats-toggle">Game Stats</button>
+                <div class="game-stats-panel">
+                    <h4>Scoring by Period</h4>
+                    <table>
+                       <tr>
+                           <th>Period</th>
+                           <th>${game.awayTeam.name}</th>
+                           <th>${game.homeTeam.name}</th>
+                       </tr>
+                       <tr>
+                           <td>1st</td>
+                           <td>${game.scoring?.period1?.away ?? 0}</td>
+                           <td>${game.scoring?.period1?.home ?? 0}</td>
+                       </tr>
+                       <tr>
+                           <td>2nd</td>
+                           <td>${game.scoring?.period2?.away ?? 0}</td>
+                           <td>${game.scoring?.period2?.home ?? 0}</td>
+                       </tr>
+                       <tr>
+                           <td>3rd</td>
+                           <td>${game.scoring?.period3?.away ?? 0}</td>
+                           <td>${game.scoring?.period3?.home ?? 0}</td>
+                       </tr>
+                    </table>
+                </div>
             </td>
           `;
 
@@ -484,6 +537,16 @@ tr:hover {
           seasonStats.goalsAgainst += game.goalsAgainst;
         });
 
+        // ====== Expand/Collapse Game Stats ======
+        setTimeout(() => {
+          document.querySelectorAll(".game-stats-toggle").forEach(btn => {
+            btn.addEventListener("click", () => {
+              const panel = btn.nextElementSibling;
+              panel.style.display = panel.style.display === "block" ? "none" : "block";
+            });
+          });
+        }, 200);
+
         // ====== Recalculate Career ======
         careerStats.gamesPlayed = baseCareerStats.gamesPlayed + seasonStats.gamesPlayed;
         careerStats.wins = baseCareerStats.wins + seasonStats.wins;
@@ -494,22 +557,22 @@ tr:hover {
 
         updateStats(seasonStats, careerStats);
 
-        // ====== DOWNLOAD SCORESHEET ======
+        // ====== Download Scoresheet ======
         setTimeout(() => {
           document.querySelectorAll(".download-btn").forEach(btn => {
             btn.addEventListener("click", () => {
               const game = JSON.parse(btn.dataset.game);
 
-             const text = 
+              const text =
 `HOCKEY GOALIE PERFORMANCE SHEET
 ================================
 
 Date: ${formatDate(game.date)}
 
-Matchup (Team vs. Team):
+Matchup:
 ${game.awayTeam.name} @ ${game.homeTeam.name}
 
-Decision (W / L / OTL):
+Decision:
 ${game.decision}
 
 --------------------------------------------
@@ -521,12 +584,18 @@ Minutes Played:     ${game.minutesPlayed}
 
 --------------------------------------------
 
+Scoring by Period:
+1st: ${game.scoring?.period1?.away ?? 0} - ${game.scoring?.period1?.home ?? 0}
+2nd: ${game.scoring?.period2?.away ?? 0} - ${game.scoring?.period2?.home ?? 0}
+3rd: ${game.scoring?.period3?.away ?? 0} - ${game.scoring?.period3?.home ?? 0}
+
+--------------------------------------------
+
 Scouting Notes:
 ____________________________________________
 ____________________________________________
 ____________________________________________
 `;
-
 
               const blob = new Blob([text], { type: "text/plain" });
               const url = URL.createObjectURL(blob);
@@ -539,7 +608,7 @@ ____________________________________________
               URL.revokeObjectURL(url);
             });
           });
-        }, 200);
+        }, 300);
 
       } catch (error) {
         console.error("Error loading games:", error);
