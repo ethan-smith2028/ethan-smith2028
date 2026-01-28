@@ -286,7 +286,7 @@ tr:hover {
             <ul class="player-details">
                 <li><strong>Height:</strong> 5'9"</li>
                 <li><strong>Weight:</strong> 182 lb</li>
-                <li><strong>Born:</strong> 12/21/2009 (Age: 15)</li>
+                <li><strong>Born:</strong> 12/21/2009 (Age: 16)</li>
                 <li><strong>Birthplace:</strong> Columbus, OH</li>
                 <li><strong>Catches:</strong> Left</li>
             </ul>
@@ -369,6 +369,14 @@ tr:hover {
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("hYbb_OOgMoLQEqodi");
+  })();
+</script>
+
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -617,6 +625,63 @@ ____________________________________________
 
     loadGameLog();
   });
+
+   function getTrafficSource() {
+    const ref = document.referrer.toLowerCase();
+
+    if (!ref) return "Direct";
+
+    if (ref.includes("google") || ref.includes("bing") || ref.includes("duckduckgo")) {
+      return "Organic Search";
+    }
+
+    if (
+      ref.includes("twitter") ||
+      ref.includes("x.com") ||
+      ref.includes("facebook") ||
+      ref.includes("instagram") ||
+      ref.includes("tiktok") ||
+      ref.includes("linkedin")
+    ) {
+      return "Social";
+    }
+
+    return "Referral";
+  }
+    async function sendPageViewEmail() {
+    // prevent spam
+    if (localStorage.getItem("page_view_sent")) return;
+
+    try {
+      // Fetch country
+      const geoRes = await fetch("https://ipapi.co/json/");
+      const geo = await geoRes.json();
+
+      const data = {
+        page: window.location.href,
+        country: geo.country_name || "Unknown",
+        city: geo.city || "Unknown",
+        time: new Date().toLocaleString(),
+        source: getTrafficSource(),
+        referrer: document.referrer || "None",
+        user_agent: navigator.userAgent
+      };
+
+      emailjs.send("service_6ahizcg", "template_1hcq7qq", data)
+        .then(() => {
+          localStorage.setItem("page_view_sent", "true");
+          console.log("Visitor email sent", data);
+        })
+        .catch(err => console.error("EmailJS error:", err));
+
+    } catch (err) {
+      console.error("Geo lookup failed", err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", sendPageViewEmail);
+
+
 </script>
 
 </body>
