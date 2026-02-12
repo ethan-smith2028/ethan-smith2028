@@ -541,6 +541,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
+    <!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+/* =========================
+   EMAILJS INIT
+========================= */
+(function () {
+  emailjs.init("YOUR_PUBLIC_KEY");
+})();
+
+/* =========================
+   TRAFFIC SOURCE DETECTOR
+========================= */
+function getTrafficSource() {
+  const ref = document.referrer.toLowerCase();
+
+  if (!ref) return "Direct";
+
+  if (ref.includes("google") || ref.includes("bing") || ref.includes("duckduckgo"))
+    return "Organic Search";
+
+  if (
+    ref.includes("twitter") ||
+    ref.includes("x.com") ||
+    ref.includes("facebook") ||
+    ref.includes("instagram") ||
+    ref.includes("tiktok") ||
+    ref.includes("linkedin")
+  )
+    return "Social";
+
+  return "Referral";
+}
+
+/* =========================
+   SEND PAGE VIEW EMAIL
+========================= */
+async function sendPageViewEmail() {
+  // Prevent spam (only send once per browser)
+  if (localStorage.getItem("page_view_sent")) return;
+
+  try {
+    // Get visitor location
+    const geoRes = await fetch("https://ipapi.co/json/");
+    const geo = await geoRes.json();
+
+    // Template variables
+    const data = {
+      page: window.location.href,
+      country: geo.country_name || "Unknown",
+      city: geo.city || "Unknown",
+      time: new Date().toLocaleString(),
+      source: getTrafficSource(),
+      referrer: document.referrer || "None",
+      user_agent: navigator.userAgent
+    };
+
+    // Send EmailJS email
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", data)
+      .then(() => {
+        localStorage.setItem("page_view_sent", "true");
+        console.log("Visitor email sent:", data);
+      })
+      .catch(err => console.error("EmailJS error:", err));
+
+  } catch (err) {
+    console.error("Geo lookup failed:", err);
+  }
+}
+
+/* =========================
+   RUN ON PAGE LOAD
+========================= */
+document.addEventListener("DOMContentLoaded", sendPageViewEmail);
+</script>
+
     
     
 </body>
