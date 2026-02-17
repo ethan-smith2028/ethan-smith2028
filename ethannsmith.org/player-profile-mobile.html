@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player - Ethan Smith (Mobile Pro)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #f3f3f3;
+      color: #222;
+      padding-bottom: 80px;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    /* ==========================
+       PLAYER BANNER HEADER
+    ========================== */
+    .banner {
+      height: 170px;
+      border-radius: 0 0 20px 20px;
+      background: linear-gradient(to right, #111, #333);
+      position: relative;
+    }
+
+    .banner img {
+      position: absolute;
+      bottom: -55px;
+      left: 20px;
+      width: 115px;
+      height: 115px;
+      border-radius: 14px;
+      border: 4px solid white;
+      object-fit: cover;
+    }
+
+    .banner-info {
+      padding: 18px;
+      padding-top: 60px;
+      margin-left: 140px;
+      color: white;
+    }
+
+    .banner-info h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .banner-info h2 {
+      font-size: 14px;
+      margin: 4px 0;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    /* ==========================
+       SECTION CARDS
+    ========================== */
+    .section {
+      margin-top: 70px;
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .section h3 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      border-left: 5px solid #f1c232;
+      padding-left: 10px;
+    }
+
+    /* ==========================
+       STAT GRID
+    ========================== */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #eee;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .stat-box span {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    /* ==========================
+       BADGES (W / L / SO)
+    ========================== */
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .badge.win {
+      background: green;
+    }
+
+    .badge.loss {
+      background: crimson;
+    }
+
+    .badge.so {
+      background: #222;
+    }
+
+    /* ==========================
+       GAME LOG CARDS
+    ========================== */
+    .game-card {
+      background: #fffbea;
+      border-left: 5px solid #f1c232;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .matchup {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .team {
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .team img {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* ==========================
+       BUTTONS
+    ========================== */
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .download-btn {
+      background: #f1c232;
+    }
+
+    .toggle-btn {
+      background: #222;
+      color: white;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      border: 1px solid #eee;
+    }
+
+    /* ==========================
+       FILTER DROPDOWN
+    ========================== */
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* ==========================
+       STICKY BOTTOM NAV
+    ========================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      z-index: 999;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .bottom-nav a:hover {
+      color: #f1c232;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PLAYER BANNER -->
+  <div class="banner">
+    <img src="pics/2024-11-23 Vancouver Rangers-110.jpg" alt="Player">
+    <div class="banner-info">
+      <h1>Ethan Smith 🇺🇸</h1>
+      <h2>#73 Goalie — Linsly/Nailers</h2>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- SEASON STATS -->
+    <div class="section" id="stats">
+      <h3>Season Stats</h3>
+
+      <div class="stat-grid">
+        <div class="stat-box"><strong>GP</strong><span id="GamesPlayed-season"></span></div>
+        <div class="stat-box"><strong>W</strong><span id="wins-season"></span></div>
+        <div class="stat-box"><strong>L</strong><span id="loss-season"></span></div>
+        <div class="stat-box"><strong>GAA</strong><span id="gaa"></span></div>
+        <div class="stat-box"><strong>SV%</strong><span id="sv%"></span></div>
+      </div>
+
+      <!-- BADGES -->
+      <div class="badge-row">
+        <div class="badge win">Wins: <span id="badgeWins"></span></div>
+        <div class="badge loss">Losses: <span id="badgeLoss"></span></div>
+        <div class="badge so">SO: <span id="badgeSO"></span></div>
+      </div>
+    </div>
+
+    <!-- GAME LOG -->
+    <div class="section" id="games">
+      <h3>Game Log</h3>
+
+      <!-- FILTER -->
+      <select id="seasonFilter">
+        <option value="all">All Seasons</option>
+        <option value="2025">2025–26</option>
+      </select>
+
+      <div id="game-log-body"></div>
+    </div>
+
+  </div>
+
+  <!-- STICKY NAV -->
+  <div class="bottom-nav">
+    <a href="#stats">Stats</a>
+    <a href="#games">Games</a>
+    <a href="#">Profile</a>
+  </div>
+
+  <!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDytzq8LrMWFsMw11nfu9xMjFxQTsepzUo",
+    authDomain: "player-profile-5b21d.firebaseapp.com",
+    projectId: "player-profile-5b21d",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Format Date
+  const formatDate = (iso) =>
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+  // Save %
+  const calcSV = (sa, ga) =>
+    sa > 0 ? ((sa - ga) / sa).toFixed(3) : "N/A";
+
+  // GAA
+  const calcGAA = (ga, gp) =>
+    gp > 0 ? (ga / gp).toFixed(2) : "N/A";
+
+  async function loadGames() {
+    const snapshot = await getDocs(collection(db, "games"));
+    const games = [];
+
+    snapshot.forEach((doc) => games.push(doc.data()));
+    games.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // ===============================
+    // SEASON TOTALS
+    // ===============================
+    let gp = 0;
+    let wins = 0;
+    let losses = 0;
+    let shotsAgainst = 0;
+    let goalsAgainst = 0;
+
+    games.forEach((game) => {
+      gp++;
+
+      if (game.decision === "W") wins++;
+      if (game.decision === "L") losses++;
+
+      shotsAgainst += game.shotsAgainst;
+      goalsAgainst += game.goalsAgainst;
+    });
+
+    // Update Stat Boxes
+    document.getElementById("GamesPlayed-season").textContent = gp;
+    document.getElementById("wins-season").textContent = wins;
+    document.getElementById("loss-season").textContent = losses;
+    document.getElementById("gaa").textContent = calcGAA(goalsAgainst, gp);
+    document.getElementById("sv%").textContent = calcSV(shotsAgainst, goalsAgainst);
+
+    // Update Badges
+    document.getElementById("badgeWins").textContent = wins;
+    document.getElementById("badgeLoss").textContent = losses;
+    document.getElementById("badgeSO").textContent = 5;
+
+    // ===============================
+    // GAME LOG CARDS
+    // ===============================
+    const log = document.getElementById("game-log-body");
+    log.innerHTML = "";
+
+    games.forEach((game) => {
+      const card = document.createElement("div");
+      card.className = "game-card";
+
+      card.innerHTML = `
+        <h4>${formatDate(game.date)} — ${game.decision}</h4>
+
+        <div class="matchup">
+          <div class="team">
+            <img src="${game.awayTeam.logo}">
+            <div>${game.awayTeam.name}</div>
+          </div>
+
+          <strong>VS</strong>
+
+          <div class="team">
+            <img src="${game.homeTeam.logo}">
+            <div>${game.homeTeam.name}</div>
+          </div>
+        </div>
+
+        <p><strong>Shots Against:</strong> ${game.shotsAgainst}</p>
+        <p><strong>Goals Against:</strong> ${game.goalsAgainst}</p>
+        <p><strong>SV%:</strong> ${calcSV(game.shotsAgainst, game.goalsAgainst)}</p>
+        <p><strong>TOI:</strong> ${game.minutesPlayed}</p>
+
+        <button class="toggle-btn">Game Stats</button>
+
+        <div class="panel">
+          <p><strong>1st:</strong> ${game.scoring?.period1?.away ?? 0} - ${game.scoring?.period1?.home ?? 0}</p>
+          <p><strong>2nd:</strong> ${game.scoring?.period2?.away ?? 0} - ${game.scoring?.period2?.home ?? 0}</p>
+          <p><strong>3rd:</strong> ${game.scoring?.period3?.away ?? 0} - ${game.scoring?.period3?.home ?? 0}</p>
+        </div>
+      `;
+
+      log.appendChild(card);
+
+      // Toggle Panel
+      const toggle = card.querySelector(".toggle-btn");
+      const panel = card.querySelector(".panel");
+
+      toggle.onclick = () => {
+        panel.style.display =
+          panel.style.display === "block" ? "none" : "block";
+      };
+    });
+  }
+
+  loadGames();
+</script>
+
+</body>
+</html>
