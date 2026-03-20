@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Gallery</title>
+
+<style>
+  :root {
+    --radius: 14px;
+    --shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+  }
+
+  /* LOADING OVERLAY */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  /* GALLERY GRID */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+
+  .card img {
+    width: 100%;
+    display: block;
+    pointer-events: none; /* prevents dragging */
+    user-select: none;
+  }
+
+  /* DOWNLOAD BUTTON */
+  .download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.download-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.download-btn.success {
+  background: green;
+}
+
+/* Spinner */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="loader">Loading Images...</div>
+<div class="gallery" id="gallery"></div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const gallery = document.getElementById("gallery");
+  const loader = document.getElementById("loader");
+
+  let loadedCount = 0;
+  const totalImages = 79;
+
+  // GENERATE IMAGES
+  for (let i = 1; i <= totalImages; i++) {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = `/lax-photos/images/img-${i}.jpg`;
+
+    // TRACK LOAD
+    img.onload = increment;
+    img.onerror = increment;
+
+    const btn = document.createElement("button");
+    btn.className = "download-btn";
+    btn.innerText = "Download";
+    btn.onclick = () => downloadImage(btn);
+
+    card.appendChild(img);
+    card.appendChild(btn);
+    gallery.appendChild(card);
+  }
+
+  function increment() {
+    loadedCount++;
+    if (loadedCount === totalImages) {
+      loader.style.display = "none";
+    }
+  }
+
+});
+
+
+// DOWNLOAD FUNCTION
+async function downloadImage(button) {
+  const img = button.parentElement.querySelector("img");
+
+  button.innerHTML = "⏳";
+  button.disabled = true;
+
+  try {
+    const response = await fetch(img.src);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = img.src.split("/").pop();
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+
+    button.innerHTML = "✓";
+
+  } catch {
+    button.innerHTML = "Error";
+  }
+
+  setTimeout(() => {
+    button.innerHTML = "Download";
+    button.disabled = false;
+  }, 1500);
+}
+</script>
+
+</body>
+</html>
