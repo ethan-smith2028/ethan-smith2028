@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Beyond the Lens - Mobile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 10px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+/* WINDOW */
+.window {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  max-width: 100%;
+}
+
+/* HEADER */
+.window-header img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.window-title {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* BUTTON */
+.open-btn {
+  display: block;
+  margin: 10px;
+  padding: 14px;
+  text-align: center;
+  background: #28a745;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* 📱 MOBILE GRID (AUTO RESPONSIVE) */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* default mobile */
+  gap: 8px;
+  padding: 10px;
+}
+
+/* smaller phones → 1 column */
+@media (max-width: 480px) {
+  .gallery {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* PHOTO */
+.photo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* DOWNLOAD BUTTON */
+.download-btn {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* LOAD MORE */
+.load-more {
+  display: block;
+  margin: 15px auto;
+  padding: 12px 20px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Beyond the Lens (Mobile)</h1>
+
+<div class="window">
+
+  <div class="window-header">
+    <img src="https://turftank.com/wp-content/uploads/2022/12/turftank-rules-of-lacrosse-2-scaled.jpg">
+    <div class="window-title">Linsly Lacrosse vs. University High School</div>
+  </div>
+
+  <button class="open-btn" id="openBtn">Open Gallery</button>
+
+  <div class="gallery" id="gallery" style="display:none;"></div>
+
+  <button class="load-more" id="loadMore" style="display:none;">Load More</button>
+
+</div>
+
+<script>
+const API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs";
+const FOLDER_ID = "1V80GO5H5dxtVd9_bNn9xlJiI-TLGFHE2";
+
+const gallery = document.getElementById("gallery");
+const openBtn = document.getElementById("openBtn");
+const loadMore = document.getElementById("loadMore");
+
+let allFiles = [];
+let index = 0;
+const CHUNK = 20; // smaller chunks for mobile
+
+/* LOAD ALL IMAGES */
+async function fetchAllImages() {
+  let pageToken = null;
+  let files = [];
+
+  do {
+    const url =
+      `https://www.googleapis.com/drive/v3/files` +
+      `?q='${FOLDER_ID}'+in+parents+and mimeType contains 'image/'` +
+      `&key=${API_KEY}` +
+      `&pageSize=100` +
+      (pageToken ? `&pageToken=${pageToken}` : "") +
+      `&fields=nextPageToken,files(id,name)`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.files) files.push(...data.files);
+    pageToken = data.nextPageToken;
+
+  } while (pageToken);
+
+  return files;
+}
+
+/* RENDER */
+function renderChunk() {
+
+  const slice = allFiles.slice(index, index + CHUNK);
+
+  slice.forEach(file => {
+
+    const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w1200`;
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
+
+    const photo = document.createElement("div");
+    photo.className = "photo";
+
+    const img = document.createElement("img");
+    img.src = imgUrl;
+
+    const btn = document.createElement("a");
+    btn.className = "download-btn";
+    btn.href = downloadUrl;
+    btn.textContent = "Download";
+    btn.download = "";
+
+    photo.appendChild(img);
+    photo.appendChild(btn);
+
+    gallery.appendChild(photo);
+  });
+
+  index += CHUNK;
+
+  if (index >= allFiles.length) {
+    loadMore.style.display = "none";
+  }
+}
+
+/* OPEN */
+openBtn.addEventListener("click", async () => {
+
+  if (gallery.style.display === "grid") {
+    gallery.style.display = "none";
+    loadMore.style.display = "none";
+    return;
+  }
+
+  gallery.style.display = "grid";
+  gallery.innerHTML = "Loading...";
+  loadMore.style.display = "none";
+
+  allFiles = await fetchAllImages();
+  index = 0;
+
+  gallery.innerHTML = "";
+
+  renderChunk();
+
+  loadMore.style.display = "block";
+});
+
+/* LOAD MORE */
+loadMore.addEventListener("click", () => {
+  renderChunk();
+});
+</script>
+
+</body>
+</html>
