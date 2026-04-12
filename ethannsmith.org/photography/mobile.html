@@ -2,59 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Beyond the Lens</title>
-
-<script>
-if (window.innerWidth <= 768) {
-  window.location.href = "mobile.html";
-}
-</script>
+<title>Photo Gallery (Mobile)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   font-family: Arial;
-  background: #f0f2f5;
   margin: 0;
-  padding: 20px;
+  padding: 10px;
+  background: #f0f2f5;
 }
 
 h1 {
   text-align: center;
+  font-size: 20px;
 }
 
-/* WINDOW GRID */
-.window-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-/* WINDOW CARD */
+/* MOBILE STACKED WINDOWS */
 .window {
   background: white;
   border-radius: 12px;
+  margin-bottom: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.window-header {
-  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .window-header img {
   width: 100%;
-  height: 150px;
+  height: 140px;
   object-fit: cover;
 }
 
 .window-title {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 10px;
+  font-weight: bold;
 }
 
 /* OPEN BUTTON */
@@ -66,55 +47,48 @@ h1 {
   background: #28a745;
   color: white;
   border-radius: 8px;
-  cursor: pointer;
   text-decoration: none;
 }
 
-/* 🔥 FIXED 3 COLUMN GRID */
+/* MOBILE GRID (2 columns) */
 .gallery {
-  padding: 10px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 10px;
 }
 
-/* PHOTO CARD */
 .photo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .photo img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 8px;
 }
 
-/* DOWNLOAD BUTTON */
 .download-btn {
   display: block;
   text-align: center;
-  padding: 8px;
+  padding: 6px;
   background: #007bff;
   color: white;
   text-decoration: none;
   border-radius: 6px;
   font-size: 12px;
-  cursor: pointer;
-}
-
-.download-btn:hover {
-  background: #0056b3;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Beyond the Lens Photo Gallery</h1>
-<div class="window-container" id="windows"></div>
+<h1>Mobile Gallery</h1>
+
+<div id="container"></div>
 
 <script>
 const API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs";
@@ -126,29 +100,24 @@ const folders = [
     cover: "https://www.lacrossemonkey.com/media/wysiwyg/Lacrosse/2026/01Jan/Heads_Static_Banner_Update_Jan2026.jpg"
   }
 ];
+const container = document.getElementById("container");
 
-const container = document.getElementById("windows");
+function createMobileWindow(folder) {
 
-function createWindow(folder) {
+  const div = document.createElement("div");
+  div.className = "window";
 
-  const windowDiv = document.createElement("div");
-  windowDiv.className = "window";
-
-  windowDiv.innerHTML = `
-    <div class="window-header">
-      <img src="${folder.cover}">
-      <div class="window-title">${folder.name}</div>
-    </div>
-
+  div.innerHTML = `
+    <img src="${folder.cover}">
+    <div class="window-title">${folder.name}</div>
     <a class="open-btn">Open Gallery</a>
-
     <div class="gallery" style="display:none;"></div>
   `;
 
-  container.appendChild(windowDiv);
+  container.appendChild(div);
 
-  const btn = windowDiv.querySelector(".open-btn");
-  const gallery = windowDiv.querySelector(".gallery");
+  const btn = div.querySelector(".open-btn");
+  const gallery = div.querySelector(".gallery");
 
   btn.addEventListener("click", async () => {
 
@@ -166,8 +135,8 @@ function createWindow(folder) {
       const res = await fetch(url);
       const data = await res.json();
 
-      if (!data.files || data.files.length === 0) {
-        gallery.innerHTML = "❌ No images found";
+      if (!data.files) {
+        gallery.innerHTML = "No images found";
         return;
       }
 
@@ -175,35 +144,29 @@ function createWindow(folder) {
 
       data.files.forEach(file => {
 
-        const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w1200`;
+        const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w800`;
         const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
 
         const photo = document.createElement("div");
         photo.className = "photo";
 
-        const img = document.createElement("img");
-        img.src = imgUrl;
-
-        const btn = document.createElement("a");
-        btn.className = "download-btn";
-        btn.href = downloadUrl;
-        btn.textContent = "Download";
-        btn.download = "";
-
-        photo.appendChild(img);
-        photo.appendChild(btn);
+        photo.innerHTML = `
+          <img src="${imgUrl}">
+          <a class="download-btn" href="${downloadUrl}" download>
+            Download
+          </a>
+        `;
 
         gallery.appendChild(photo);
       });
 
     } catch (err) {
-      console.error(err);
-      gallery.innerHTML = "❌ Failed to load gallery";
+      gallery.innerHTML = "Error loading gallery";
     }
   });
 }
 
-folders.forEach(createWindow);
+folders.forEach(createMobileWindow);
 </script>
 
 </body>
