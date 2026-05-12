@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Linsly Live Scorecard</title>
+
+<style>
+body{
+  margin:0;
+  background:transparent;
+  font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+
+  display:flex;
+   color:#ffffff;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+  width:720px;
+
+  background:rgba(10,12,16,0.94);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;
+
+  box-shadow:0 25px 70px rgba(0,0,0,0.65);
+
+  overflow:hidden;
+}
+
+/* =========================
+   TOP
+========================= */
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:16px 20px;
+
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.live{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2px;
+  color:#EA7511;
+}
+
+.clock{
+  font-size:22px;
+  font-weight:900;
+}
+
+.period{
+  font-size:11px;
+  opacity:.5;
+  text-align:right;
+}
+
+/* =========================
+   TEAMS
+========================= */
+
+.teams{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:22px 26px;
+}
+
+.team{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:260px;
+}
+
+.team img{
+  width:52px;
+  height:52px;
+  object-fit:contain;
+}
+
+.name{
+  font-size:15px;
+  font-weight:700;
+  opacity:.8;
+}
+
+.score{
+  font-size:52px;
+  font-weight:900;
+}
+
+.vs{
+  font-size:12px;
+  opacity:.35;
+  letter-spacing:3px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+  display:flex;
+  justify-content:space-between;
+
+  padding:14px 26px;
+
+  border-top:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+
+  font-size:13px;
+}
+
+.stat{
+  opacity:.7;
+}
+
+.stat strong{
+  color:#fff;
+  font-weight:800;
+}
+
+/* =========================
+   STORY
+========================= */
+
+.story{
+  padding:14px 26px;
+
+  font-size:13px;
+  font-weight:600;
+
+  color:rgba(255,255,255,0.9);
+
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.story strong{
+  color:#EA7511;
+}
+
+/* =========================
+   PENALTIES
+========================= */
+
+.penalties{
+  padding:16px 26px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.pen{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:12px 14px;
+
+  background:rgba(255,255,255,0.03);
+  border-left:4px solid #EA7511;
+
+  border-radius:12px;
+}
+
+.penText{
+  font-size:14px;
+  font-weight:650;
+}
+
+.badge{
+  font-size:11px;
+  font-weight:800;
+
+  padding:5px 10px;
+  border-radius:999px;
+
+  background:#EA7511;
+  color:#0b0d10;
+}
+</style>
+</head>
+
+<body>
+
+    <div id="preGame" style="
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(10px);
+  color:white;
+  z-index:999;
+">
+
+  <div style="font-size:14px; opacity:.7; letter-spacing:2px;">
+    UPCOMING GAME
+  </div>
+
+  <div id="countdown" style="
+    font-size:64px;
+    font-weight:900;
+    margin:10px 0;
+    color:#EA7511;
+  ">
+    --:--:--
+  </div>
+
+  <div id="preSub" style="opacity:.7; font-size:14px;">
+    Waiting for schedule...
+  </div>
+
+</div>
+
+<div class="card">
+
+  <!-- TOP -->
+  <div class="top">
+    <div class="live">● LIVE</div>
+    <div class="clock" id="clock">12:00</div>
+    <div class="period" id="period">Q1</div>
+  </div>
+
+  <!-- TEAMS -->
+  <div class="teams">
+
+    <div class="team">
+      <img id="logoA">
+      <div>
+        <div class="name" id="nameA">LINSLY</div>
+        <div class="score" id="scoreA">0</div>
+      </div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="team" style="justify-content:flex-end;">
+      <div style="text-align:right">
+        <div class="name" id="nameB">OPPONENT</div>
+        <div class="score" id="scoreB">0</div>
+      </div>
+      <img id="logoB">
+    </div>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">Shots on Goal: <strong id="toA">0</strong></div>
+    <div class="stat">Shots on Goal: <strong id="toB">0</strong></div>
+  </div>
+
+  <!-- STORY -->
+  <div class="story" id="story">
+    Game starting...
+  </div>
+
+  <!-- PENALTIES -->
+  <div class="penalties" id="penalties"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+/* =========================
+   FIREBASE
+========================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.firebasestorage.app",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dbRef = ref(db, "scorebug");
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const preGame = document.getElementById("preGame");
+const countdownEl = document.getElementById("countdown");
+const preSub = document.getElementById("preSub");
+
+const nameA = document.getElementById("nameA");
+const nameB = document.getElementById("nameB");
+
+const scoreA = document.getElementById("scoreA");
+const scoreB = document.getElementById("scoreB");
+
+const logoA = document.getElementById("logoA");
+const logoB = document.getElementById("logoB");
+
+const clock = document.getElementById("clock");
+const period = document.getElementById("period");
+
+const toA = document.getElementById("toA");
+const toB = document.getElementById("toB");
+
+const penalties = document.getElementById("penalties");
+const story = document.getElementById("story");
+
+/* =========================
+   STATE
+========================= */
+
+let lastA = 0;
+let lastB = 0;
+let lastStory = "";
+let countdownInterval = null;
+
+/* =========================
+   COUNTDOWN ENGINE
+========================= */
+
+function startCountdown(time){
+
+  if(countdownInterval) clearInterval(countdownInterval);
+
+  countdownInterval = setInterval(() => {
+
+    const now = Date.now();
+    const target = new Date(time).getTime();
+    const diff = target - now;
+
+    if(diff <= 0){
+      countdownEl.textContent = "00:00:00";
+      preSub.textContent = "Game starting...";
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    countdownEl.textContent =
+      `${String(h).padStart(2,'0')}:` +
+      `${String(m).padStart(2,'0')}:` +
+      `${String(s).padStart(2,'0')}`;
+
+  }, 1000);
+}
+
+/* =========================
+   STORY GENERATOR (UPGRADED)
+========================= */
+
+function updateStory(d){
+
+  const a = d.scoreA || 0;
+  const b = d.scoreB || 0;
+
+  let text = "";
+
+  if(lastA === 0 && lastB === 0 && (a > 0 || b > 0)){
+    text = (a > b)
+      ? `${d.nameA || "Linsly"} draws first blood.`
+      : `${d.nameB || "Opponent"} strikes first.`;
+  }
+
+  if(a > lastA){
+    const phrases = [
+      `${d.nameA || "Linsly"} lights the lamp!`,
+      `What a finish by ${d.nameA || "Linsly"}!`,
+      `${d.nameA || "Linsly"} buries it!`,
+      `Goal for ${d.nameA || "Linsly"}!`
+    ];
+    text = phrases[Math.floor(Math.random() * phrases.length)];
+  }
+
+  if(b > lastB){
+    const phrases = [
+      `${d.nameB || "Opponent"} answers right back.`,
+      `Quick response from ${d.nameB || "Opponent"}!`,
+      `${d.nameB || "Opponent"} evens the pressure.`,
+      `They get one back.`
+    ];
+    text = phrases[Math.floor(Math.random() * phrases.length)];
+  }
+
+  if(a === b && (a !== 0 || b !== 0)){
+    const ties = [
+      "We are tied up.",
+      "Deadlocked again.",
+      "Nothing separating these two teams.",
+      "Even on the scoreboard."
+    ];
+    text = ties[Math.floor(Math.random() * ties.length)];
+  }
+
+  if((lastA > lastB && a < b) || (lastA < lastB && a > b)){
+    const leadChanges = [
+      "🚨 Lead change!",
+      "We have a new leader!",
+      "Momentum swings again!",
+      "Everything just flipped!"
+    ];
+    text = leadChanges[Math.floor(Math.random() * leadChanges.length)];
+  }
+
+  if(text && text !== lastStory){
+    lastStory = text;
+    story.innerHTML = `🧠 <strong>Game Story:</strong> ${text}`;
+  }
+
+  lastA = a;
+  lastB = b;
+}
+
+/* =========================
+   LIVE FIREBASE LISTENER
+========================= */
+
+onValue(dbRef, snap => {
+
+  const d = snap.val();
+  const preGame = document.getElementById("preGame");
+
+  /* =========================
+     NO DATA = PRE-GAME MODE
+  ========================= */
+
+  if(!d || Object.keys(d).length === 0){
+
+    preGame.style.display = "flex";
+
+    story.innerHTML = "🧠 <strong>Game Story:</strong> Waiting for game data...";
+
+    if(countdownInterval) clearInterval(countdownInterval);
+
+    countdownEl.textContent = "--:--:--";
+    preSub.textContent = "No active game loaded";
+
+    return;
+  }
+
+  const running = d.running === true;
+
+  /* =========================
+     PRE-GAME MODE
+  ========================= */
+
+  if(!running){
+
+    preGame.style.display = "flex";
+
+    if(d.gameStartTime){
+      startCountdown(d.gameStartTime);
+      preSub.textContent = "Next scheduled game";
+    } else {
+      countdownEl.textContent = "--:--:--";
+      preSub.textContent = "Game not scheduled";
+    }
+
+    return;
+  }
+
+  /* =========================
+     LIVE MODE
+  ========================= */
+
+  preGame.style.display = "none";
+
+  nameA.textContent = d.nameA || "LINSLY";
+  nameB.textContent = d.nameB || "OPPONENT";
+
+  scoreA.textContent = d.scoreA || 0;
+  scoreB.textContent = d.scoreB || 0;
+
+  logoA.src = d.logoA || "";
+  logoB.src = d.logoB || "";
+
+  clock.textContent = d.clock || "12:00";
+  period.textContent = d.period || "Q1";
+
+  toA.textContent = d.toA || 0;
+  toB.textContent = d.toB || 0;
+
+  penalties.innerHTML = "";
+
+  if(d.penalties){
+    Object.values(d.penalties).forEach(p => {
+
+      const div = document.createElement("div");
+      div.className = "pen";
+
+      div.innerHTML = `
+        <div class="penText">#${p.number} — ${p.type}</div>
+        <div class="badge">${p.remaining}s</div>
+      `;
+
+      penalties.appendChild(div);
+
+    });
+  }
+
+  updateStory(d);
+
+});
+
+</script>
+
+</body>
+</html>
