@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Linsly Live Scorecard</title>
+<title>Cadets vs. Patriots | 5:30PM</title>
 
 <style>
 body{
@@ -223,7 +223,7 @@ body{
   </div>
 
   <div id="preSub" style="opacity:.7; font-size:14px;">
-    Waiting for schedule...
+    Linsly LAX vs. Wheeling Park | 5/13/2026 | 5:30PM
   </div>
 
 </div>
@@ -472,7 +472,7 @@ onValue(dbRef, snap => {
 
     if(d.gameStartTime){
       startCountdown(d.gameStartTime);
-      preSub.textContent = "Next scheduled game";
+      preSub.textContent = "Linsly LAX vs. Wheeling Park | 5/13/2026 | 5:30PM";
     } else {
       countdownEl.textContent = "--:--:--";
       preSub.textContent = "Game not scheduled";
