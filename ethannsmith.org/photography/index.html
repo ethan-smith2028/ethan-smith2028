@@ -5,140 +5,419 @@
 <title>Beyond the Lens</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
-if (window.innerWidth <= 768) {
-  window.location.href = "mobile.html";
-}
-</script>
-
 <style>
 body {
-  font-family: Arial;
-  background: #f0f2f5;
   margin: 0;
-  padding: 20px;
-}
-
-h1 {
-  text-align: center;
-}
-
-/* WINDOW */
-.window {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  max-width: 1000px;
-  margin: auto;
-}
-
-/* HEADER */
-.window-header img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.window-title {
-  padding: 10px;
-  font-weight: bold;
-}
-
-/* BUTTON */
-.open-btn {
-  display: block;
-  margin: 10px;
-  padding: 10px;
-  text-align: center;
-  background: #28a745;
+  font-family: system-ui, Arial;
+  background: #0b0f19;
   color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  text-decoration: none;
-  border: none;
 }
 
-/* GRID */
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 10px;
+/* HEADER HERO */
+.hero {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
 }
 
-/* PHOTO */
-.photo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.photo img {
+.hero img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  filter: brightness(0.6);
+  user-select: none;
+  pointer-events: none;
 }
 
-/* DOWNLOAD */
-.download-btn {
-  display: block;
-  text-align: center;
-  padding: 8px;
-  background: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 12px;
+.hero-title {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-/* LOAD MORE */
-.load-more {
-  display: block;
-  margin: 15px auto;
-  padding: 10px 20px;
-  background: #333;
-  color: white;
+/* TOP BAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #111827;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.status {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.btn {
   border: none;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary { background: #2563eb; color: white; }
+.btn-green { background: #16a34a; color: white; }
+.btn-purple { background: #7c3aed; color: white; }
+
+/* LOGIN PANEL */
+.login-panel {
+  display: none;
+  background: #111827;
+  padding: 12px;
+  gap: 8px;
+}
+
+.login-panel input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 8px;
+}
+
+/* GALLERY */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  padding: 16px;
+}
+
+.card {
+  background: #111827;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+
+.card {
+  position: relative;
+  overflow: hidden; /* this is the key */
+}
+
+.watermark {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* repeating tiled pattern */
+.watermark::before {
+  content: "Beyond the Lens • Beyond the Lens • Beyond the Lens • Beyond the Lens • Beyond the Lens • Beyond the Lens";
+
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+
+  color: rgba(255,255,255,0.08);
+
+  transform: rotate(-25deg);
+
+  /* THIS is what makes it actually tile */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 60px;
+  gap: 40px;
+
+  white-space: nowrap;
+}
+
+/* CARD ACTIONS */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 8px;
+}
+
+.download {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999; /* 🔥 forces it above everything */
+}
+
+.modal-content {
+  width: 90%;
+  height: 85vh;
+  background: white;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1000000;
+}
+
+.modal iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: black;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: none;
+}
+
+#mobileBlocker {
+  position: fixed;
+  inset: 0;
+  background: #0b0f19;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999999;
+  text-align: center;
+  padding: 20px;
+}
+
+#mobileBlocker .box {
+  max-width: 400px;
+  background: #111827;
+  padding: 24px;
+  border-radius: 12px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Beyond the Lens Photo Gallery</h1>
-
-<div class="window">
-
-  <div class="window-header">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Morgan_Hall_of_Williams_College_in_the_fall_%2827_October_2010%29.jpg">
-    <div class="window-title">Linsly College Signing 5/8/2026</div>
+  <div id="mobileBlocker">
+  <div class="box">
+    <h1>Desktop Only</h1>
+    <p>Please open this gallery on a computer for the best experience.</p>
   </div>
-
-  <button class="open-btn" id="openBtn">Open Gallery</button>
-
-  <div class="gallery" id="gallery" style="display:none;"></div>
-
-  <button class="load-more" id="loadMore" style="display:none;">Load More</button>
-
 </div>
 
-<script>
-const API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs";
-const FOLDER_ID = "1WBFd58yxfxaNqwK9ol7_L0TD4dHpz-JJ";
+<div class="hero">
+  <img src="https://stadiumconnection.com/simages/2555.jpg">
+  <div class="hero-title">WVSLA Linsly vs. Morgantown • 5/16/2026</div>
+</div>
+
+<div class="topbar">
+  <div class="status" id="status">Not signed in</div>
+
+  <div>
+    <button class="btn btn-primary" id="loginBtn">Sign In</button>
+    <button class="btn btn-purple" id="purchaseBtn">Purchase Access</button>
+    <button class="btn btn-green" id="openBtn">Open Gallery</button>
+  </div>
+</div>
+
+<div class="login-panel" id="loginPanel">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="btn btn-primary" id="signInBtn">Sign In</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+<div style="text-align:center; padding: 20px;">
+  <button id="loadMoreBtn" class="btn btn-primary" style="display:none;">
+    Load More
+  </button>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close" id="close">✕</button>
+    <iframe src="https://tally.so/r/eq0gbx"></iframe>
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ---------------- FIREBASE ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.firebasestorage.app",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f",
+  measurementId: "G-3X5TK2WYBF"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+function isMobile() {
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(navigator.userAgent)
+    || window.innerWidth < 768;
+}
+
+if (isMobile()) {
+  document.getElementById("mobileBlocker").style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+/* ---------------- GOOGLE DRIVE ---------------- */
+const API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs"; 
+const FOLDER_ID = "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5";
+
+/* ---------------- ELEMENTS ---------------- */
+const status = document.getElementById("status");
+const loginBtn = document.getElementById("loginBtn");
+const loginPanel = document.getElementById("loginPanel");
+
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const signInBtn = document.getElementById("signInBtn");
 
 const gallery = document.getElementById("gallery");
+
+const modal = document.getElementById("modal");
+const purchaseBtn = document.getElementById("purchaseBtn");
+const closeBtn = document.getElementById("close");
+
 const openBtn = document.getElementById("openBtn");
-const loadMore = document.getElementById("loadMore");
+
+/* ---------------- BASIC PROTECTION ---------------- */
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("dragstart", e => e.preventDefault());
+
+
+const flash = document.createElement("div");
+flash.style.position = "fixed";
+flash.style.inset = "0";
+flash.style.background = "white";
+flash.style.opacity = "0";
+flash.style.pointerEvents = "none";
+flash.style.zIndex = "999999999";
+flash.style.transition = "opacity 0.08s ease";
+document.body.appendChild(flash);
+
+let ctrlHeld = false;
+let cmdHeld = false;
+
+function updateFlash() {
+  if (ctrlHeld || cmdHeld) {
+    flash.style.opacity = "1";
+  } else {
+    flash.style.opacity = "0";
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+
+  if (e.ctrlKey) ctrlHeld = true;
+  if (e.metaKey) cmdHeld = true;
+
+  updateFlash();
+
+  // optional: still block dev tools shortcuts
+  if (e.key === "F12") {
+    e.preventDefault();
+  }
+
+  if ((e.ctrlKey || e.metaKey)) {
+    const blocked = ["u", "s", "p", "c", "v", "x", "a", "i", "j"];
+
+    if (blocked.includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  }
+});
 
 let allFiles = [];
-let index = 0;
-const CHUNK = 30;
+let currentIndex = 0;
+const PAGE_SIZE = 12;
 
-/* ---------------- LOAD ALL IMAGES (PAGINATION) ---------------- */
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+
+document.addEventListener("keyup", (e) => {
+
+  if (!e.ctrlKey) ctrlHeld = false;
+  if (!e.metaKey) cmdHeld = false;
+
+  updateFlash();
+});
+
+window.addEventListener("blur", () => {
+  ctrlHeld = false;
+  cmdHeld = false;
+  updateFlash();
+});
+
+/* ---------------- LOGIN UI ---------------- */
+loginBtn.onclick = () => {
+  loginPanel.style.display =
+    loginPanel.style.display === "block" ? "none" : "block";
+};
+
+signInBtn.onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+onAuthStateChanged(auth, user => {
+  status.textContent =
+    user ? `Signed in: ${user.email}` : "Not signed in";
+});
+
+/* ---------------- REQUIRE LOGIN ---------------- */
+function requireLogin(action) {
+  if (!auth.currentUser) {
+    alert("Please sign in first.");
+    loginPanel.style.display = "block";
+    return;
+  }
+  action();
+}
+
+/* ---------------- GOOGLE DRIVE FETCH ---------------- */
 async function fetchAllImages() {
   let pageToken = null;
   let files = [];
@@ -155,79 +434,99 @@ async function fetchAllImages() {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.files) {
-      files.push(...data.files);
-    }
+    if (data.files) files.push(...data.files);
 
     pageToken = data.nextPageToken;
-
   } while (pageToken);
 
   return files;
 }
 
-/* ---------------- RENDER CHUNK ---------------- */
-function renderChunk() {
-
-  const slice = allFiles.slice(index, index + CHUNK);
+/* ---------------- RENDER IMAGES ---------------- */
+function renderNextBatch() {
+  const slice = allFiles.slice(currentIndex, currentIndex + PAGE_SIZE);
 
   slice.forEach(file => {
 
     const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w1200`;
     const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
 
-    const photo = document.createElement("div");
-    photo.className = "photo";
+    const card = document.createElement("div");
+    card.className = "card";
 
     const img = document.createElement("img");
     img.src = imgUrl;
+    img.draggable = false;
 
-    const btn = document.createElement("a");
-    btn.className = "download-btn";
-    btn.href = downloadUrl;
+    const watermark = document.createElement("div");
+    watermark.className = "watermark";
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const btn = document.createElement("button");
+    btn.className = "download";
     btn.textContent = "Download";
-    btn.download = "";
 
-    photo.appendChild(img);
-    photo.appendChild(btn);
+    btn.onclick = () =>
+      requireLogin(() => window.open(downloadUrl, "_blank"));
 
-    gallery.appendChild(photo);
+    actions.appendChild(btn);
+
+    card.appendChild(img);
+    card.appendChild(watermark);
+    card.appendChild(actions);
+
+    gallery.appendChild(card);
   });
 
-  index += CHUNK;
+  currentIndex += PAGE_SIZE;
 
-  if (index >= allFiles.length) {
-    loadMore.style.display = "none";
+  // show/hide button
+  if (currentIndex >= allFiles.length) {
+    loadMoreBtn.style.display = "none";
+  } else {
+    loadMoreBtn.style.display = "inline-block";
   }
 }
 
 /* ---------------- OPEN GALLERY ---------------- */
-openBtn.addEventListener("click", async () => {
+openBtn.onclick = async () => {
+  gallery.innerHTML = "Loading...";
+  loadMoreBtn.style.display = "none";
 
-  if (gallery.style.display === "grid") {
-    gallery.style.display = "none";
-    loadMore.style.display = "none";
+  allFiles = await fetchAllImages();
+
+  if (!allFiles.length) {
+    gallery.innerHTML = "No images found.";
     return;
   }
 
-  gallery.style.display = "grid";
-  gallery.innerHTML = "Loading...";
-  loadMore.style.display = "none";
-
-  allFiles = await fetchAllImages();
-  index = 0;
-
   gallery.innerHTML = "";
+  currentIndex = 0;
 
-  renderChunk();
+  renderNextBatch();
+};
 
-  loadMore.style.display = "block";
-});
+loadMoreBtn.onclick = () => {
+  renderNextBatch();
+};
 
-/* ---------------- LOAD MORE ---------------- */
-loadMore.addEventListener("click", () => {
-  renderChunk();
-});
+/* ---------------- TALLY MODAL ---------------- */
+purchaseBtn.onclick = () => {
+  modal.style.display = "flex";
+};
+
+closeBtn.onclick = () => {
+  modal.style.display = "none";
+};
+
+window.onclick = e => {
+  if (e.target === modal) modal.style.display = "none";
+};
+
+
+
 </script>
 
 </body>
