@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Beyond the Lens</title>
+<link rel="icon" type="image/png" href="beyond-the-lens.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui, Arial;
-  background: #0b0f19;
-  color: white;
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+  box-sizing: border-box;
 }
 
-/* HERO */
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background: #09090b;
+  color: #fff;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* =========================
+   HERO
+========================= */
+
 .hero {
   position: relative;
-  height: 220px;
+  height: 340px;
   overflow: hidden;
 }
 
@@ -24,183 +45,488 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.6);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,.85),
+      rgba(0,0,0,.2)
+    );
 }
 
 .hero-title {
   position: absolute;
-  bottom: 12px;
-  left: 14px;
-  font-size: 18px;
-  font-weight: 600;
-  padding-right: 12px;
+  bottom: 24px;
+  left: 24px;
+  z-index: 2;
+
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+
+  max-width: 700px;
 }
 
-/* TOPBAR */
+/* =========================
+   TOP BAR
+========================= */
+
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   flex-wrap: wrap;
-  padding: 12px 14px;
-  background: #111827;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+
+  padding: 14px 20px;
+
+  background: rgba(17,24,39,.8);
+  backdrop-filter: blur(18px);
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .status {
-  font-size: 13px;
-  opacity: 0.8;
-  flex: 1 1 100%;
+  font-size: 14px;
+  opacity: .75;
 }
 
-.topbar > div {
+.topbar > div:last-child {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-/* BUTTONS */
+/* =========================
+   BUTTONS
+========================= */
+
 .btn {
   border: none;
-  padding: 10px 12px;
-  border-radius: 10px;
   cursor: pointer;
-  font-weight: 500;
+
+  padding: 11px 16px;
+
+  border-radius: 12px;
+
   font-size: 14px;
+  font-weight: 600;
+
+  transition: .2s ease;
 }
 
-.btn-primary { background: #2563eb; color: white; }
-.btn-green { background: #16a34a; color: white; }
-.btn-purple { background: #7c3aed; color: white; }
+.btn:hover {
+  transform: translateY(-2px);
+}
 
-/* LOGIN */
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-green {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-purple {
+  background: #7c3aed;
+  color: white;
+}
+
+/* =========================
+   LOGIN PANEL
+========================= */
+
 .login-panel {
   display: none;
+
   background: #111827;
-  padding: 12px;
+
+  padding: 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .login-panel input {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  margin-bottom: 8px;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+
+  background: #0f172a;
+  color: white;
 }
 
-/* GALLERY (DESKTOP DEFAULT) */
+/* =========================
+   STATS
+========================= */
+
+.stats {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #18181b;
+
+  border-radius: 18px;
+
+  min-width: 160px;
+
+  padding: 18px;
+
+  border: 1px solid rgba(255,255,255,.05);
+}
+
+.stat span {
+  display: block;
+
+  font-size: 28px;
+  font-weight: 800;
+}
+
+/* =========================
+   GALLERY GRID
+========================= */
+
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
-  padding: 16px;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(260px, 1fr));
+
+  gap: 18px;
+
+  padding: 20px;
 }
 
-/* CARD */
+/* =========================
+   CARD
+========================= */
+
 .card {
-  background: #111827;
-  border-radius: 14px;
+  background: #18181b;
+
+  border-radius: 18px;
+
   overflow: hidden;
-  position: relative;
+
+  border: 1px solid rgba(255,255,255,.05);
+
+  transition: .25s ease;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.25);
 }
 
-.card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.45);
 }
 
 .img-wrapper {
   position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4; /* desktop default */
-  overflow: hidden;
-}
 
-@media (max-width: 768px) {
-  .img-wrapper {
-    aspect-ratio: 2 / 3; /* taller on mobile */
-  }
+  width: 100%;
+
+  aspect-ratio: 3/4;
+
+  overflow: hidden;
 }
 
 .img-wrapper img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
+  display: block;
+
+  transition: transform .4s ease;
+
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* WATERMARK NOW MATCHES IMAGE ONLY */
+.card:hover .img-wrapper img {
+  transform: scale(1.03);
+}
+
+/* =========================
+   WATERMARK
+========================= */
+
 .watermark {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+
   pointer-events: none;
 
-  background-image: repeating-linear-gradient(
-    -30deg,
-    rgba(255, 255, 255, 0.12) 0px,
-    rgba(255,255,255,0.12) 2px,
-    transparent 2px,
-    transparent 60px
-  );
+  background-image:
+    repeating-linear-gradient(
+      -30deg,
+      rgba(255,255,255,.08) 0px,
+      rgba(255,255,255,.08) 2px,
+      transparent 2px,
+      transparent 60px
+    );
 }
 
 .watermark::after {
   content: "BEYOND THE LENS";
+
   position: absolute;
+
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-30deg);
 
-  font-size: 28px;
+  transform:
+    translate(-50%, -50%)
+    rotate(-30deg);
+
+  font-size: 26px;
   font-weight: 900;
   letter-spacing: 4px;
-  color: rgba(255,255,255,0.45);
+
+  color: rgba(255,255,255,.35);
 }
 
-/* ACTIONS */
+/* =========================
+   IMAGE NUMBER
+========================= */
+
+.image-number {
+  padding: 10px 14px;
+
+  background: #0f172a;
+
+  border-top: 1px solid rgba(255,255,255,.06);
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
 .actions {
-  display: flex;
-  padding: 10px;
+  padding: 12px;
 }
 
 .download {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
+  width: 100%;
+
   border: none;
+
+  border-radius: 10px;
+
+  padding: 12px;
+
+  cursor: pointer;
+
+  font-weight: 700;
+
   background: #2563eb;
   color: white;
+
+  transition: .2s ease;
 }
 
-/* IMAGE NUMBER */
-.image-number {
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 700;
-  background: #0f172a;
-  border-top: 1px solid rgba(255,255,255,0.08);
+.download:hover {
+  background: #1d4ed8;
 }
 
-/* MODAL */
-.modal {
+/* =========================
+   LOAD MORE
+========================= */
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 40px;
+}
+
+#loadMoreBtn {
+  width: auto;
+  min-width: 160px;
+}
+
+/* =========================
+   LIGHTBOX
+========================= */
+
+.lightbox {
   position: fixed;
+
   inset: 0;
-  background: rgba(0,0,0,0.75);
+
   display: none;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0,0,0,.95);
+
+  z-index: 9999;
+}
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 95%;
+  border-radius: 12px;
+}
+
+/* =========================
+   DONATION FAB
+========================= */
+
+#donateFab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+
+  padding: 12px 18px;
+
+  background: #ef4444;
+  color: white;
+
+  border: none;
+  border-radius: 999px;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  cursor: pointer;
+  z-index: 99999;
+
+  box-shadow: 0 12px 30px rgba(239,68,68,.4);
+  transition: .2s ease;
+}
+
+#donateFab .heart {
+  font-size: 16px;
+  line-height: 1;
+}
+
+
+#donateFab:hover {
+  transform: scale(1.08);
+}
+
+/* =========================
+   DONATION PANEL
+========================= */
+
+#donationPanel {
+  position: fixed;
+
+  right: 24px;
+  bottom: 105px;
+
+  width: 420px;
+  height: 620px;
+
+  background: white;
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  display: none;
+
+  z-index: 99998;
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.45);
+}
+
+.donationHeader {
+  height: 56px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 18px;
+
+  color: black;
+
+  font-weight: 700;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.donationHeader button {
+  border: none;
+  background: none;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+#donationPanel iframe {
+  width: 100%;
+  height: calc(100% - 56px);
+
+  border: none;
+}
+
+/* =========================
+   ORIGINAL MODAL
+========================= */
+
+.modal {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,.8);
+
+  display: none;
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
 }
 
 .modal-content {
   width: 95%;
+  max-width: 900px;
+
   height: 80vh;
+
   background: white;
-  border-radius: 12px;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
   position: relative;
 }
 
@@ -212,91 +538,200 @@ body {
 
 .close {
   position: absolute;
+
   right: 10px;
   top: 10px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+
   background: black;
   color: white;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  border: none;
+
+  cursor: pointer;
 }
 
-/* 📱 MOBILE */
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 768px) {
 
+  /* ================= HERO ================= */
   .hero {
-    height: 160px;
+    height: 220px;
   }
 
   .hero-title {
-    font-size: 15px;
+    font-size: 1.1rem;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
   }
 
-  .gallery {
-    grid-template-columns: 1fr;
-    padding: 10px;
+  /* ================= TOP BAR ================= */
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
   }
 
-  .card img {
-    height: 960px;
+  .topbar > div:last-child {
+    width: 100%;
+    justify-content: space-between;
   }
 
+  select.btn {
+    width: 100%;
+  }
+
+  /* ================= BUTTONS ================= */
   .btn {
     flex: 1;
-    text-align: center;
+    font-size: 13px;
+    padding: 10px 12px;
   }
 
-  .topbar {
-    align-items: flex-start;
+  /* ================= STATS (if used) ================= */
+  .stats {
+    padding: 12px;
+    gap: 10px;
   }
-}
 
-.img-wrapper img {
-  -webkit-touch-callout: none; /* iOS long press menu */
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
+  .stat {
+    flex: 1;
+    min-width: unset;
+    padding: 14px;
+  }
+
+  .stat span {
+    font-size: 22px;
+  }
+
+  /* ================= GALLERY ================= */
+  .gallery {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 14px;
+  }
+
+  .card {
+    border-radius: 14px;
+  }
+
+  /* ================= LIGHTBOX ================= */
+  .lightbox img {
+    max-width: 100%;
+    max-height: 85%;
+  }
+
+  /* ================= DONATE BUTTON ================= */
+  #donateFab {
+    right: 14px;
+    bottom: 14px;
+
+    padding: 10px 14px;
+    font-size: 16px;
+
+    border-radius: 999px;
+  }
+
+  #donateFab .heart {
+    font-size: 14px;
+  }
+
+  /* ================= DONATION PANEL ================= */
+  #donationPanel {
+    left: 10px;
+    right: 10px;
+    bottom: 80px;
+
+    width: auto;
+    height: 70vh;
+
+    border-radius: 16px;
+  }
+
+  .donationHeader {
+    font-size: 14px;
+    padding: 0 12px;
+  }
+
+  /* ================= LOAD MORE ================= */
+  .load-more-container {
+    padding: 10px 0 30px;
+  }
+
+  #loadMoreBtn {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-  <img src="https://stadiumconnection.com/simages/2555.jpg">
-  <div class="hero-title">WVSLA Linsly vs. Morgantown • 5/16/2026</div>
-</div>
-
-<div class="topbar">
-  <div class="status" id="status">Not signed in</div>
-
-  <div>
-    <button class="btn btn-primary" id="loginBtn">Sign In</button>
-    <button class="btn btn-purple" id="purchaseBtn">Purchase Access</button>
-    <button class="btn btn-green" id="openBtn">Open Gallery</button>
+<!-- HERO -->
+<div class="hero" id="hero">
+  <img id="heroImg" src="https://stadiumconnection.com/simages/2555.jpg">
+  <div class="hero-title" id="heroTitle">
+    WVSLA Linsly vs. Morgantown • 5/16/2026
   </div>
 </div>
 
-<div class="login-panel" id="loginPanel">
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button class="btn btn-primary" id="signInBtn">Sign In</button>
+<!-- TOP BAR -->
+<div class="topbar">
+
+  <div class="status" ></div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="gallerySelect" class="btn"></select>
+
+    <!--<button class="btn btn-primary" id="loginBtn">Sign In</button> 
+    <button class="btn btn-purple" id="purchaseBtn">Purchase Access</button> -->
+    <button class="btn btn-green" id="openBtn">Load Gallery</button>
+  </div>
+
 </div>
 
+<!-- GALLERY -->
 <div class="gallery" id="gallery"></div>
-<div style="text-align:center; padding: 20px;">
-  <button id="loadMoreBtn" class="btn btn-primary" style="display:none;">
-    Load More
-  </button>
+
+<div class="load-more-container">
+  <button id="loadMoreBtn" class="btn btn-primary">Load More</button>
 </div>
 
-<!-- MODAL -->
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg">
+</div>
+
+<!-- PURCHASE MODAL (UNCHANGED) -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close" id="close">✕</button>
-    <iframe src="https://tally.so/r/eq0gbx"></iframe>
+    <iframe src="https://tally.so/r/PdkvPd"></iframe>
   </div>
+</div>
+
+<!-- DONATION FLOAT BUTTON -->
+<button id="donateFab">
+  <span class="heart">❤</span>
+  <span>Donate</span>
+</button>
+
+<!-- DONATION PANEL -->
+<div id="donationPanel">
+  <div class="donationHeader">
+    Support Beyond The Lens
+    <button id="closeDonation">✕</button>
+  </div>
+  <iframe src="https://tally.so/r/PdkvPd"></iframe>
 </div>
 
 <script type="module">
@@ -307,7 +742,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* ---------------- FIREBASE ---------------- */
+/* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
   authDomain: "email-list-83dfb.firebaseapp.com",
@@ -315,169 +750,185 @@ const firebaseConfig = {
   projectId: "email-list-83dfb",
   storageBucket: "email-list-83dfb.firebasestorage.app",
   messagingSenderId: "471452404510",
-  appId: "1:471452404510:web:e91752174f6f0000c1570f",
-  measurementId: "G-3X5TK2WYBF"
+  appId: "1:471452404510:web:e91752174f6f0000c1570f"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* ---------------- AUTH STATE ---------------- */
-onAuthStateChanged(auth, user => {
-  status.textContent = user
-    ? `Signed in: ${user.email}`
-    : "Not signed in";
-});
+/* ================= GALLERIES ================= */
+const GALLERIES = [
+  {
+    name: "WVSLA Linsly vs Morgantown",
+    folderId: "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5",
+    hero: "https://stadiumconnection.com/simages/2555.jpg",
+    date: "5/16/2026"
+  },
+  {
+    name: "Seattle Selects Spring Classic Game 1",
+    folderId: "1Vt-9N1L5KrLQRUbzmkwWip87FXxtpdix",
+    hero: "https://www.seevirtual360.com/photos/tours/337989.jpg",
+    date: "5/29/2026"
+  }
+];
 
-/* ---------------- ELEMENTS ---------------- */
-const status = document.getElementById("status");
-const loginBtn = document.getElementById("loginBtn");
-const loginPanel = document.getElementById("loginPanel");
+let activeGallery = 0;
+let allFiles = [];
+let currentIndex = 0;
 
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const signInBtn = document.getElementById("signInBtn");
+const PAGE_SIZE = 24;
 
-const gallery = document.getElementById("gallery");
+/* ================= HELPERS ================= */
+const el = (id) => document.getElementById(id);
 
-const modal = document.getElementById("modal");
-const purchaseBtn = document.getElementById("purchaseBtn");
-const closeBtn = document.getElementById("close");
+/* ================= ELEMENTS ================= */
+const status = el("status");
+const gallerySelect = el("gallerySelect");
+const heroImg = el("heroImg");
+const heroTitle = el("heroTitle");
 
-const openBtn = document.getElementById("openBtn");
-const loadMoreBtn = document.getElementById("loadMoreBtn");
+const loginPanel = el("loginPanel");
+const email = el("email");
+const password = el("password");
 
-/* ---------------- BASIC PROTECTION ---------------- */
-document.addEventListener("contextmenu", e => e.preventDefault());
-document.addEventListener("dragstart", e => e.preventDefault());
+const gallery = el("gallery");
+const loadMoreBtn = el("loadMoreBtn");
+const modal = el("modal");
+const closeBtn = el("close");
+const lightbox = el("lightbox");
+const lightboxImg = el("lightboxImg");
 
-const flash = document.createElement("div");
-flash.style.position = "fixed";
-flash.style.inset = "0";
-flash.style.background = "white";
-flash.style.opacity = "0";
-flash.style.pointerEvents = "none";
-flash.style.zIndex = "999999999";
-flash.style.transition = "opacity 0.08s ease";
-document.body.appendChild(flash);
+const donateFab = el("donateFab");
+const donationPanel = el("donationPanel");
+const closeDonation = el("closeDonation");
 
-let ctrlHeld = false;
-let cmdHeld = false;
+/* ================= AUTH ================= */
+if (email && password) {
+  const signInBtn = el("signInBtn");
 
-function updateFlash() {
-  flash.style.opacity = (ctrlHeld || cmdHeld) ? "1" : "0";
+  if (signInBtn) {
+    signInBtn.onclick = async () => {
+      try {
+        await signInWithEmailAndPassword(auth, email.value, password.value);
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+  }
 }
 
-document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey) ctrlHeld = true;
-  if (e.metaKey) cmdHeld = true;
-
-  updateFlash();
-
-  if (e.key === "F12") e.preventDefault();
-
-  if (e.ctrlKey || e.metaKey) {
-    const blocked = ["u", "s", "p", "c", "v", "x", "a", "i", "j"];
-    if (blocked.includes(e.key.toLowerCase())) {
-      e.preventDefault();
-    }
+onAuthStateChanged(auth, user => {
+  if (status) {
+    status.textContent = user
+      ? `Signed in: ${user.email}`
+      : "Not signed in";
   }
 });
 
-document.addEventListener("keyup", () => {
-  ctrlHeld = false;
-  cmdHeld = false;
-  updateFlash();
+/* ================= HERO / GALLERY SELECT ================= */
+GALLERIES.forEach((g, i) => {
+  if (!gallerySelect) return;
+
+  const opt = document.createElement("option");
+  opt.value = i;
+  opt.textContent = g.name;
+  gallerySelect.appendChild(opt);
 });
 
-window.addEventListener("blur", () => {
-  ctrlHeld = false;
-  cmdHeld = false;
-  updateFlash();
-});
+if (gallerySelect) {
+  gallerySelect.onchange = () => {
+    activeGallery = Number(gallerySelect.value);
+    updateHero();
+  };
+}
 
-/* ---------------- LOGIN ---------------- */
-loginBtn.onclick = () => {
-  loginPanel.style.display =
-    loginPanel.style.display === "block" ? "none" : "block";
-};
+function updateHero() {
+  const g = GALLERIES[activeGallery];
+  if (heroImg) heroImg.src = g.hero;
+  if (heroTitle) heroTitle.textContent = `${g.name} • ${g.date}`;
+}
 
-signInBtn.onclick = async () => {
-  try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-  } catch (err) {
-    alert(err.message);
-  }
-};
-
-/* ---------------- GOOGLE DRIVE ---------------- */
+/* ================= DRIVE API ================= */
 const API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs";
-const FOLDER_ID = "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5";
 
-async function fetchAllImages() {
+async function fetchImages(folderId) {
   let pageToken = null;
   let files = [];
 
   do {
     const url =
       `https://www.googleapis.com/drive/v3/files` +
-      `?q='${FOLDER_ID}'+in+parents+and mimeType contains 'image/'` +
+      `?q='${folderId}'+in+parents` +
       `&key=${API_KEY}` +
-      `&pageSize=100` +
-      (pageToken ? `&pageToken=${pageToken}` : "") +
-      `&fields=nextPageToken,files(id,name)`;
+      `&pageSize=1000` +
+      `&fields=nextPageToken,files(id,name,mimeType)` +
+      (pageToken ? `&pageToken=${pageToken}` : "");
 
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.files) files.push(...data.files);
+    if (data.error) {
+      console.error("Drive API error:", data.error);
+      break;
+    }
+
+    files.push(...(data.files || []));
     pageToken = data.nextPageToken;
+
   } while (pageToken);
 
-  return files;
+  return files.filter(f => f.mimeType?.startsWith("image/"));
 }
 
-/* ---------------- RENDER SYSTEM ---------------- */
-let allFiles = [];
-let currentIndex = 0;
-const PAGE_SIZE = 12;
+/* ================= RENDER ================= */
+async function loadGallery(reset = true) {
+  if (!gallery || !loadMoreBtn) return;
 
-function renderNextBatch() {
-  const slice = allFiles.slice(currentIndex, currentIndex + PAGE_SIZE);
+  // ALWAYS hide button immediately when starting load
+  loadMoreBtn.style.display = "none";
 
-  slice.forEach((file, index) => {
-    const imageNumber = currentIndex + index + 1;
+  if (reset) {
+    gallery.innerHTML = "Loading...";
+    currentIndex = 0;
 
+    const g = GALLERIES[activeGallery];
+    allFiles = await fetchImages(g.folderId);
+
+    gallery.innerHTML = "";
+  }
+
+  // ✅ HANDLE EMPTY GALLERY (THIS IS THE BUG YOU’RE SEEING)
+  if (!allFiles || allFiles.length === 0) {
+    gallery.innerHTML = "<p style='padding:20px;opacity:.7'>No photos found.</p>";
+    loadMoreBtn.style.display = "none";
+    return;
+  }
+
+  const nextBatch = allFiles.slice(currentIndex, currentIndex + PAGE_SIZE);
+
+  nextBatch.forEach(file => {
     const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w1200`;
     const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
 
     const card = document.createElement("div");
     card.className = "card";
 
-    /* ---------------- IMAGE WRAPPER (IMPORTANT FIX) ---------------- */
-    const imgWrap = document.createElement("div");
-    imgWrap.style.position = "relative";
-    imgWrap.style.width = "100%";
-    imgWrap.classList.add("img-wrapper");
-    imgWrap.style.overflow = "hidden";
+    const wrap = document.createElement("div");
+    wrap.className = "img-wrapper";
 
     const img = document.createElement("img");
     img.src = imgUrl;
-    img.draggable = false;
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
-    img.style.display = "block";
 
-    /* ---------------- WATERMARK (NOW PERFECTLY OVER IMAGE) ---------------- */
+    img.onclick = () => {
+      lightbox.style.display = "flex";
+      lightboxImg.src = imgUrl;
+    };
+
     const watermark = document.createElement("div");
     watermark.className = "watermark";
-    watermark.style.position = "absolute";
-    watermark.style.inset = "0";
 
-    const numberTag = document.createElement("div");
-    numberTag.className = "image-number";
-    numberTag.textContent = `IMG-${String(imageNumber).padStart(4, "0")}`;
+    wrap.appendChild(img);
+    wrap.appendChild(watermark);
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -485,77 +936,64 @@ function renderNextBatch() {
     const btn = document.createElement("button");
     btn.className = "download";
     btn.textContent = "Download";
-
-    btn.onclick = () =>
-      requireLogin(() => window.open(downloadUrl, "_blank"));
+    btn.onclick = () => window.open(downloadUrl, "_blank");
 
     actions.appendChild(btn);
-
-    /* ---------------- BUILD CARD ORDER ---------------- */
-    imgWrap.appendChild(img);
-    imgWrap.appendChild(watermark);
-
-    card.appendChild(imgWrap);
-    card.appendChild(numberTag);
+    card.appendChild(wrap);
     card.appendChild(actions);
-
     gallery.appendChild(card);
   });
 
   currentIndex += PAGE_SIZE;
 
-  loadMoreBtn.style.display =
-    currentIndex >= allFiles.length ? "none" : "inline-block";
+  // ✅ FINAL BUTTON STATE CHECK (ALWAYS SAFE)
+  if (currentIndex < allFiles.length) {
+    loadMoreBtn.style.display = "block";
+  } else {
+    loadMoreBtn.style.display = "none";
+  }
 }
 
-/* ---------------- GALLERY ---------------- */
-openBtn.onclick = async () => {
-  gallery.innerHTML = "Loading...";
-  loadMoreBtn.style.display = "none";
-
-  allFiles = await fetchAllImages();
-  allFiles.sort((a, b) => a.name.localeCompare(b.name));
-
-  if (!allFiles.length) {
-    gallery.innerHTML = "No images found.";
-    return;
-  }
-
-  gallery.innerHTML = "";
-  currentIndex = 0;
-
-  renderNextBatch();
-};
-
-loadMoreBtn.onclick = renderNextBatch;
-
-/* ---------------- MODAL ---------------- */
-purchaseBtn.onclick = () => {
-  modal.style.display = "flex";
-};
-
-closeBtn.onclick = () => {
-  modal.style.display = "none";
-};
-
-window.onclick = (e) => {
-  if (e.target === modal) modal.style.display = "none";
-};
-
-/* ---------------- LOGIN HELPER ---------------- */
-function requireLogin(action) {
-  if (!auth.currentUser) {
-    alert("Please sign in first.");
-    loginPanel.style.display = "block";
-    return;
-  }
-  action();
+/* ================= BUTTONS ================= */
+if (loadMoreBtn) {
+  loadMoreBtn.onclick = () => loadGallery(false);
+  loadMoreBtn.textContent = "Load More";
 }
 
-document.addEventListener("visibilitychange", () => {
-  document.body.style.filter =
-    document.hidden ? "blur(20px)" : "none";
-});
+const openBtn = el("openBtn");
+if (openBtn) {
+  openBtn.onclick = () => loadGallery(true);
+}
+
+/* ================= MODAL ================= */
+if (closeBtn) {
+  closeBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+}
+
+/* ================= LIGHTBOX ================= */
+if (lightbox) {
+  lightbox.onclick = () => {
+    lightbox.style.display = "none";
+  };
+}
+
+/* ================= DONATION PANEL ================= */
+if (donateFab && donationPanel) {
+  donateFab.onclick = () => {
+    donationPanel.style.display = "block";
+  };
+}
+
+if (closeDonation && donationPanel) {
+  closeDonation.onclick = () => {
+    donationPanel.style.display = "none";
+  };
+}
+
+/* ================= INIT ================= */
+updateHero();
 </script>
 
 </body>
