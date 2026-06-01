@@ -778,18 +778,13 @@ let currentIndex = 0;
 
 const PAGE_SIZE = 24;
 
-/* ================= HELPERS ================= */
+/* ================= ELEMENTS ================= */
 const el = (id) => document.getElementById(id);
 
-/* ================= ELEMENTS ================= */
 const status = el("status");
 const gallerySelect = el("gallerySelect");
 const heroImg = el("heroImg");
 const heroTitle = el("heroTitle");
-
-const loginPanel = el("loginPanel");
-const email = el("email");
-const password = el("password");
 
 const gallery = el("gallery");
 const loadMoreBtn = el("loadMoreBtn");
@@ -802,50 +797,23 @@ const donateFab = el("donateFab");
 const donationPanel = el("donationPanel");
 const closeDonation = el("closeDonation");
 
-/* ================= AUTH ================= */
-if (email && password) {
-  const signInBtn = el("signInBtn");
-
-  if (signInBtn) {
-    signInBtn.onclick = async () => {
-      try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
-      } catch (e) {
-        alert(e.message);
-      }
-    };
-  }
-}
-
-onAuthStateChanged(auth, user => {
-  if (status) {
-    status.textContent = user
-      ? `Signed in: ${user.email}`
-      : "Not signed in";
-  }
-});
-
-/* ================= HERO / GALLERY SELECT ================= */
+/* ================= HERO ================= */
 GALLERIES.forEach((g, i) => {
-  if (!gallerySelect) return;
-
   const opt = document.createElement("option");
   opt.value = i;
   opt.textContent = g.name;
   gallerySelect.appendChild(opt);
 });
 
-if (gallerySelect) {
-  gallerySelect.onchange = () => {
-    activeGallery = Number(gallerySelect.value);
-    updateHero();
-  };
-}
+gallerySelect.onchange = () => {
+  activeGallery = Number(gallerySelect.value);
+  updateHero();
+};
 
 function updateHero() {
   const g = GALLERIES[activeGallery];
-  if (heroImg) heroImg.src = g.hero;
-  if (heroTitle) heroTitle.textContent = `${g.name} • ${g.date}`;
+  heroImg.src = g.hero;
+  heroTitle.textContent = `${g.name} • ${g.date}`;
 }
 
 /* ================= DRIVE API ================= */
@@ -867,14 +835,10 @@ async function fetchImages(folderId) {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.error) {
-      console.error("Drive API error:", data.error);
-      break;
-    }
+    if (data.error) break;
 
     files.push(...(data.files || []));
     pageToken = data.nextPageToken;
-
   } while (pageToken);
 
   return files.filter(f => f.mimeType?.startsWith("image/"));
@@ -882,9 +846,6 @@ async function fetchImages(folderId) {
 
 /* ================= RENDER ================= */
 async function loadGallery(reset = true) {
-  if (!gallery || !loadMoreBtn) return;
-
-  // ALWAYS hide button immediately when starting load
   loadMoreBtn.style.display = "none";
 
   if (reset) {
@@ -897,10 +858,8 @@ async function loadGallery(reset = true) {
     gallery.innerHTML = "";
   }
 
-  // ✅ HANDLE EMPTY GALLERY (THIS IS THE BUG YOU’RE SEEING)
-  if (!allFiles || allFiles.length === 0) {
-    gallery.innerHTML = "<p style='padding:20px;opacity:.7'>No photos found.</p>";
-    loadMoreBtn.style.display = "none";
+  if (!allFiles.length) {
+    gallery.innerHTML = "<p style='opacity:.7;padding:20px'>No photos found.</p>";
     return;
   }
 
@@ -936,17 +895,19 @@ async function loadGallery(reset = true) {
     const btn = document.createElement("button");
     btn.className = "download";
     btn.textContent = "Download";
-    btn.onclick = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
 
-  const a = document.createElement("a");
-  a.href = downloadUrl;
-  a.download = "";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // SAVE STATE BEFORE NAVIGATING AWAY
+      sessionStorage.setItem("scrollPos", window.scrollY);
+      sessionStorage.setItem("activeGallery", activeGallery);
+      sessionStorage.setItem("currentIndex", currentIndex);
+
+      // IMPORTANT: direct navigation works better on mobile than window.open
+      location.href = downloadUrl;
+    };
 
     actions.appendChild(btn);
     card.appendChild(wrap);
@@ -956,51 +917,58 @@ async function loadGallery(reset = true) {
 
   currentIndex += PAGE_SIZE;
 
-  // ✅ FINAL BUTTON STATE CHECK (ALWAYS SAFE)
   if (currentIndex < allFiles.length) {
     loadMoreBtn.style.display = "block";
-  } else {
-    loadMoreBtn.style.display = "none";
   }
 }
 
+/* ================= RESTORE AFTER MOBILE DOWNLOAD ================= */
+window.addEventListener("load", async () => {
+  const savedGallery = sessionStorage.getItem("activeGallery");
+  const savedIndex = sessionStorage.getItem("currentIndex");
+  const savedScroll = sessionStorage.getItem("scrollPos");
+
+  updateHero();
+
+  if (savedGallery !== null) {
+    activeGallery = Number(savedGallery);
+    gallerySelect.value = activeGallery;
+
+    const g = GALLERIES[activeGallery];
+    allFiles = await fetchImages(g.folderId);
+
+    gallery.innerHTML = "";
+    currentIndex = 0;
+
+    const target = Number(savedIndex || PAGE_SIZE);
+
+    while (currentIndex < target) {
+      await loadGallery(false);
+    }
+
+    requestAnimationFrame(() => {
+      window.scrollTo(0, Number(savedScroll || 0));
+    });
+  }
+});
+
 /* ================= BUTTONS ================= */
-if (loadMoreBtn) {
-  loadMoreBtn.onclick = () => loadGallery(false);
-  loadMoreBtn.textContent = "Load More";
-}
-
-const openBtn = el("openBtn");
-if (openBtn) {
-  openBtn.onclick = () => loadGallery(true);
-}
-
-/* ================= MODAL ================= */
-if (closeBtn) {
-  closeBtn.onclick = () => {
-    modal.style.display = "none";
-  };
-}
+loadMoreBtn.onclick = () => loadGallery(false);
+document.getElementById("openBtn").onclick = () => loadGallery(true);
 
 /* ================= LIGHTBOX ================= */
-if (lightbox) {
-  lightbox.onclick = () => {
-    lightbox.style.display = "none";
-  };
-}
+lightbox.onclick = () => {
+  lightbox.style.display = "none";
+};
 
-/* ================= DONATION PANEL ================= */
-if (donateFab && donationPanel) {
-  donateFab.onclick = () => {
-    donationPanel.style.display = "block";
-  };
-}
+/* ================= DONATION ================= */
+donateFab.onclick = () => {
+  donationPanel.style.display = "block";
+};
 
-if (closeDonation && donationPanel) {
-  closeDonation.onclick = () => {
-    donationPanel.style.display = "none";
-  };
-}
+closeDonation.onclick = () => {
+  donationPanel.style.display = "none";
+};
 
 /* ================= INIT ================= */
 updateHero();
