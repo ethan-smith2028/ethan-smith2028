@@ -936,7 +936,17 @@ async function loadGallery(reset = true) {
     const btn = document.createElement("button");
     btn.className = "download";
     btn.textContent = "Download";
-    btn.onclick = () => window.open(downloadUrl, "_blank");
+    btn.onclick = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
 
     actions.appendChild(btn);
     card.appendChild(wrap);
