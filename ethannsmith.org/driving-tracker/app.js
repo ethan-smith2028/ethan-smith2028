@@ -1,3 +1,6 @@
+/* =========================
+   FIREBASE IMPORTS
+========================= */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import {
@@ -7,16 +10,27 @@ import {
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-window.addEventListener("DOMContentLoaded", () => {
+/* =========================
+   INIT APP AFTER DOM LOAD
+========================= */
+
+window.addEventListener("DOMContentLoaded", init);
+
+function init() {
 
 /* =========================
-   FIREBASE
+   CONFIG
 ========================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
   authDomain: "email-list-83dfb.firebaseapp.com",
-  projectId: "email-list-83dfb"
+  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.firebasestorage.app",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f",
+  measurementId: "G-3X5TK2WYBF"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -24,36 +38,24 @@ const db = getFirestore(app);
 const tripRef = doc(db, "trips", "currentTrip");
 
 /* =========================
-   STATE
+   DEVICE / STATE
 ========================= */
 
 const deviceId = crypto.randomUUID();
 
 let trackingDevice = null;
 let isTracking = false;
-
 let currentSpeed = 0;
-let maxSpeed = 0;
-let totalMiles = 0;
 
-let path = [];
-let previousPoint = null;
-let firstFix = true;
-
-let lastSave = 0;
 let lastSpeedAlert = 0;
 
-const el = (id) => document.getElementById(id);
-
 /* =========================
-   MAP (FIXED)
+   MAP
 ========================= */
 
-const map = L.map("map", {
-    zoomControl: true
-});
+const map = L.map("map");
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19
 }).addTo(map);
 
@@ -70,51 +72,93 @@ let routeLine = L.polyline([], {
     opacity: 0.9
 }).addTo(map);
 
-/* 🔥 FIX: force map to render correctly after layout loads */
-setTimeout(() => {
-    map.invalidateSize();
-}, 300);
+let path = [];
+let totalMiles = 0;
+let maxSpeed = 0;
+let previousPoint = null;
+let firstFix = true;
+
+/* =========================
+   SAFE ELEMENT GETTER
+========================= */
+
+function el(id) {
+    return document.getElementById(id);
+}
 
 /* =========================
    UI
 ========================= */
 
 function updateFuel() {
-    const mpg = Number(el("mpg")?.value);
-    const gallons = el("gallons");
+    const mpgEl = el("mpg");
+    const gallonsEl = el("gallons");
 
-    if (!mpg || mpg <= 0 || !gallons) return;
+    if (!mpgEl || !gallonsEl) return;
 
-    gallons.textContent = (totalMiles / mpg).toFixed(2);
+    const mpg = Number(mpgEl.value);
+    if (!mpg || mpg <= 0) return;
+
+    gallonsEl.textContent = (totalMiles / mpg).toFixed(2);
 }
 
 function updateUI() {
 
     const speedEl = el("speed");
-    const maxEl = el("maxSpeed");
-    const distEl = el("distance");
+    const maxSpeedEl = el("maxSpeed");
+    const distanceEl = el("distance");
 
     if (speedEl) speedEl.textContent = currentSpeed.toFixed(1) + " mph";
-    if (maxEl) maxEl.textContent = maxSpeed.toFixed(1) + " mph";
-    if (distEl) distEl.textContent = totalMiles.toFixed(2) + " mi";
+    if (maxSpeedEl) maxSpeedEl.textContent = maxSpeed.toFixed(1) + " mph";
+    if (distanceEl) distanceEl.textContent = totalMiles.toFixed(2) + " mi";
 
     updateFuel();
 }
 
+function updateTrackerStatus() {
+    const elStatus = el("trackerStatus");
+    if (!elStatus) return;
+
+    if (trackingDevice === deviceId) {
+        elStatus.innerHTML =
+            `<i class="fa-solid fa-satellite-dish"></i> Tracking Active`;
+        elStatus.style.color = "#34c759";
+    } else {
+        elStatus.innerHTML =
+            `<i class="fa-solid fa-eye"></i> Viewer Mode`;
+        elStatus.style.color = "#fff";
+    }
+}
+
 /* =========================
-   STATUS
+   SAVE
 ========================= */
 
-function updateTrackerStatus() {
-    const status = el("trackerStatus");
-    if (!status) return;
+let lastSave = 0;
 
-    if (trackingDevice === deviceId && isTracking) {
-        status.innerHTML = "🚗 Tracking Active";
-        status.style.color = "#34c759";
-    } else {
-        status.innerHTML = "👁 Viewer Mode";
-        status.style.color = "#fff";
+async function saveTrip() {
+
+    if (trackingDevice !== deviceId || !isTracking) return;
+
+    const now = Date.now();
+    if (now - lastSave < 3000) return;
+    lastSave = now;
+
+    const mpg = Number(el("mpg")?.value) || 25;
+
+    try {
+        await setDoc(tripRef, {
+            distance: totalMiles,
+            currentSpeed,
+            maxSpeed,
+            gallonsUsed: totalMiles / mpg,
+            route: path,
+            trackingDevice,
+            updatedAt: now
+        }, { merge: true });
+
+    } catch (err) {
+        console.error("Firestore save failed:", err);
     }
 }
 
@@ -129,58 +173,16 @@ onSnapshot(tripRef, (snap) => {
     const data = snap.data();
 
     trackingDevice = data.trackingDevice || null;
-
     totalMiles = data.distance || 0;
     maxSpeed = data.maxSpeed || 0;
+    path = data.route || [];
     currentSpeed = data.currentSpeed || 0;
 
-    path = Array.isArray(data.route) ? data.route : [];
-
-    routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
-
-    // viewer follows driver
-    if (!(trackingDevice === deviceId && isTracking) && path.length > 0) {
-
-        const last = path[path.length - 1];
-        const point = L.latLng(last.lat, last.lng);
-
-        if (!userMarker) {
-            userMarker = L.marker(point, { icon: blueDot }).addTo(map);
-        } else {
-            userMarker.setLatLng(point);
-        }
-
-        map.panTo(point);
-    }
+    routeLine.setLatLngs(path);
 
     updateTrackerStatus();
     updateUI();
 });
-
-/* =========================
-   SAVE
-========================= */
-
-async function saveTrip() {
-
-    if (!(trackingDevice === deviceId && isTracking)) return;
-
-    const now = Date.now();
-    if (now - lastSave < 2500) return;
-    lastSave = now;
-
-    const mpg = Number(el("mpg")?.value || 25);
-
-    await setDoc(tripRef, {
-        trackingDevice,
-        distance: totalMiles,
-        currentSpeed,
-        maxSpeed,
-        gallonsUsed: totalMiles / mpg,
-        route: path,
-        updatedAt: now
-    }, { merge: true });
-}
 
 /* =========================
    GPS
@@ -192,7 +194,6 @@ navigator.geolocation.watchPosition((pos) => {
     const lng = pos.coords.longitude;
     const point = L.latLng(lat, lng);
 
-    // ALWAYS show marker (fixes blank map feeling)
     if (!userMarker) {
         userMarker = L.marker(point, { icon: blueDot }).addTo(map);
     } else {
@@ -203,21 +204,17 @@ navigator.geolocation.watchPosition((pos) => {
         map.setView(point, 17);
         firstFix = false;
     } else {
-        map.panTo(point);
+        map.panTo(point, { animate: true });
     }
 
-    // DRIVER ONLY
     if (trackingDevice === deviceId && isTracking) {
 
-        path.push({ lat, lng });
-
-        routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
+        path.push([lat, lng]);
+        routeLine.setLatLngs(path);
 
         if (previousPoint) {
             const meters = point.distanceTo(previousPoint);
-            if (meters > 2) {
-                totalMiles += meters * 0.000621371;
-            }
+            if (meters > 2) totalMiles += meters * 0.000621371;
         }
 
         previousPoint = point;
@@ -225,8 +222,19 @@ navigator.geolocation.watchPosition((pos) => {
         let speed = pos.coords.speed;
 
         if (speed !== null) {
-            currentSpeed = speed * 2.23694;
-            maxSpeed = Math.max(maxSpeed, currentSpeed);
+            speed *= 2.23694;
+            currentSpeed = speed;
+
+            if (speed > maxSpeed) maxSpeed = speed;
+
+            const limit = Number(el("speedLimit")?.value) || 65;
+            const now = Date.now();
+
+            if (speed > limit + 10 && now - lastSpeedAlert > 5000) {
+                lastSpeedAlert = now;
+                alert(`⚠️ Overspeed: ${speed.toFixed(1)} mph`);
+                navigator.vibrate?.([200, 100, 200]);
+            }
         }
 
         updateUI();
@@ -240,7 +248,7 @@ navigator.geolocation.watchPosition((pos) => {
 });
 
 /* =========================
-   BUTTONS
+   BUTTONS (SAFE)
 ========================= */
 
 el("startTrip")?.addEventListener("click", async () => {
@@ -248,12 +256,16 @@ el("startTrip")?.addEventListener("click", async () => {
     isTracking = true;
     trackingDevice = deviceId;
 
+    const mpg = Number(el("mpg")?.value) || 25;
+    const now = Date.now();
+
     await setDoc(tripRef, {
         trackingDevice: deviceId,
-        updatedAt: Date.now()
+        updatedAt: now
     }, { merge: true });
 
     updateTrackerStatus();
+    alert("Tracking started.");
 });
 
 el("stopTrip")?.addEventListener("click", async () => {
@@ -265,14 +277,17 @@ el("stopTrip")?.addEventListener("click", async () => {
         trackingDevice: null
     }, { merge: true });
 
-    updateTrackerStatus();
+    alert("Tracking stopped.");
 });
 
 el("resetTrip")?.addEventListener("click", async () => {
 
+    if (!confirm("Reset trip for ALL devices?")) return;
+
     totalMiles = 0;
     maxSpeed = 0;
     path = [];
+    previousPoint = null;
 
     routeLine.setLatLngs([]);
 
@@ -290,7 +305,10 @@ el("resetTrip")?.addEventListener("click", async () => {
    MPG
 ========================= */
 
-el("mpg")?.addEventListener("input", updateUI);
+el("mpg")?.addEventListener("input", () => {
+    updateFuel();
+    saveTrip();
+});
 
 /* =========================
    DASHBOARD
@@ -299,23 +317,37 @@ el("mpg")?.addEventListener("input", updateUI);
 const dashboard = document.querySelector(".dashboard");
 const toggleBtn = el("toggleDashboard");
 
-let collapsed = false;
+let isCollapsed = false;
 
 toggleBtn?.addEventListener("click", () => {
-    collapsed = !collapsed;
-    dashboard?.classList.toggle("collapsed", collapsed);
-
-    setTimeout(() => {
-        map.invalidateSize(); // 🔥 IMPORTANT when UI changes
-    }, 200);
+    isCollapsed = !isCollapsed;
+    dashboard?.classList.toggle("collapsed", isCollapsed);
+    if (toggleBtn) toggleBtn.innerHTML = isCollapsed ? "☰" : "✕";
 });
 
 /* =========================
-   SERVICE WORKER
+   PWA
+========================= */
+
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+
+window.installApp = function () {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(() => deferredPrompt = null);
+};
+
+/* =========================
+   SW
 ========================= */
 
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js");
 }
 
-});
+}
