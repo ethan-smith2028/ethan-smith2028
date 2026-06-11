@@ -358,6 +358,28 @@ function installApp() {
     });
 }
 
+const dashboard =
+    document.querySelector(".dashboard");
+
+const toggleBtn =
+    document.getElementById("toggleDashboard");
+
+let isCollapsed = false;
+
+toggleBtn.addEventListener("click", () => {
+
+    isCollapsed = !isCollapsed;
+
+    dashboard.classList.toggle(
+        "collapsed",
+        isCollapsed
+    );
+
+    toggleBtn.innerHTML = isCollapsed
+        ? "☰"
+        : "✕";
+});
+
 /* =========================
    MPG CHANGE
 ========================= */
