@@ -1,8 +1,4 @@
 
-/* =========================
-   FIREBASE IMPORTS
-========================= */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 import {
     getFirestore,
@@ -11,34 +7,17 @@ import {
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-/* =========================
-   INIT AFTER DOM LOAD
-========================= */
-
 window.addEventListener("DOMContentLoaded", () => {
-
-/* =========================
-   FIREBASE CONFIG
-========================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
   authDomain: "email-list-83dfb.firebaseapp.com",
-  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
   projectId: "email-list-83dfb",
-  storageBucket: "email-list-83dfb.firebasestorage.app",
-  messagingSenderId: "471452404510",
-  appId: "1:471452404510:web:e91752174f6f0000c1570f",
-  measurementId: "G-3X5TK2WYBF"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const tripRef = doc(db, "trips", "currentTrip");
-
-/* =========================
-   STATE
-========================= */
 
 const deviceId = crypto.randomUUID();
 
@@ -55,10 +34,6 @@ let firstFix = true;
 
 let lastSave = 0;
 let lastSpeedAlert = 0;
-
-/* =========================
-   SAFE ELEMENT HELPER
-========================= */
 
 const el = (id) => document.getElementById(id);
 
@@ -86,41 +61,38 @@ let routeLine = L.polyline([], {
 }).addTo(map);
 
 /* =========================
+   ROLE
+========================= */
+
+const isDriver = () =>
+    isTracking && trackingDevice === deviceId;
+
+/* =========================
    UI
 ========================= */
 
-function updateFuel() {
-    const mpg = Number(el("mpg")?.value);
-    const gallons = el("gallons");
-
-    if (!mpg || mpg <= 0 || !gallons) return;
-
-    gallons.textContent = (totalMiles / mpg).toFixed(2);
-}
-
 function updateUI() {
 
-    const speedEl = el("speed");
-    const maxEl = el("maxSpeed");
-    const distEl = el("distance");
+    el("speed") && (el("speed").textContent = currentSpeed.toFixed(1) + " mph");
+    el("maxSpeed") && (el("maxSpeed").textContent = maxSpeed.toFixed(1) + " mph");
+    el("distance") && (el("distance").textContent = totalMiles.toFixed(2) + " mi");
 
-    if (speedEl) speedEl.textContent = currentSpeed.toFixed(1) + " mph";
-    if (maxEl) maxEl.textContent = maxSpeed.toFixed(1) + " mph";
-    if (distEl) distEl.textContent = totalMiles.toFixed(2) + " mi";
-
-    updateFuel();
+    const mpg = Number(el("mpg")?.value || 25);
+    if (el("gallons"))
+        el("gallons").textContent = (totalMiles / mpg).toFixed(2);
 }
 
 function updateTrackerStatus() {
-    const status = el("trackerStatus");
-    if (!status) return;
 
-    if (trackingDevice === deviceId) {
-        status.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> Tracking Active`;
-        status.style.color = "#34c759";
+    const elStatus = el("trackerStatus");
+    if (!elStatus) return;
+
+    if (isDriver()) {
+        elStatus.innerHTML = "🚗 Tracking Active";
+        elStatus.style.color = "#34c759";
     } else {
-        status.innerHTML = `<i class="fa-solid fa-eye"></i> Viewer Mode`;
-        status.style.color = "#fff";
+        elStatus.innerHTML = "👁 Viewer Mode";
+        elStatus.style.color = "#fff";
     }
 }
 
@@ -134,55 +106,55 @@ onSnapshot(tripRef, (snap) => {
 
     const data = snap.data();
 
-    if (!isTracking) {
-        trackingDevice = data.trackingDevice || null;
-    }
-
+    trackingDevice = data.trackingDevice || null;
     totalMiles = data.distance || 0;
     maxSpeed = data.maxSpeed || 0;
     currentSpeed = data.currentSpeed || 0;
 
-    path = data.route || [];
+    path = Array.isArray(data.route) ? data.route : [];
 
-    // FIX: convert objects → Leaflet format
     routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
 
-    updateTrackerStatus();
+    // viewer follows driver
+    if (!isDriver() && path.length) {
+        const last = path[path.length - 1];
+        const point = L.latLng(last.lat, last.lng);
+
+        if (!userMarker) {
+            userMarker = L.marker(point, { icon: blueDot }).addTo(map);
+        } else {
+            userMarker.setLatLng(point);
+        }
+    }
+
     updateUI();
+    updateTrackerStatus();
 });
 
 /* =========================
-   SAVE TRIP
+   SAVE
 ========================= */
 
 async function saveTrip() {
 
-    if (!isTracking || trackingDevice !== deviceId) return;
+    if (!isDriver()) return;
 
     const now = Date.now();
-    if (now - lastSave < 3000) return;
+    if (now - lastSave < 2500) return;
     lastSave = now;
 
-    const mpg = Number(el("mpg")?.value) || 25;
-
-    try {
-        await setDoc(tripRef, {
-            trackingDevice,
-            distance: totalMiles,
-            currentSpeed,
-            maxSpeed,
-            gallonsUsed: totalMiles / mpg,
-            route: path,
-            updatedAt: now
-        }, { merge: true });
-
-    } catch (err) {
-        console.error("Firestore write failed:", err);
-    }
+    await setDoc(tripRef, {
+        trackingDevice,
+        distance: totalMiles,
+        currentSpeed,
+        maxSpeed,
+        route: path,
+        updatedAt: now
+    }, { merge: true });
 }
 
 /* =========================
-   GPS TRACKING
+   GPS
 ========================= */
 
 navigator.geolocation.watchPosition((pos) => {
@@ -191,24 +163,22 @@ navigator.geolocation.watchPosition((pos) => {
     const lng = pos.coords.longitude;
     const point = L.latLng(lat, lng);
 
-    if (!userMarker) {
-        userMarker = L.marker(point, { icon: blueDot }).addTo(map);
-    } else {
-        userMarker.setLatLng(point);
-    }
+    if (isDriver()) {
 
-    if (firstFix) {
-        map.setView(point, 17);
-        firstFix = false;
-    } else {
-        map.panTo(point, { animate: true });
-    }
+        if (!userMarker) {
+            userMarker = L.marker(point, { icon: blueDot }).addTo(map);
+        } else {
+            userMarker.setLatLng(point);
+        }
 
-    if (trackingDevice === deviceId && isTracking) {
+        if (firstFix) {
+            map.setView(point, 17);
+            firstFix = false;
+        } else {
+            map.panTo(point);
+        }
 
-        // FIX: store as object (NOT array)
         path.push({ lat, lng });
-
         routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
 
         if (previousPoint) {
@@ -221,19 +191,8 @@ navigator.geolocation.watchPosition((pos) => {
         let speed = pos.coords.speed;
 
         if (speed !== null) {
-            speed *= 2.23694;
-            currentSpeed = speed;
-
-            if (speed > maxSpeed) maxSpeed = speed;
-
-            const limit = Number(el("speedLimit")?.value) || 65;
-            const now = Date.now();
-
-            if (speed > limit + 10 && now - lastSpeedAlert > 5000) {
-                lastSpeedAlert = now;
-                alert(`⚠️ Overspeed: ${speed.toFixed(1)} mph`);
-                navigator.vibrate?.([200, 100, 200]);
-            }
+            currentSpeed = speed * 2.23694;
+            maxSpeed = Math.max(maxSpeed, currentSpeed);
         }
 
         updateUI();
@@ -247,7 +206,7 @@ navigator.geolocation.watchPosition((pos) => {
 });
 
 /* =========================
-   START / STOP / RESET
+   BUTTONS
 ========================= */
 
 el("startTrip")?.addEventListener("click", async () => {
@@ -260,33 +219,22 @@ el("startTrip")?.addEventListener("click", async () => {
         updatedAt: Date.now()
     }, { merge: true });
 
-    updateTrackerStatus();
-    alert("Tracking started.");
 });
 
 el("stopTrip")?.addEventListener("click", async () => {
 
     isTracking = false;
-    trackingDevice = null;
 
     await setDoc(tripRef, {
         trackingDevice: null
     }, { merge: true });
-
-    updateTrackerStatus();
-    alert("Tracking stopped.");
 });
 
 el("resetTrip")?.addEventListener("click", async () => {
 
-    if (!confirm("Reset trip for ALL devices?")) return;
-
     totalMiles = 0;
     maxSpeed = 0;
     path = [];
-    previousPoint = null;
-
-    routeLine.setLatLngs([]);
 
     await setDoc(tripRef, {
         distance: 0,
@@ -302,45 +250,10 @@ el("resetTrip")?.addEventListener("click", async () => {
    MPG
 ========================= */
 
-el("mpg")?.addEventListener("input", () => {
-    updateFuel();
-    saveTrip();
-});
+el("mpg")?.addEventListener("input", updateUI);
 
 /* =========================
-   DASHBOARD
-========================= */
-
-const dashboard = document.querySelector(".dashboard");
-const toggleBtn = el("toggleDashboard");
-
-let collapsed = false;
-
-toggleBtn?.addEventListener("click", () => {
-    collapsed = !collapsed;
-    dashboard?.classList.toggle("collapsed", collapsed);
-});
-
-/* =========================
-   PWA
-========================= */
-
-let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-});
-
-window.installApp = function () {
-    deferredPrompt?.prompt();
-    deferredPrompt?.userChoice?.finally(() => {
-        deferredPrompt = null;
-    });
-};
-
-/* =========================
-   SERVICE WORKER
+   SW
 ========================= */
 
 if ("serviceWorker" in navigator) {
