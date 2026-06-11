@@ -56,27 +56,37 @@
     </div>
 
     <div class="card">
-    <button id="resetTrip">
-        Reset Trip
-    </button>
-
-    
-
-    <div class="card">
-
-    <button id="startTrip">
-        Start Trip
-    </button>
-
+    <div class="label">MPG</div>
+    <input id="mpg" type="number" value="25">
 </div>
 
 <div class="card">
+    <div class="label">Speed Limit</div>
+    <input id="speedLimit" type="number" value="65">
+</div>
 
-    <button id="stopTrip">
-        Stop Trip
-    </button>
+<div class="card">
+    <div class="label">Gallons Used</div>
+    <div>
+        <span id="gallons">0.00</span>
+    </div>
+</div>
 
+<div class="card">
+    <button id="resetTrip">Reset Trip</button>
+</div>
+
+<div class="card">
+    <button id="startTrip">Start Trip</button>
+</div>
+
+<div class="card">
+    <button id="stopTrip">Stop Trip</button>
+</div>
+
+<div class="card">
     <button onclick="installApp()">Install App</button>
+</div>
 
 </div>
 </div>
@@ -84,7 +94,6 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="app.js"></script>
 <script type="module" src="app.js"></script>
 
 </body>
