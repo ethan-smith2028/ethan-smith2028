@@ -43,6 +43,7 @@ const deviceId = crypto.randomUUID();
 
 let trackingDevice = null;
 let isTracking = false;
+let currentSpeed = 0;
 
 /* =========================
    SPEED ALERT STATE
@@ -105,6 +106,9 @@ function updateUI() {
 
     document.getElementById("distance").textContent =
         totalMiles.toFixed(2) + " mi";
+
+    document.getElementById("speed").textContent =
+        currentSpeed.toFixed(1) + " mph";
 
     document.getElementById("maxSpeed").textContent =
         maxSpeed.toFixed(1) + " mph";
@@ -176,6 +180,8 @@ onSnapshot(tripRef, (snap) => {
     totalMiles = data.distance || 0;
     maxSpeed = data.maxSpeed || 0;
     path = data.route || [];
+    currentSpeed =
+    data.currentSpeed || 0;
 
     routeLine.setLatLngs(path);
 
@@ -232,11 +238,13 @@ navigator.geolocation.watchPosition(
 
                 speed *= 2.23694;
 
-                document.getElementById("speed").textContent =
-                    speed.toFixed(1) + " mph";
+currentSpeed = speed;
 
-                if (speed > maxSpeed) {
-                    maxSpeed = speed;
+document.getElementById("speed").textContent =
+    currentSpeed.toFixed(1) + " mph";
+
+                if (currentSpeed > maxSpeed) {
+                    maxSpeed = currentSpeed;
                 }
 
                 /* SPEED ALERT */
@@ -285,9 +293,14 @@ document.getElementById("startTrip")
     );
 
     await setDoc(tripRef, {
-        trackingDevice: deviceId,
-        startedAt: Date.now()
-    }, { merge: true });
+    distance: totalMiles,
+    currentSpeed,
+    maxSpeed,
+    gallonsUsed: totalMiles / mpg,
+    route: path,
+    trackingDevice,
+    updatedAt: now
+}, { merge: true });
 
     alert("Tracking started. Page is now locked.");
 });
