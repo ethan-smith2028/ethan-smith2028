@@ -16,12 +16,14 @@ import {
 ========================= */
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.firebasestorage.app",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f",
+  measurementId: "G-3X5TK2WYBF"
 };
 
 /* =========================
