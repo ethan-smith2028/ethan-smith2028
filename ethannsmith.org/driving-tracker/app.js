@@ -9,15 +9,23 @@ import {
 
 window.addEventListener("DOMContentLoaded", () => {
 
+/* =========================
+   FIREBASE
+========================= */
+
 const firebaseConfig = {
   apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
   authDomain: "email-list-83dfb.firebaseapp.com",
-  projectId: "email-list-83dfb",
+  projectId: "email-list-83dfb"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const tripRef = doc(db, "trips", "currentTrip");
+
+/* =========================
+   STATE
+========================= */
 
 const deviceId = crypto.randomUUID();
 
@@ -38,12 +46,14 @@ let lastSpeedAlert = 0;
 const el = (id) => document.getElementById(id);
 
 /* =========================
-   MAP
+   MAP (FIXED)
 ========================= */
 
-const map = L.map("map");
+const map = L.map("map", {
+    zoomControl: true
+});
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19
 }).addTo(map);
 
@@ -60,39 +70,51 @@ let routeLine = L.polyline([], {
     opacity: 0.9
 }).addTo(map);
 
-/* =========================
-   ROLE
-========================= */
-
-const isDriver = () =>
-    isTracking && trackingDevice === deviceId;
+/* 🔥 FIX: force map to render correctly after layout loads */
+setTimeout(() => {
+    map.invalidateSize();
+}, 300);
 
 /* =========================
    UI
 ========================= */
 
-function updateUI() {
+function updateFuel() {
+    const mpg = Number(el("mpg")?.value);
+    const gallons = el("gallons");
 
-    el("speed") && (el("speed").textContent = currentSpeed.toFixed(1) + " mph");
-    el("maxSpeed") && (el("maxSpeed").textContent = maxSpeed.toFixed(1) + " mph");
-    el("distance") && (el("distance").textContent = totalMiles.toFixed(2) + " mi");
+    if (!mpg || mpg <= 0 || !gallons) return;
 
-    const mpg = Number(el("mpg")?.value || 25);
-    if (el("gallons"))
-        el("gallons").textContent = (totalMiles / mpg).toFixed(2);
+    gallons.textContent = (totalMiles / mpg).toFixed(2);
 }
 
+function updateUI() {
+
+    const speedEl = el("speed");
+    const maxEl = el("maxSpeed");
+    const distEl = el("distance");
+
+    if (speedEl) speedEl.textContent = currentSpeed.toFixed(1) + " mph";
+    if (maxEl) maxEl.textContent = maxSpeed.toFixed(1) + " mph";
+    if (distEl) distEl.textContent = totalMiles.toFixed(2) + " mi";
+
+    updateFuel();
+}
+
+/* =========================
+   STATUS
+========================= */
+
 function updateTrackerStatus() {
+    const status = el("trackerStatus");
+    if (!status) return;
 
-    const elStatus = el("trackerStatus");
-    if (!elStatus) return;
-
-    if (isDriver()) {
-        elStatus.innerHTML = "🚗 Tracking Active";
-        elStatus.style.color = "#34c759";
+    if (trackingDevice === deviceId && isTracking) {
+        status.innerHTML = "🚗 Tracking Active";
+        status.style.color = "#34c759";
     } else {
-        elStatus.innerHTML = "👁 Viewer Mode";
-        elStatus.style.color = "#fff";
+        status.innerHTML = "👁 Viewer Mode";
+        status.style.color = "#fff";
     }
 }
 
@@ -107,6 +129,7 @@ onSnapshot(tripRef, (snap) => {
     const data = snap.data();
 
     trackingDevice = data.trackingDevice || null;
+
     totalMiles = data.distance || 0;
     maxSpeed = data.maxSpeed || 0;
     currentSpeed = data.currentSpeed || 0;
@@ -116,7 +139,8 @@ onSnapshot(tripRef, (snap) => {
     routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
 
     // viewer follows driver
-    if (!isDriver() && path.length) {
+    if (!(trackingDevice === deviceId && isTracking) && path.length > 0) {
+
         const last = path[path.length - 1];
         const point = L.latLng(last.lat, last.lng);
 
@@ -125,10 +149,12 @@ onSnapshot(tripRef, (snap) => {
         } else {
             userMarker.setLatLng(point);
         }
+
+        map.panTo(point);
     }
 
-    updateUI();
     updateTrackerStatus();
+    updateUI();
 });
 
 /* =========================
@@ -137,17 +163,20 @@ onSnapshot(tripRef, (snap) => {
 
 async function saveTrip() {
 
-    if (!isDriver()) return;
+    if (!(trackingDevice === deviceId && isTracking)) return;
 
     const now = Date.now();
     if (now - lastSave < 2500) return;
     lastSave = now;
+
+    const mpg = Number(el("mpg")?.value || 25);
 
     await setDoc(tripRef, {
         trackingDevice,
         distance: totalMiles,
         currentSpeed,
         maxSpeed,
+        gallonsUsed: totalMiles / mpg,
         route: path,
         updatedAt: now
     }, { merge: true });
@@ -163,27 +192,32 @@ navigator.geolocation.watchPosition((pos) => {
     const lng = pos.coords.longitude;
     const point = L.latLng(lat, lng);
 
-    if (isDriver()) {
+    // ALWAYS show marker (fixes blank map feeling)
+    if (!userMarker) {
+        userMarker = L.marker(point, { icon: blueDot }).addTo(map);
+    } else {
+        userMarker.setLatLng(point);
+    }
 
-        if (!userMarker) {
-            userMarker = L.marker(point, { icon: blueDot }).addTo(map);
-        } else {
-            userMarker.setLatLng(point);
-        }
+    if (firstFix) {
+        map.setView(point, 17);
+        firstFix = false;
+    } else {
+        map.panTo(point);
+    }
 
-        if (firstFix) {
-            map.setView(point, 17);
-            firstFix = false;
-        } else {
-            map.panTo(point);
-        }
+    // DRIVER ONLY
+    if (trackingDevice === deviceId && isTracking) {
 
         path.push({ lat, lng });
+
         routeLine.setLatLngs(path.map(p => [p.lat, p.lng]));
 
         if (previousPoint) {
             const meters = point.distanceTo(previousPoint);
-            if (meters > 2) totalMiles += meters * 0.000621371;
+            if (meters > 2) {
+                totalMiles += meters * 0.000621371;
+            }
         }
 
         previousPoint = point;
@@ -219,15 +253,19 @@ el("startTrip")?.addEventListener("click", async () => {
         updatedAt: Date.now()
     }, { merge: true });
 
+    updateTrackerStatus();
 });
 
 el("stopTrip")?.addEventListener("click", async () => {
 
     isTracking = false;
+    trackingDevice = null;
 
     await setDoc(tripRef, {
         trackingDevice: null
     }, { merge: true });
+
+    updateTrackerStatus();
 });
 
 el("resetTrip")?.addEventListener("click", async () => {
@@ -235,6 +273,8 @@ el("resetTrip")?.addEventListener("click", async () => {
     totalMiles = 0;
     maxSpeed = 0;
     path = [];
+
+    routeLine.setLatLngs([]);
 
     await setDoc(tripRef, {
         distance: 0,
@@ -253,7 +293,25 @@ el("resetTrip")?.addEventListener("click", async () => {
 el("mpg")?.addEventListener("input", updateUI);
 
 /* =========================
-   SW
+   DASHBOARD
+========================= */
+
+const dashboard = document.querySelector(".dashboard");
+const toggleBtn = el("toggleDashboard");
+
+let collapsed = false;
+
+toggleBtn?.addEventListener("click", () => {
+    collapsed = !collapsed;
+    dashboard?.classList.toggle("collapsed", collapsed);
+
+    setTimeout(() => {
+        map.invalidateSize(); // 🔥 IMPORTANT when UI changes
+    }, 200);
+});
+
+/* =========================
+   SERVICE WORKER
 ========================= */
 
 if ("serviceWorker" in navigator) {
