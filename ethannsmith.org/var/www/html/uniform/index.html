@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VCEMS Uniform Closet</title>
+
+    <link rel="icon" type="image/x-icon" href="ssmo.png">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Three.js -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+</head>
+
+<body>
+
+    <!-- ========================= -->
+<!-- HEADER -->
+<!-- ========================= -->
+
+<header class="topHeader">
+
+    <button id="menuButton" class="menuButton">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+</header>
+
+<!-- ========================= -->
+<!-- SIDE MENU -->
+<!-- ========================= -->
+
+<nav id="sideMenu" class="sideMenu">
+
+    <div class="menuHeader">
+
+        <h2>Navigation</h2>
+
+        <button id="closeMenu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+    <a href="#" id="menuHome">
+    <i class="fa-solid fa-house"></i>
+    Home
+</a>
+
+    <a href="#" id="menuDonate">
+        <i class="fa-solid fa-heart"></i>
+        Donate
+    </a>
+
+    <a href="#" id="menuPickup">
+        <i class="fa-solid fa-shirt"></i>
+        Pick-Up
+    </a>
+
+    <details>
+
+        <summary>
+
+            <i class="fa-solid fa-book"></i>
+
+            Dress Codes
+
+        </summary>
+
+        <a href="https://ssmo.org/wp-content/uploads/2026/05/ssmo.org-vces-dress-code-2026-27-vces-dress-code-2026-27.pdf" target="_blank">
+            Elementary School
+        </a>
+
+        <a href="https://ssmo.org/wp-content/uploads/2024/08/MS-Dress-Code-2024-2025-Francis-Butch-Malec.pdf" target="_blank">
+            Middle School
+        </a>
+
+    </details>
+
+    <a href="#viewerDonate">
+        <i class="fa-solid fa-cube"></i>
+        Closet Layout
+    </a>
+
+</nav>
+
+<div id="menuOverlay" class="menuOverlay"></div>
+
+<!-- ========================= -->
+<!-- Animated Background -->
+<!-- ========================= -->
+
+<div class="floating-icons"></div>
+
+<!-- Dark Overlay -->
+
+<div class="overlay"></div>
+
+<!-- ========================= -->
+<!-- HERO -->
+<!-- ========================= -->
+
+<section id="hero">
+
+<div class="hero-content">
+
+<div class="logoCircle">
+
+    <img
+        src="ssmo_logo_vcs.svg"
+        alt="Valley Catholic Logo"
+        class="heroLogo"
+    >
+
+</div>
+
+<h1>
+Valley Catholic Elementary<br>
+& Middle School<br>
+Uniform Closet
+</h1>
+
+<p>
+
+Welcome!
+
+We're glad you're here.
+
+Whether you're donating uniforms or picking up clothing for your family,
+thank you for helping make our community stronger.
+
+</p>
+
+
+<div class="buttonRow">
+
+    <button id="donateBtn" class="mainButton">
+
+        <i class="fa-solid fa-heart"></i>
+
+        Donate Clothes
+
+    </button>
+
+    <button id="pickupBtn" class="mainButton secondary">
+
+        <i class="fa-solid fa-shirt"></i>
+
+        Pick-Up Clothes
+
+    </button>
+
+</div>
+
+<!--<div class="dressCodeCard">
+
+    <label>
+
+        <i class="fa-solid fa-book"></i>
+
+        School Dress Codes
+
+    </label>
+
+     <div class="dressCodeButtons">
+
+        <a
+            href="https://ssmo.org/wp-content/uploads/2026/05/ssmo.org-vces-dress-code-2026-27-vces-dress-code-2026-27.pdf"
+            target="_blank"
+            class="dressCodeButton">
+
+            <i class="fa-solid fa-school"></i>
+
+            Elementary
+
+        </a>
+
+        <a
+            href="https://ssmo.org/wp-content/uploads/2024/08/MS-Dress-Code-2024-2025-Francis-Butch-Malec.pdf"
+            target="_blank"
+            class="dressCodeButton">
+
+            <i class="fa-solid fa-graduation-cap"></i>
+
+            Middle School
+
+        </a> -->
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+</section>
+
+<!-- ========================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================= -->
+
+<main id="mainContent">
+
+<!-- DONATE -->
+
+<section
+class="infoPage"
+id="donatePage">
+
+<div class="card">
+
+<h2>
+
+<i class="fa-solid fa-heart"></i>
+
+Donate Uniforms
+
+</h2>
+
+<p>
+
+Thank you for supporting Valley Catholic families!
+
+Please help us keep the Uniform Closet stocked with clean,
+high-quality clothing that students can proudly wear.
+
+</p>
+
+<div class="guidelines">
+
+<div class="guide">
+
+<i class="fa-solid fa-soap"></i>
+
+<div>
+
+<h3>Wash Items</h3>
+
+<p>
+
+Please ensure all items have been washed.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="guide">
+
+<i class="fa-solid fa-star"></i>
+
+<div>
+
+<h3>Good Condition</h3>
+
+<p>
+
+No tears, stains, or excessive wear.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="guide">
+
+<i class="fa-solid fa-tags"></i>
+
+<div>
+
+<h3>Sort by Type</h3>
+
+<p>
+
+Sort by type of uniform (Fleece, Shirt, Shorts, etc.)
+
+</p>
+
+</div>
+
+</div>
+
+<div class="guide">
+
+<i class="fa-solid fa-box"></i>
+
+<div>
+
+<h3>Donation Bin</h3>
+
+<p>
+
+Place donations in the designated Uniform Closet bin.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<h2 class="viewerTitle">
+
+Uniform Closet Layout
+
+</h2>
+
+<div id="viewerDonate"
+class="viewer"></div>
+
+</div>
+
+</section>
+
+<!-- ========================= -->
+<!-- PICK-UP PAGE -->
+<!-- ========================= -->
+
+<section
+class="infoPage"
+id="pickupPage">
+
+    <div class="card">
+
+        <h2>
+            <i class="fa-solid fa-shirt"></i>
+            Pick-Up Uniforms
+        </h2>
+
+        <p>
+            Welcome to the Valley Catholic Uniform Closet! Please help us keep
+            the closet organized so every family can find what they need.
+        </p>
+
+        <div class="guidelines">
+
+            <div class="guide">
+                <i class="fa-solid fa-ruler"></i>
+
+                <div>
+                    <h3>Find Your Size</h3>
+
+                    <p>
+                        Browse the closet to locate uniforms that best fit
+                        your student.
+                    </p>
+                </div>
+            </div>
+
+            <div class="guide">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+
+                <div>
+                    <h3>Take What You Need</h3>
+
+                    <p>
+                        Please only take the items your family currently needs.
+                    </p>
+                </div>
+            </div>
+
+            <div class="guide">
+                <i class="fa-solid fa-recycle"></i>
+
+                <div>
+                    <h3>Return Later</h3>
+
+                    <p>
+                        If uniforms are outgrown, consider donating them back
+                        to help another family.
+                    </p>
+                </div>
+            </div>
+
+            <div class="guide">
+                <i class="fa-solid fa-broom"></i>
+
+                <div>
+                    <h3>Stay Organized</h3>
+
+                    <p>
+                        Please return clothing to the appropriate racks or bins
+                        after browsing.
+                    </p>
+                </div>
+            </div>
+
+            <div class="guide">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <div>
+                    <h3>Need Help?</h3>
+
+                    <p>
+                        Contact the school office if you have questions or need
+                        assistance locating uniforms.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <h2 class="viewerTitle">
+            Uniform Closet Layout
+        </h2>
+
+        <div
+            id="viewerPickup"
+            class="viewer">
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- BACK BUTTON -->
+<!-- ========================= -->
+
+<div class="backContainer">
+
+    <button
+        id="homeBtn"
+        class="backButton">
+
+        <i class="fa-solid fa-house"></i>
+
+        Return Home
+
+    </button>
+
+</div>
+
+</main>
+
+<!-- ========================= -->
+<!-- FOOTER -->
+<!-- ========================= -->
+
+<footer>
+
+    <div class="footerContainer">
+
+        <div class="footerColumn">
+
+            <h3>
+                <i class="fa-solid fa-shirt"></i>
+                Valley Catholic Uniform Closet
+            </h3>
+
+            <p>
+                Supporting Valley Catholic Elementary and Middle School
+                families through shared uniforms and community generosity.
+            </p>
+
+        </div>
+
+        <div class="footerColumn">
+
+            <h4>Quick Links</h4>
+
+            <a href="#" id="footerHome">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+
+            <a href="#" id="footerDonate">
+                <i class="fa-solid fa-heart"></i>
+                Donate Uniforms
+            </a>
+
+            <a href="#" id="footerPickup">
+                <i class="fa-solid fa-shirt"></i>
+                Pick-Up Uniforms
+            </a>
+
+        </div>
+
+        <div class="footerColumn">
+
+            <h4>Resources</h4>
+
+            <a href="https://ssmo.org/wp-content/uploads/2026/05/ssmo.org-vces-dress-code-2026-27-vces-dress-code-2026-27.pdf" target="_blank">
+                <i class="fa-solid fa-school"></i>
+                Elementary Dress Code
+            </a>
+
+            <a href="https://ssmo.org/wp-content/uploads/2024/08/MS-Dress-Code-2024-2025-Francis-Butch-Malec.pdf" target="_blank">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Middle School Dress Code
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footerBottom">
+
+        <p>
+
+            © 2026 VCEMS Uniform Closet. All Rights Reserved.
+
+        </p>
+
+        <p class="designerCredit">
+
+            Designed & Developed by
+            <strong>Ethan Smith '28</strong>
+
+        </p>
+
+    </div>
+
+</footer>
+
+<div id="resourcePopup" class="resourcePopup">
+
+    <div class="popupIcon">
+        <i class="fa-solid fa-book-open"></i>
+    </div>
+
+    <div class="popupContent">
+
+        <h4>Looking for the Dress Codes?</h4>
+
+        <p>
+            Scroll to the <strong>Resources</strong> section below to view the
+            Elementary and Middle School handbooks.
+        </p>
+
+        <div class="popupProgress">
+            <div class="popupProgressBar"></div>
+        </div>
+
+    </div>
+
+    <button id="closePopup">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+</div>
+
+<!-- ========================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================= -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
