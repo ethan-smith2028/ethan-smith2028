@@ -223,22 +223,25 @@ function createViewer(containerId){
 
     controls.maxDistance = 350;
 
-    // Lighting
+// ------------------------------------------
+// Lighting
+// ------------------------------------------
 
-    scene.add(new THREE.HemisphereLight(
+const ambientLight = new THREE.AmbientLight(
     0xffffff,
-    0xbbbbbb,
-    1.8
-));
-
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    2
+    0.8
 );
 
-sun.position.set(100,150,80);
+scene.add(ambientLight);
 
-scene.add(sun);
+const directionalLight = new THREE.DirectionalLight(
+    0xffffff,
+    0.7
+);
+
+directionalLight.position.set(60, 100, 50);
+
+scene.add(directionalLight);
 
         // ------------------------------------------
     // Ground Grid
@@ -252,6 +255,8 @@ scene.add(sun);
     // ------------------------------------------
 // GLB Loader
 // ------------------------------------------
+
+
 
 const loader = new THREE.GLTFLoader();
 
@@ -281,17 +286,22 @@ loader.load(
         model.scale.setScalar(scale);
 
         // Enable shadows (optional)
-        model.traverse(function(child){
+        model.traverse((child) => {
 
-            if(child.isMesh){
+    if (child.isMesh) {
 
-                child.castShadow = true;
+        // Hide the ceiling
+        if (child.name === "Ceiling_Room") {
+            child.visible = false;
+            return;
+        }
 
-                child.receiveShadow = true;
+        child.castShadow = true;
+        child.receiveShadow = true;
 
-            }
+    }
 
-        });
+});
 
         scene.add(model);
 
@@ -313,6 +323,8 @@ loader.load(
         }
 
     },
+
+    
 
     function(error){
 
@@ -336,6 +348,9 @@ loader.load(
     }
 
 );
+
+
+
 
     // ------------------------------------------
     // Animation Loop
