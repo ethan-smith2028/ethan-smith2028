@@ -2060,7 +2060,7 @@ CONTACT
     font-weight:600;
 }
 
-.input-group input,
+.input-group input:not([type="checkbox"]),
 .input-group textarea,
 .input-group select{
     width:100%;
@@ -2094,12 +2094,24 @@ CONTACT
 
 .checkbox-grid label{
     display:flex;
-    gap:10px;
     align-items:center;
+    gap:12px;
+
+    padding:14px 16px;
+
     background:#F8FAFD;
-    padding:14px;
-    border-radius:12px;
+    border:1px solid var(--border);
+    border-radius:14px;
+
     cursor:pointer;
+}
+
+.checkbox-grid input[type="checkbox"]{
+    width:20px;
+    height:20px;
+    margin:0;
+    padding:0;
+    flex:none;
 }
 
 #form-status{
@@ -2112,6 +2124,20 @@ CONTACT
    CONTACT FORM - MOBILE
 ========================== */
 
+@media (max-width:768px){
+
+    .checkbox-grid{
+        grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .checkbox-grid label{
+        width:100%;
+        padding:16px;
+        font-size:0.95rem;
+    }
+
+}
 @media (max-width:768px){
 
     .contact .container{
