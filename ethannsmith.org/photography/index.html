@@ -17,286 +17,598 @@
 </script>
 
 <style>
-/* =========================
-   GLOBAL
-========================= */
+/* =========================================================
+   BEYOND THE LENS — MODERN PHOTOGRAPHY GALLERY
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg: #08090b;
+  --surface: #101216;
+  --surface-2: #15171c;
+  --surface-3: #1b1e24;
+
+  --text: #f5f7fa;
+  --muted: #9298a3;
+  --muted-2: #686e79;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
+
+  --accent: #ffffff;
+  --green: #22c55e;
+
+  --radius: 16px;
+  --radius-lg: 22px;
+
+  --shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: Inter, system-ui, Arial, sans-serif;
-  background: #09090b;
-  color: #fff;
   min-height: 100vh;
+
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(255,255,255,.055),
+      transparent 35%
+    ),
+    var(--bg);
+
+  color: var(--text);
+
+  -webkit-font-smoothing: antialiased;
 }
 
 img {
   max-width: 100%;
 }
 
-button {
-  font-family: inherit;
+button,
+select,
+input {
+  font: inherit;
 }
 
-/* =========================
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #292d35;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f49;
+}
+
+/* =========================================================
    HERO
-========================= */
+   ========================================================= */
 
 .hero {
   position: relative;
-  height: 340px;
+
+  height: min(62vh, 620px);
+  min-height: 380px;
+
   overflow: hidden;
+
+  background: #050506;
 }
 
 .hero img {
+  position: absolute;
+  inset: 0;
+
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
+  transform: scale(1.015);
+
+  filter:
+    saturate(.9)
+    contrast(1.04);
+
+  transition:
+    opacity .5s ease,
+    transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.08) 0%,
+      rgba(0,0,0,.08) 35%,
+      rgba(0,0,0,.42) 65%,
+      rgba(8,9,11,.98) 100%
+    );
 }
 
 .hero::after {
   content: "";
+
   position: absolute;
   inset: 0;
 
+  z-index: 1;
+
   background:
     linear-gradient(
-      to top,
-      rgba(0,0,0,.85),
-      rgba(0,0,0,.2)
+      90deg,
+      rgba(0,0,0,.32),
+      transparent 45%,
+      rgba(0,0,0,.18)
     );
 }
 
 .hero-title {
   position: absolute;
-  bottom: 24px;
-  left: 24px;
-  z-index: 2;
 
-  font-size: 2rem;
+  left: clamp(24px, 5vw, 80px);
+  bottom: clamp(36px, 6vw, 72px);
+
+  z-index: 3;
+
+  max-width: 900px;
+
+  font-family: Manrope, Inter, sans-serif;
+
+  font-size: clamp(2rem, 4.5vw, 4.5rem);
+  line-height: 1.02;
+
   font-weight: 800;
-  letter-spacing: -.03em;
+  letter-spacing: -.055em;
 
-  max-width: 700px;
+  text-shadow:
+    0 3px 20px rgba(0,0,0,.35);
 }
 
-/* =========================
+/* =========================================================
    TOP BAR
-========================= */
+   ========================================================= */
 
 .topbar {
   position: sticky;
+
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: space-between;
 
-  padding: 14px 20px;
+  gap: 20px;
 
-  background: rgba(17,24,39,.8);
-  backdrop-filter: blur(18px);
+  min-height: 76px;
 
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 12px clamp(18px, 4vw, 64px);
+
+  background: rgba(8,9,11,.78);
+
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.12),
+    transparent
+  );
+
+  pointer-events: none;
 }
 
 .status {
-  font-size: 14px;
-  opacity: .75;
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--muted);
+
+  letter-spacing: .01em;
 }
 
 .topbar > div:last-child {
   display: flex;
+
+  align-items: center;
+
   gap: 10px;
+
   flex-wrap: wrap;
 }
 
-/* =========================
+/* =========================================================
    BUTTONS
-========================= */
+   ========================================================= */
 
 .btn {
-  border: none;
+  appearance: none;
+
+  border: 1px solid var(--border);
+
+  border-radius: 11px;
+
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  background: rgba(255,255,255,.055);
+  color: var(--text);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: -.01em;
+
   cursor: pointer;
 
-  padding: 11px 16px;
-
-  border-radius: 12px;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  transition: .2s ease;
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+
+  background: rgba(255,255,255,.09);
+
+  border-color: var(--border-hover);
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.2);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn-primary {
-  background: #2563eb;
-  color: white;
+  background: #f5f5f5;
+  color: #0a0a0b;
+
+  border-color: #f5f5f5;
+}
+
+.btn-primary:hover {
+  background: #fff;
+  color: #000;
 }
 
 .btn-green {
-  background: #16a34a;
-  color: white;
+  background: var(--green);
+  color: #031108;
+
+  border-color: var(--green);
+
+  box-shadow:
+    0 8px 25px rgba(34,197,94,.12);
+}
+
+.btn-green:hover {
+  background: #2dd36a;
+  border-color: #2dd36a;
 }
 
 .btn-purple {
   background: #7c3aed;
   color: white;
+
+  border-color: #7c3aed;
 }
 
-/* =========================
+/* =========================================================
+   GALLERY SELECT
+   ========================================================= */
+
+#gallerySelect {
+  min-width: 230px;
+
+  appearance: none;
+
+  padding-right: 38px;
+
+  background:
+    linear-gradient(45deg, transparent 50%, #858b96 50%) calc(100% - 17px) 18px / 6px 6px no-repeat,
+    linear-gradient(135deg, #858b96 50%, transparent 50%) calc(100% - 12px) 18px / 6px 6px no-repeat,
+    rgba(255,255,255,.055);
+
+  color: var(--text);
+}
+
+#gallerySelect option {
+  background: #15171c;
+  color: white;
+}
+
+/* =========================================================
    LOGIN PANEL
-========================= */
+   ========================================================= */
 
 .login-panel {
   display: none;
 
-  background: #111827;
+  padding: 20px clamp(18px, 4vw, 64px);
 
-  padding: 18px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: #0e1014;
+
+  border-bottom: 1px solid var(--border);
 }
 
 .login-panel input {
   width: 100%;
 
-  padding: 12px;
+  padding: 13px 14px;
 
   margin-bottom: 10px;
 
-  border: 1px solid rgba(255,255,255,.1);
+  background: #090a0d;
+
+  color: white;
+
+  border: 1px solid var(--border);
+
   border-radius: 10px;
 
-  background: #0f172a;
-  color: white;
+  outline: none;
+
+  transition: border-color .2s ease;
 }
 
-/* =========================
+.login-panel input:focus {
+  border-color: rgba(255,255,255,.25);
+}
+
+/* =========================================================
    STATS
-========================= */
+   ========================================================= */
 
 .stats {
-  display: flex;
-  gap: 16px;
-  padding: 20px;
-  flex-wrap: wrap;
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 12px;
+
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding: 28px clamp(18px, 4vw, 64px);
 }
 
 .stat {
-  background: #18181b;
+  padding: 20px;
 
-  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.025)
+    );
 
-  min-width: 160px;
+  border: 1px solid var(--border);
 
-  padding: 18px;
+  border-radius: var(--radius);
 
-  border: 1px solid rgba(255,255,255,.05);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.12);
 }
 
 .stat span {
   display: block;
 
-  font-size: 28px;
+  margin-bottom: 5px;
+
+  font-family: Manrope, Inter, sans-serif;
+
+  font-size: 30px;
+  line-height: 1;
+
   font-weight: 800;
+
+  letter-spacing: -.04em;
 }
 
-/* =========================
-   GALLERY GRID
-========================= */
+.stat small {
+  color: var(--muted);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   GALLERY
+   ========================================================= */
 
 .gallery {
+  width: min(1600px, 100%);
+
+  margin: 0 auto;
+
   display: grid;
 
   grid-template-columns:
-    repeat(auto-fill, minmax(260px, 1fr));
+    repeat(4, minmax(0, 1fr));
 
   gap: 18px;
 
-  padding: 20px;
+  padding:
+    20px
+    clamp(18px, 4vw, 64px)
+    40px;
 }
 
-/* =========================
-   CARD
-========================= */
+/* =========================================================
+   PHOTO CARD
+   ========================================================= */
 
 .card {
-  background: #18181b;
-
-  border-radius: 18px;
+  position: relative;
 
   overflow: hidden;
 
-  border: 1px solid rgba(255,255,255,.05);
+  background: var(--surface);
 
-  transition: .25s ease;
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,.25);
+    0 12px 35px rgba(0,0,0,.22);
+
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    border-color .35s ease,
+    box-shadow .35s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+
+  border-color: var(--border-hover);
 
   box-shadow:
-    0 20px 45px rgba(0,0,0,.45);
+    0 25px 55px rgba(0,0,0,.4);
 }
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
 
 .img-wrapper {
   position: relative;
 
   width: 100%;
 
-  aspect-ratio: 3/4;
+  aspect-ratio: 4 / 5;
 
   overflow: hidden;
+
+  background: #0c0d10;
+
+  cursor: zoom-in;
+}
+
+.img-wrapper::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent 60%,
+      rgba(0,0,0,.16)
+    );
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  transition: opacity .3s ease;
+}
+
+.card:hover .img-wrapper::after {
+  opacity: 1;
 }
 
 .img-wrapper img {
   width: 100%;
   height: 100%;
 
-  object-fit: cover;
-
   display: block;
 
-  transition: transform .4s ease;
+  object-fit: cover;
 
   user-select: none;
   -webkit-user-drag: none;
+
+  transition:
+    transform .65s cubic-bezier(.2,.8,.2,1),
+    filter .4s ease;
 }
 
 .card:hover .img-wrapper img {
-  transform: scale(1.03);
+  transform: scale(1.045);
+
+  filter: brightness(1.04);
 }
 
-/* =========================
+/* =========================================================
    WATERMARK
-========================= */
+   ========================================================= */
 
 .watermark {
   position: absolute;
+
   inset: 0;
 
   pointer-events: none;
 
-  background-image:
+  overflow: hidden;
+
+  opacity: .55;
+
+  background:
     repeating-linear-gradient(
-      -30deg,
-      rgba(255,255,255,.08) 0px,
-      rgba(255,255,255,.08) 2px,
-      transparent 2px,
-      transparent 60px
+      -32deg,
+      transparent 0,
+      transparent 74px,
+      rgba(255,255,255,.055) 74px,
+      rgba(255,255,255,.055) 75px
     );
 }
 
@@ -312,77 +624,106 @@ button {
     translate(-50%, -50%)
     rotate(-30deg);
 
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: 4px;
+  width: 500px;
 
-  color: rgba(255,255,255,.35);
+  text-align: center;
+
+  font-family: Manrope, Inter, sans-serif;
+
+  font-size: clamp(18px, 2vw, 28px);
+
+  font-weight: 800;
+
+  letter-spacing: 6px;
+
+  white-space: nowrap;
+
+  color: rgba(255,255,255,.16);
 }
 
-/* =========================
-   IMAGE NUMBER
-========================= */
-
-.image-number {
-  padding: 10px 14px;
-
-  background: #0f172a;
-
-  border-top: 1px solid rgba(255,255,255,.06);
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-/* =========================
-   ACTIONS
-========================= */
+/* =========================================================
+   ACTION AREA
+   ========================================================= */
 
 .actions {
-  padding: 12px;
+  display: flex;
+
+  align-items: center;
+
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #15171c,
+      #111318
+    );
 }
 
 .download {
   width: 100%;
 
-  border: none;
+  min-height: 40px;
 
-  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.08);
 
-  padding: 12px;
+  border-radius: 9px;
 
-  cursor: pointer;
+  background: rgba(255,255,255,.06);
+
+  color: #f5f5f5;
+
+  font-size: 12px;
 
   font-weight: 700;
 
-  background: #2563eb;
-  color: white;
+  letter-spacing: .01em;
 
-  transition: .2s ease;
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    transform .2s ease;
 }
 
 .download:hover {
-  background: #1d4ed8;
+  background: rgba(255,255,255,.11);
+
+  border-color: rgba(255,255,255,.15);
+
+  transform: translateY(-1px);
 }
 
-/* =========================
+.download:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
    LOAD MORE
-========================= */
+   ========================================================= */
 
 .load-more-container {
   display: flex;
+
   justify-content: center;
-  padding: 20px 0 40px;
+
+  padding:
+    10px
+    20px
+    70px;
 }
 
 #loadMoreBtn {
-  width: auto;
-  min-width: 160px;
+  min-width: 170px;
+
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
-/* =========================
+/* =========================================================
    LIGHTBOX
-========================= */
+   ========================================================= */
 
 .lightbox {
   position: fixed;
@@ -390,296 +731,563 @@ button {
   inset: 0;
 
   display: none;
+
   justify-content: center;
   align-items: center;
 
-  background: rgba(0,0,0,.95);
+  padding: 30px;
+
+  background: rgba(0,0,0,.94);
+
+  backdrop-filter: blur(14px);
 
   z-index: 9999;
+
+  cursor: zoom-out;
+
+  animation: fadeIn .2s ease;
 }
 
 .lightbox img {
-  max-width: 95%;
-  max-height: 95%;
-  border-radius: 12px;
+  max-width: 96vw;
+  max-height: 92vh;
+
+  object-fit: contain;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.65);
+
+  animation: lightboxIn .3s cubic-bezier(.2,.8,.2,1);
 }
 
-/* =========================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightboxIn {
+  from {
+    opacity: 0;
+    transform: scale(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================================================
    DONATION FAB
-========================= */
+   ========================================================= */
 
 #donateFab {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  right: 28px;
+  bottom: 28px;
 
-  padding: 12px 18px;
-
-  background: #ef4444;
-  color: white;
-
-  border: none;
-  border-radius: 999px;
-
-  font-size: 20px;
-  font-weight: 700;
-
-  cursor: pointer;
   z-index: 99999;
 
-  box-shadow: 0 12px 30px rgba(239,68,68,.4);
-  transition: .2s ease;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  min-height: 48px;
+
+  padding: 0 18px;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  border-radius: 999px;
+
+  background:
+    rgba(20,21,25,.9);
+
+  color: white;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.4);
+
+  backdrop-filter: blur(16px);
+
+  transition:
+    transform .25s ease,
+    background .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease;
+}
+
+#donateFab:hover {
+  transform: translateY(-3px);
+
+  background: #1b1d22;
+
+  border-color: rgba(255,255,255,.2);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.5);
 }
 
 #donateFab .heart {
-  font-size: 16px;
+  font-size: 14px;
+
   line-height: 1;
+
+  color: #ff5c69;
 }
 
-
-#donateFab:hover {
-  transform: scale(1.08);
-}
-
-/* =========================
+/* =========================================================
    DONATION PANEL
-========================= */
+   ========================================================= */
 
 #donationPanel {
   position: fixed;
 
-  right: 24px;
-  bottom: 105px;
-
-  width: 420px;
-  height: 620px;
-
-  background: white;
-
-  border-radius: 22px;
-
-  overflow: hidden;
-
-  display: none;
+  right: 28px;
+  bottom: 90px;
 
   z-index: 99998;
 
+  display: none;
+
+  width: min(420px, calc(100vw - 32px));
+  height: min(650px, calc(100vh - 120px));
+
+  overflow: hidden;
+
+  background: #fff;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  border-radius: 20px;
+
   box-shadow:
-    0 30px 80px rgba(0,0,0,.45);
+    0 30px 100px rgba(0,0,0,.55);
+
+  animation: panelIn .25s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .donationHeader {
-  height: 56px;
+  height: 58px;
 
   display: flex;
-  justify-content: space-between;
+
   align-items: center;
+  justify-content: space-between;
 
   padding: 0 18px;
 
-  color: black;
+  background: #fff;
 
-  font-weight: 700;
+  color: #101114;
+
+  font-size: 14px;
+
+  font-weight: 800;
 
   border-bottom: 1px solid #e5e7eb;
 }
 
 .donationHeader button {
-  border: none;
-  background: none;
+  display: grid;
 
-  font-size: 18px;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #f1f2f4;
+
+  color: #34363a;
+
+  font-size: 15px;
 
   cursor: pointer;
+
+  transition: background .2s ease;
+}
+
+.donationHeader button:hover {
+  background: #e5e7eb;
 }
 
 #donationPanel iframe {
   width: 100%;
-  height: calc(100% - 56px);
+  height: calc(100% - 58px);
 
   border: none;
 }
 
-/* =========================
-   ORIGINAL MODAL
-========================= */
+/* =========================================================
+   MODAL
+   ========================================================= */
 
 .modal {
   position: fixed;
 
   inset: 0;
 
-  background: rgba(0,0,0,.8);
+  z-index: 10000;
 
   display: none;
 
   justify-content: center;
   align-items: center;
 
-  z-index: 1000;
+  padding: 20px;
+
+  background: rgba(0,0,0,.85);
+
+  backdrop-filter: blur(12px);
 }
 
 .modal-content {
-  width: 95%;
-  max-width: 900px;
+  position: relative;
 
-  height: 80vh;
+  width: min(1000px, 100%);
 
-  background: white;
-
-  border-radius: 16px;
+  height: min(82vh, 800px);
 
   overflow: hidden;
 
-  position: relative;
+  background: white;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 40px 100px rgba(0,0,0,.55);
 }
 
 .modal iframe {
   width: 100%;
   height: 100%;
+
   border: none;
 }
 
 .close {
   position: absolute;
 
-  right: 10px;
-  top: 10px;
+  top: 12px;
+  right: 12px;
 
-  width: 34px;
-  height: 34px;
+  z-index: 2;
 
-  border: none;
+  display: grid;
+
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid rgba(255,255,255,.1);
+
   border-radius: 50%;
 
-  background: black;
+  background: rgba(0,0,0,.75);
+
   color: white;
 
+  font-size: 14px;
+
   cursor: pointer;
+
+  backdrop-filter: blur(10px);
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
 }
 
-/* =========================
-   MOBILE
-========================= */
+.close:hover {
+  transform: scale(1.08);
 
-@media (max-width: 768px) {
+  background: #000;
+}
 
-  /* ================= HERO ================= */
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .gallery {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+/* =========================================================
+   RESPONSIVE — SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
   .hero {
-    height: 220px;
+    height: 440px;
+  }
+
+  .gallery {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
   }
 
   .hero-title {
-    font-size: 1.1rem;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
+    max-width: 700px;
   }
 
-  /* ================= TOP BAR ================= */
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+
+  .hero {
+    height: 330px;
+    min-height: 330px;
+  }
+
+  .hero::before {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0,0,0,.05),
+        rgba(0,0,0,.18) 40%,
+        rgba(8,9,11,1) 100%
+      );
+  }
+
+  .hero-title {
+    left: 18px;
+    right: 18px;
+    bottom: 30px;
+
+    font-size: 2rem;
+
+    line-height: 1.04;
+
+    letter-spacing: -.045em;
+  }
+
+  /* TOP BAR */
+
   .topbar {
-    flex-direction: column;
     align-items: stretch;
+
+    flex-direction: column;
+
     gap: 10px;
+
     padding: 12px;
+  }
+
+  .status {
+    display: none;
   }
 
   .topbar > div:last-child {
     width: 100%;
-    justify-content: space-between;
+
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+
+    gap: 8px;
   }
 
-  select.btn {
+  #gallerySelect {
     width: 100%;
+
+    min-width: 0;
   }
 
-  /* ================= BUTTONS ================= */
-  .btn {
-    flex: 1;
-    font-size: 13px;
-    padding: 10px 12px;
+  #openBtn {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
-  /* ================= STATS (if used) ================= */
-  .stats {
-    padding: 12px;
-    gap: 10px;
-  }
+  /* GALLERY */
 
-  .stat {
-    flex: 1;
-    min-width: unset;
-    padding: 14px;
-  }
-
-  .stat span {
-    font-size: 22px;
-  }
-
-  /* ================= GALLERY ================= */
   .gallery {
     grid-template-columns: 1fr;
-    padding: 12px;
+
     gap: 14px;
+
+    padding:
+      14px
+      14px
+      30px;
   }
 
   .card {
     border-radius: 14px;
   }
 
-  /* ================= LIGHTBOX ================= */
-  .lightbox img {
-    max-width: 100%;
-    max-height: 85%;
+  .img-wrapper {
+    aspect-ratio: 4 / 5;
   }
 
-  /* ================= DONATE BUTTON ================= */
-  #donateFab {
-    right: 14px;
-    bottom: 14px;
+  /* BUTTONS */
 
-    padding: 10px 14px;
-    font-size: 16px;
+  .btn {
+    min-height: 40px;
 
-    border-radius: 999px;
+    padding: 0 13px;
+
+    font-size: 12px;
   }
 
-  #donateFab .heart {
-    font-size: 14px;
-  }
+  /* LOAD MORE */
 
-  /* ================= DONATION PANEL ================= */
-  #donationPanel {
-    left: 10px;
-    right: 10px;
-    bottom: 80px;
-
-    width: auto;
-    height: 70vh;
-
-    border-radius: 16px;
-  }
-
-  .donationHeader {
-    font-size: 14px;
-    padding: 0 12px;
-  }
-
-  /* ================= LOAD MORE ================= */
   .load-more-container {
-    padding: 10px 0 30px;
+    padding:
+      5px
+      14px
+      50px;
   }
 
   #loadMoreBtn {
     width: 100%;
-    max-width: 300px;
+    max-width: 360px;
   }
+
+  /* LIGHTBOX */
+
+  .lightbox {
+    padding: 10px;
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 88vh;
+
+    border-radius: 5px;
+  }
+
+  /* DONATION */
+
+  #donateFab {
+    right: 14px;
+    bottom: 14px;
+
+    min-height: 44px;
+
+    padding: 0 15px;
+
+    font-size: 12px;
+  }
+
+  #donationPanel {
+    left: 8px;
+    right: 8px;
+
+    bottom: 70px;
+
+    width: auto;
+
+    height: calc(100vh - 90px);
+
+    border-radius: 16px;
+  }
+
+  /* MODAL */
+
+  .modal {
+    padding: 8px;
+  }
+
+  .modal-content {
+    height: 92vh;
+
+    border-radius: 14px;
+  }
+
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .hero {
+    height: 300px;
+  }
+
+  .hero-title {
+    font-size: 1.7rem;
+  }
+
+  .topbar > div:last-child {
+    grid-template-columns: 1fr;
+  }
+
+  #openBtn {
+    width: 100%;
+  }
+
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+
 }
 </style>
 </head>
@@ -785,6 +1393,12 @@ const GALLERIES = [
     folderId: "1naJH_DoxupO6LSG_c7sRwoR8I94518hW",
     hero: "https://www.seevirtual360.com/photos/tours/337989.jpg",
     date: "5/29/2026"
+  },
+    {
+    name: "Linsly Football Practice | 8/19",
+    folderId: "1h7Cp97ejfIgqUjIisVP7V_MOght_svUv",
+    hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png/v1/fill/w_1685,h_608,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png",
+    date: "8/19/2026"
   }
 ];
 
