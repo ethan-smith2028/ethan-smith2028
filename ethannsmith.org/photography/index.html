@@ -1275,6 +1275,115 @@ input {
 }
 
 /* =========================================================
+   LOADING SCREEN
+   ========================================================= */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(255,255,255,.045),
+      transparent 35%
+    ),
+    #08090b;
+
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    opacity .65s cubic-bezier(.2,.8,.2,1),
+    visibility .65s ease;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  width: min(420px, calc(100vw - 48px));
+
+  text-align: center;
+}
+
+.loading-brand {
+  margin-bottom: 14px;
+
+  font-family: Manrope, Inter, sans-serif;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: .18em;
+
+  color: #f5f7fa;
+}
+
+.loading-status {
+  margin-bottom: 14px;
+
+  color: #9298a3;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: .01em;
+}
+
+.progress-track {
+  position: relative;
+
+  width: 100%;
+  height: 4px;
+
+  overflow: hidden;
+
+  background: rgba(255,255,255,.08);
+
+  border-radius: 999px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+
+  background: #f5f7fa;
+
+  border-radius: inherit;
+
+  box-shadow:
+    0 0 18px rgba(255,255,255,.25);
+
+  transition:
+    width .25s cubic-bezier(.2,.8,.2,1);
+}
+
+.loading-percent {
+  margin-top: 10px;
+
+  color: #686e79;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: .08em;
+}
+
+/* Prevent the page from showing underneath while loading */
+body.is-loading {
+  overflow: hidden;
+}
+
+/* =========================================================
    REDUCED MOTION
    ========================================================= */
 
@@ -1293,6 +1402,23 @@ input {
 </head>
 
 <body>
+
+  <!-- LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="loading-brand">BEYOND THE LENS</div>
+
+    <div class="loading-status" id="loadingStatus">
+      Loading photos...
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="loading-percent" id="loadingPercent">0%</div>
+  </div>
+</div>
 
 <!-- HERO -->
 <div class="hero" id="hero">
@@ -1374,6 +1500,78 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/* ================= LOADING SCREEN ================= */
+
+const loadingScreen = document.getElementById("loadingScreen");
+const progressBar = document.getElementById("progressBar");
+const loadingPercent = document.getElementById("loadingPercent");
+const loadingStatus = document.getElementById("loadingStatus");
+
+document.body.classList.add("is-loading");
+
+let loadingTotal = 0;
+let loadingCompleted = 0;
+
+function startLoading(total) {
+  loadingTotal = Math.max(total, 1);
+  loadingCompleted = 0;
+
+  loadingScreen.classList.remove("hidden");
+
+  progressBar.style.width = "0%";
+  loadingPercent.textContent = "0%";
+  loadingStatus.textContent = "Loading photos...";
+
+  document.body.classList.add("is-loading");
+}
+
+function updateLoading() {
+  loadingCompleted++;
+
+  const percent = Math.min(
+    100,
+    Math.round((loadingCompleted / loadingTotal) * 100)
+  );
+
+  progressBar.style.width = `${percent}%`;
+  loadingPercent.textContent = `${percent}%`;
+
+  if (percent >= 100) {
+    loadingStatus.textContent = "Ready";
+  }
+}
+
+function finishLoading() {
+  progressBar.style.width = "100%";
+  loadingPercent.textContent = "100%";
+  loadingStatus.textContent = "Ready";
+
+  setTimeout(() => {
+    loadingScreen.classList.add("hidden");
+    document.body.classList.remove("is-loading");
+  }, 350);
+}
+
+/* Load an image and report when it finishes */
+function preloadImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+
+    img.onload = () => {
+      updateLoading();
+      resolve();
+    };
+
+    img.onerror = () => {
+      // Don't let one broken image hold the entire page hostage
+      updateLoading();
+      resolve();
+    };
+
+    img.src = src;
+  });
+}
+
 /* ================= GALLERIES ================= */
 const GALLERIES = [
   {
@@ -1405,6 +1603,12 @@ const GALLERIES = [
     folderId: "10-HgB4c33iqOrd-FL5LmDL0CoJT7Lkiy",
     hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png/v1/fill/w_1685,h_608,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png",
     date: "8/20/2026"
+  },
+  {
+    name: "Linsly Soccer Match | 8/21",
+    folderId: "1AfCp0hc6clygVIFnjgcVFiqo76fc7Q86",
+    hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png",
+    date: "8/21/2026"
   }
 ];
 
@@ -1441,14 +1645,33 @@ GALLERIES.forEach((g, i) => {
   gallerySelect.appendChild(opt);
 });
 
-gallerySelect.onchange = () => {
+gallerySelect.onchange = async () => {
   activeGallery = Number(gallerySelect.value);
+
   updateHero();
+
+  await loadGallery(true);
 };
 
-function updateHero() {
+async function updateHero() {
   const g = GALLERIES[activeGallery];
+
+  loadingStatus.textContent = "Loading gallery...";
+
+  startLoading(1);
+
+  heroImg.onload = () => {
+    updateLoading();
+    finishLoading();
+  };
+
+  heroImg.onerror = () => {
+    updateLoading();
+    finishLoading();
+  };
+
   heroImg.src = g.hero;
+
   heroTitle.textContent = `${g.name} • ${g.date}`;
 }
 
@@ -1485,25 +1708,57 @@ async function loadGallery(reset = true) {
   loadMoreBtn.style.display = "none";
 
   if (reset) {
-    gallery.innerHTML = "Loading...";
+    gallery.innerHTML = "";
     currentIndex = 0;
 
     const g = GALLERIES[activeGallery];
+
+    loadingStatus.textContent = "Finding photos...";
+    startLoading(1);
+
     allFiles = await fetchImages(g.folderId);
+
+    updateLoading();
 
     gallery.innerHTML = "";
   }
 
   if (!allFiles.length) {
-    gallery.innerHTML = "<p style='opacity:.7;padding:20px'>No photos found.</p>";
+    gallery.innerHTML =
+      "<p style='opacity:.7;padding:20px'>No photos found.</p>";
+
+    finishLoading();
     return;
   }
 
-  const nextBatch = allFiles.slice(currentIndex, currentIndex + PAGE_SIZE);
+  const nextBatch = allFiles.slice(
+    currentIndex,
+    currentIndex + PAGE_SIZE
+  );
 
-  nextBatch.forEach(file => {
-    const imgUrl = `https://lh3.googleusercontent.com/d/${file.id}=w1200`;
-    const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
+  /*
+   * Only preload the images we're actually about
+   * to display. This keeps the loading screen fast
+   * even when a gallery contains hundreds of photos.
+   */
+  startLoading(nextBatch.length);
+
+  const imageUrls = nextBatch.map(
+    file =>
+      `https://lh3.googleusercontent.com/d/${file.id}=w1200`
+  );
+
+  /*
+   * Start loading all images at the same time.
+   * Each completed image updates the progress bar.
+   */
+  const imagePromises = imageUrls.map(preloadImage);
+
+  nextBatch.forEach((file, index) => {
+    const imgUrl = imageUrls[index];
+
+    const downloadUrl =
+      `https://drive.google.com/uc?export=download&id=${file.id}`;
 
     const card = document.createElement("div");
     card.className = "card";
@@ -1512,6 +1767,11 @@ async function loadGallery(reset = true) {
     wrap.className = "img-wrapper";
 
     const img = document.createElement("img");
+
+    /*
+     * The image was preloaded above, so it should
+     * appear immediately when inserted.
+     */
     img.src = imgUrl;
 
     img.onclick = () => {
@@ -1532,30 +1792,48 @@ async function loadGallery(reset = true) {
     btn.className = "download";
     btn.textContent = "Download";
 
-    btn.onclick = (e) => {
+    btn.onclick = e => {
       e.preventDefault();
       e.stopPropagation();
 
-      // SAVE STATE BEFORE NAVIGATING AWAY
-      sessionStorage.setItem("scrollPos", window.scrollY);
-      sessionStorage.setItem("activeGallery", activeGallery);
-      sessionStorage.setItem("currentIndex", currentIndex);
+      sessionStorage.setItem(
+        "scrollPos",
+        window.scrollY
+      );
 
-      // IMPORTANT: direct navigation works better on mobile than window.open
+      sessionStorage.setItem(
+        "activeGallery",
+        activeGallery
+      );
+
+      sessionStorage.setItem(
+        "currentIndex",
+        currentIndex
+      );
+
       location.href = downloadUrl;
     };
 
     actions.appendChild(btn);
+
     card.appendChild(wrap);
     card.appendChild(actions);
+
     gallery.appendChild(card);
   });
+
+  /*
+   * Wait until every visible image has finished loading.
+   */
+  await Promise.all(imagePromises);
 
   currentIndex += PAGE_SIZE;
 
   if (currentIndex < allFiles.length) {
     loadMoreBtn.style.display = "block";
   }
+
+  finishLoading();
 }
 
 /* ================= RESTORE AFTER MOBILE DOWNLOAD ================= */
