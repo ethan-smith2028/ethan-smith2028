@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NCAA Volleyball Scorebug</title>
+
+<script type="module">
+
+import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+
+
+// =========================================================
+// FIREBASE
+// =========================================================
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+    authDomain: "email-list-83dfb.firebaseapp.com",
+    databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+    projectId: "email-list-83dfb",
+    storageBucket: "email-list-83dfb.firebasestorage.app",
+    messagingSenderId: "471452404510",
+    appId: "1:471452404510:web:e91752174f6f0000c1570f",
+    measurementId: "G-3X5TK2WYBF"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const scorebugRef = ref(db, "scorebug");
+
+
+
+// =========================================================
+// FIREBASE LISTENER
+// =========================================================
+
+onValue(
+    scorebugRef,
+
+    snapshot => {
+
+        const data = snapshot.val();
+
+        if (!data) return;
+
+        render(data);
+
+    },
+
+    error => {
+
+        console.error(
+            "Firebase read error:",
+            error
+        );
+
+    }
+);
+
+
+
+// =========================================================
+// SET STATUS
+// =========================================================
+
+function getSetStatus(home, away, currentSet) {
+
+    const homeSets =
+        Number(home.sets ?? 0);
+
+    const awaySets =
+        Number(away.sets ?? 0);
+
+
+    const homeName =
+        (
+            home.abbreviation ||
+            "HOME"
+        ).toUpperCase();
+
+
+    const awayName =
+        (
+            away.abbreviation ||
+            "AWAY"
+        ).toUpperCase();
+
+
+
+    // =====================================================
+    // NO SETS WON YET
+    // =====================================================
+
+    if (
+        homeSets === 0 &&
+        awaySets === 0
+    ) {
+
+        return `SET ${currentSet} (BEST OF 5)`;
+
+    }
+
+
+
+    // =====================================================
+    // TIED
+    // =====================================================
+
+    if (
+        homeSets === awaySets
+    ) {
+
+        return `TIED ${homeSets}-${awaySets}`;
+
+    }
+
+
+
+    // =====================================================
+    // HOME LEADS
+    // =====================================================
+
+    if (
+        homeSets > awaySets
+    ) {
+
+        return `${homeName} LEADS ${homeSets}-${awaySets}`;
+
+    }
+
+
+
+    // =====================================================
+    // AWAY LEADS
+    // =====================================================
+
+    return `${awayName} LEADS ${awaySets}-${homeSets}`;
+
+}
+
+
+
+// =========================================================
+// RENDER
+// =========================================================
+
+function render(data) {
+
+    const home =
+        data.home || {};
+
+    const away =
+        data.away || {};
+
+    const match =
+        data.match || {};
+
+    const settings =
+        data.settings || {};
+
+
+
+    // =====================================================
+    // TITLE
+    // =====================================================
+
+    document.getElementById(
+        "title"
+    ).textContent =
+
+        match.title ||
+        "NCAA VOLLEYBALL NATIONAL CHAMPIONSHIP";
+
+
+
+    // =====================================================
+    // HOME
+    // =====================================================
+
+    document.getElementById(
+        "home-seed"
+    ).textContent =
+
+        home.seed ?? "";
+
+
+
+    document.getElementById(
+        "home-name"
+    ).textContent =
+
+        home.abbreviation ||
+        "HOME";
+
+
+
+    // -----------------------------------------------------
+    // HOME SCORE
+    // -----------------------------------------------------
+
+    const homeScoreElement =
+        document.getElementById(
+            "home-score"
+        );
+
+
+    const previousHomeScore =
+        homeScoreElement.textContent;
+
+
+    const newHomeScore =
+        home.score ?? 0;
+
+
+    homeScoreElement.textContent =
+        newHomeScore;
+
+
+
+    // -----------------------------------------------------
+    // HOME SCORE ANIMATION
+    // -----------------------------------------------------
+
+    if (
+        previousHomeScore !==
+        String(newHomeScore)
+    ) {
+
+        homeScoreElement.classList.remove(
+            "score-change"
+        );
+
+
+        void homeScoreElement.offsetWidth;
+
+
+        homeScoreElement.classList.add(
+            "score-change"
+        );
+
+    }
+
+
+
+    // -----------------------------------------------------
+    // HOME RECORD
+    // -----------------------------------------------------
+
+    document.getElementById(
+        "home-record"
+    ).textContent =
+
+        home.record ||
+        "";
+
+
+
+    // -----------------------------------------------------
+    // HOME COLOR
+    // -----------------------------------------------------
+
+    const homeColor =
+        home.color ||
+        "#c77800";
+
+
+    document.getElementById(
+        "home-color"
+    ).style.background =
+        homeColor;
+
+
+    document.getElementById(
+        "home-accent"
+    ).style.background =
+        homeColor;
+
+
+
+    // -----------------------------------------------------
+    // HOME LOGO
+    // -----------------------------------------------------
+
+    const homeLogo =
+        document.getElementById(
+            "home-logo"
+        );
+
+
+    if (home.logo) {
+
+        if (
+            homeLogo.src !==
+            home.logo
+        ) {
+
+            homeLogo.src =
+                home.logo;
+
+        }
+
+        homeLogo.style.display =
+            "block";
+
+    } else {
+
+        homeLogo.removeAttribute(
+            "src"
+        );
+
+        homeLogo.style.display =
+            "none";
+
+    }
+
+
+
+    // =====================================================
+    // AWAY
+    // =====================================================
+
+    document.getElementById(
+        "away-seed"
+    ).textContent =
+
+        away.seed ?? "";
+
+
+
+    document.getElementById(
+        "away-name"
+    ).textContent =
+
+        away.abbreviation ||
+        "AWAY";
+
+
+
+    // -----------------------------------------------------
+    // AWAY SCORE
+    // -----------------------------------------------------
+
+    const awayScoreElement =
+        document.getElementById(
+            "away-score"
+        );
+
+
+    const previousAwayScore =
+        awayScoreElement.textContent;
+
+
+    const newAwayScore =
+        away.score ?? 0;
+
+
+    awayScoreElement.textContent =
+        newAwayScore;
+
+
+
+    // -----------------------------------------------------
+    // AWAY SCORE ANIMATION
+    // -----------------------------------------------------
+
+    if (
+        previousAwayScore !==
+        String(newAwayScore)
+    ) {
+
+        awayScoreElement.classList.remove(
+            "score-change"
+        );
+
+
+        void awayScoreElement.offsetWidth;
+
+
+        awayScoreElement.classList.add(
+            "score-change"
+        );
+
+    }
+
+
+
+    // -----------------------------------------------------
+    // AWAY RECORD
+    // -----------------------------------------------------
+
+    document.getElementById(
+        "away-record"
+    ).textContent =
+
+        away.record ||
+        "";
+
+
+
+    // -----------------------------------------------------
+    // AWAY COLOR
+    // -----------------------------------------------------
+
+    const awayColor =
+        away.color ||
+        "#d71945";
+
+
+    document.getElementById(
+        "away-color"
+    ).style.background =
+        awayColor;
+
+
+    document.getElementById(
+        "away-accent"
+    ).style.background =
+        awayColor;
+
+
+
+    // -----------------------------------------------------
+    // AWAY LOGO
+    // -----------------------------------------------------
+
+    const awayLogo =
+        document.getElementById(
+            "away-logo"
+        );
+
+
+    if (away.logo) {
+
+        if (
+            awayLogo.src !==
+            away.logo
+        ) {
+
+            awayLogo.src =
+                away.logo;
+
+        }
+
+        awayLogo.style.display =
+            "block";
+
+    } else {
+
+        awayLogo.removeAttribute(
+            "src"
+        );
+
+        awayLogo.style.display =
+            "none";
+
+    }
+
+
+
+    // =====================================================
+    // MATCH / SET STATUS
+    // =====================================================
+
+    const currentSet =
+        Number(match.set ?? 1);
+
+
+    document.getElementById(
+        "set-info"
+    ).textContent =
+
+        getSetStatus(
+            home,
+            away,
+            currentSet
+        );
+
+
+
+    // =====================================================
+    // SERVING
+    // =====================================================
+
+    document
+        .getElementById(
+            "home-serving"
+        )
+        .classList.toggle(
+            "active",
+            match.serving === "home"
+        );
+
+
+    document
+        .getElementById(
+            "away-serving"
+        )
+        .classList.toggle(
+            "active",
+            match.serving === "away"
+        );
+
+
+
+    // =====================================================
+    // VISIBILITY
+    // =====================================================
+
+    document
+        .getElementById(
+            "scorebug"
+        )
+        .classList.toggle(
+            "hidden",
+            settings.visible === false
+        );
+
+}
+
+</script>
+
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+
+    width: 1920px;
+    height: 1080px;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    background: transparent;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+/* =========================================================
+   SCOREBUG
+========================================================= */
+
+#scorebug {
+
+    position: absolute;
+
+    left: 32px;
+    bottom: 34px;
+
+    width: 1120px;
+    height: 90px;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+    filter:
+        drop-shadow(
+            0 3px 5px
+            rgba(0, 0, 0, .35)
+        );
+
+}
+
+#scorebug.hidden {
+
+    opacity: 0;
+
+    transform:
+        translateY(8px);
+
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.title {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 510px;
+    height: 27px;
+
+    padding: 0 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #373737 0%,
+            #1d1d1d 100%
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.55);
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    letter-spacing: .35px;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    z-index: 10;
+
+}
+
+
+/* =========================================================
+   MAIN BAR
+========================================================= */
+
+.main-bar {
+
+    position: absolute;
+
+    left: 0;
+    top: 25px;
+
+    width: 1120px;
+    height: 65px;
+
+    display: flex;
+
+    overflow: hidden;
+
+    background: #e7e7e4;
+
+    border:
+        1px solid
+        rgba(0, 0, 0, .45);
+
+}
+
+
+/* =========================================================
+   TEAM BLOCK
+========================================================= */
+
+/* =========================================================
+   TEAM BLOCK
+========================================================= */
+
+.team {
+
+    position: relative;
+
+    flex:
+        1 1 0;
+
+    min-width:
+        0;
+
+    height:
+        64px;
+
+    display:
+        flex;
+
+    flex-shrink:
+        1;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #f7f7f5 0%,
+            #ddddda 100%
+        );
+
+}
+
+
+/* =========================================================
+   MATCH INFO / SET BOX
+========================================================= */
+
+.match-info {
+
+    /*
+       Flexible set box.
+       It will grow/shrink based on available space.
+    */
+    flex:
+        0 1 260px;
+
+    width:
+        260px;
+
+    min-width:
+        190px;
+
+    max-width:
+        300px;
+
+    height:
+        64px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        0 12px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #f6f6f4 0%,
+            #ddddda 100%
+        );
+
+    color:
+        #292929;
+
+    font-size:
+        17px;
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    text-align:
+        center;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+/* =========================================================
+   HOME / AWAY SEPARATOR
+========================================================= */
+
+.home {
+
+    border-right:
+        2px solid #bcbcb9;
+
+}
+
+.away {
+
+    border-right:
+        2px solid #bcbcb9;
+
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo-box {
+
+    position: relative;
+
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+}
+
+
+/* logo color background */
+
+.logo-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .95;
+
+}
+
+
+/* right edge */
+
+.logo-box::after {
+
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+    top: 0;
+
+    width: 1px;
+    height: 100%;
+
+    background:
+        rgba(0, 0, 0, .18);
+
+}
+
+
+.logo {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 45px;
+    height: 45px;
+
+    object-fit: contain;
+
+    filter:
+        drop-shadow(
+            0 1px 1px
+            rgba(0,0,0,.25)
+        );
+
+}
+
+
+/* =========================================================
+   TEAM INFORMATION
+========================================================= */
+
+.team-info {
+
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 8px 7px 9px;
+
+}
+
+
+/* =========================================================
+   SEED
+========================================================= */
+
+.seed {
+
+    margin-right: 6px;
+
+    color: #333333;
+
+    font-size: 17px;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   TEAM NAME
+========================================================= */
+
+.team-name {
+
+    min-width: 0;
+
+    color: #242424;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =========================================================
+   RECORD
+========================================================= */
+
+.record {
+
+    position: absolute;
+
+    left: 8px;
+    bottom: 0;
+
+    height: 17px;
+
+    min-width: 58px;
+
+    padding:
+        0 7px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #d1d1ce;
+
+    color: #505050;
+
+    font-size: 10px;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   SCORE
+========================================================= */
+
+.team-score {
+
+    width: 62px;
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: #1c1c1c;
+
+    font-size: 38px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   SERVING INDICATOR
+========================================================= */
+
+.serving {
+
+    position: absolute;
+
+    right: 4px;
+    top: 8px;
+
+    width: 0;
+    height: 0;
+
+    border-top:
+        6px solid transparent;
+
+    border-bottom:
+        6px solid transparent;
+
+    border-left:
+        8px solid #666666;
+
+    opacity: 0;
+
+    transition:
+        opacity .15s ease;
+
+}
+
+.serving.active {
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   MATCH INFO
+========================================================= */
+
+.match-info {
+
+    width: 190px;
+    height: 64px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        0 10px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #f6f6f4 0%,
+            #ddddda 100%
+        );
+
+    color: #292929;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   GOLD BOTTOM LINE
+========================================================= */
+
+.bottom-accent {
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 5px;
+
+    background: #b49c73;
+
+    z-index: 20;
+
+}
+
+
+/* =========================================================
+   LOGO COLOR STRIP
+========================================================= */
+
+.team-accent {
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 64px;
+    height: 5px;
+
+    z-index: 21;
+
+}
+
+
+/* =========================================================
+   SCORE ANIMATION
+========================================================= */
+
+.score-change {
+
+    animation:
+        scorePulse .22s ease;
+
+}
+
+@keyframes scorePulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   1600px
+========================================================= */
+
+@media (max-width: 1600px) {
+
+    #scorebug {
+
+        transform: scale(.85);
+
+        transform-origin:
+            bottom left;
+
+    }
+
+}
+
+
+/* =========================================================
+   1100px
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    #scorebug {
+
+        transform: scale(.7);
+
+        transform-origin:
+            bottom left;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="scorebug">
+
+
+    <!-- =====================================================
+         TITLE
+    ====================================================== -->
+
+    <div
+        id="title"
+        class="title"
+    >
+        LINSLY CADETS VOLLEYBALL
+    </div>
+
+
+    <!-- =====================================================
+         MAIN BAR
+    ====================================================== -->
+
+    <div class="main-bar">
+
+
+        <!-- =================================================
+             HOME
+        ================================================== -->
+
+        <div class="team home">
+
+
+            <div
+                id="home-color"
+                class="logo-box"
+            >
+
+                <img
+                    id="home-logo"
+                    class="logo"
+                    alt=""
+                >
+
+            </div>
+
+
+            <div class="team-info">
+
+                <span
+                    id="home-seed"
+                    class="seed"
+                >
+                    2
+                </span>
+
+                <span
+                    id="home-name"
+                    class="team-name"
+                >
+                    Texas
+                </span>
+
+
+                <div
+                    id="home-record"
+                    class="record"
+                >
+                    27-4
+                </div>
+
+
+                <div
+                    id="home-serving"
+                    class="serving"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="home-score"
+                class="team-score"
+            >
+                4
+            </div>
+
+
+            <div
+                id="home-accent"
+                class="team-accent"
+                style="background:#222222;"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             AWAY
+        ================================================== -->
+
+        <div class="team away">
+
+
+            <div
+                id="away-color"
+                class="logo-box"
+            >
+
+                <img
+                    id="away-logo"
+                    class="logo"
+                    alt=""
+                >
+
+            </div>
+
+
+            <div class="team-info">
+
+                <span
+                    id="away-seed"
+                    class="seed"
+                >
+                    1
+                </span>
+
+                <span
+                    id="away-name"
+                    class="team-name"
+                >
+                    Nebraska
+                </span>
+
+
+                <div
+                    id="away-record"
+                    class="record"
+                >
+                    33-1
+                </div>
+
+
+                <div
+                    id="away-serving"
+                    class="serving"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="away-score"
+                class="team-score"
+            >
+                2
+            </div>
+
+
+            <div
+                id="away-accent"
+                class="team-accent"
+                style="background:#222222;"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             SET INFO
+        ================================================== -->
+
+        <div
+            id="set-info"
+            class="match-info"
+        >
+            SET 1 (BEST OF 5)
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

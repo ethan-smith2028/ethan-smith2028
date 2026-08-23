@@ -1,0 +1,3187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             maximum-scale=1.0,
+             user-scalable=no"
+>
+
+<title>Volleyball Controller</title>
+
+
+<script type="module">
+
+import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    update,
+    onValue,
+    set
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+
+// =========================================================
+// FIREBASE
+// =========================================================
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+
+    authDomain:
+        "email-list-83dfb.firebaseapp.com",
+
+    databaseURL:
+        "https://email-list-83dfb-default-rtdb.firebaseio.com",
+
+    projectId:
+        "email-list-83dfb",
+
+    storageBucket:
+        "email-list-83dfb.firebasestorage.app",
+
+    messagingSenderId:
+        "471452404510",
+
+    appId:
+        "1:471452404510:web:e91752174f6f0000c1570f",
+
+    measurementId:
+        "G-3X5TK2WYBF"
+
+};
+
+
+const app =
+    initializeApp(firebaseConfig);
+
+const db =
+    getDatabase(app);
+
+const scorebugRef =
+    ref(db, "scorebug");
+
+
+// =========================================================
+// ELEMENT HELPER
+// =========================================================
+
+const $ = id =>
+    document.getElementById(id);
+
+
+// =========================================================
+// ELEMENTS
+// =========================================================
+
+// HOME
+
+const homeName =
+    $("homeName");
+
+const homeLogo =
+    $("homeLogo");
+
+const homeScore =
+    $("homeScore");
+
+const homeSets =
+    $("homeSets");
+
+const homeTimeouts =
+    $("homeTimeouts");
+
+
+// AWAY
+
+const awayName =
+    $("awayName");
+
+const awayLogo =
+    $("awayLogo");
+
+const awayScore =
+    $("awayScore");
+
+const awaySets =
+    $("awaySets");
+
+const awayTimeouts =
+    $("awayTimeouts");
+
+
+// MATCH
+
+const currentSet =
+    $("currentSet");
+
+const status =
+    $("status");
+
+
+// =========================================================
+// DEFAULT DATABASE STATE
+// =========================================================
+
+const DEFAULT_STATE = {
+
+    home: {
+
+        abbreviation:
+            "HOME",
+
+        logo:
+            "",
+
+        score:
+            0,
+
+        sets:
+            0,
+
+        timeouts:
+            0,
+
+        seed:
+            "",
+
+        record:
+            "",
+
+        color:
+            "#c77800"
+
+    },
+
+    away: {
+
+        abbreviation:
+            "AWAY",
+
+        logo:
+            "",
+
+        score:
+            0,
+
+        sets:
+            0,
+
+        timeouts:
+            0,
+
+        seed:
+            "",
+
+        record:
+            "",
+
+        color:
+            "#d71945"
+
+    },
+
+    match: {
+
+        set:
+            1,
+
+        status:
+            "NCAA VOLLEYBALL",
+
+        serving:
+            "home",
+
+        title:
+            "NCAA VOLLEYBALL NATIONAL CHAMPIONSHIP"
+
+    },
+
+    settings: {
+
+        visible:
+            true
+
+    }
+
+};
+
+
+// =========================================================
+// DISPLAY HELPERS
+// =========================================================
+
+/*
+    IMPORTANT:
+
+    Scores, sets, timeouts and currentSet are
+    <span> / <div> elements.
+
+    Therefore we use textContent instead of .value.
+*/
+
+
+function setDisplay(element, value) {
+
+    if (!element)
+        return;
+
+    element.textContent =
+        String(value);
+
+}
+
+
+function getDisplayNumber(element) {
+
+    if (!element)
+        return 0;
+
+    const value =
+        parseInt(
+            element.textContent,
+            10
+        );
+
+    return Number.isFinite(value)
+        ? value
+        : 0;
+
+}
+
+
+// =========================================================
+// CONNECTION STATUS
+// =========================================================
+
+function setConnection(connected) {
+
+    const dot =
+        document.querySelector(
+            ".connection-dot"
+        );
+
+    const text =
+        document.querySelector(
+            ".connection-status"
+        );
+
+
+    if (!dot || !text)
+        return;
+
+
+    if (connected) {
+
+        dot.style.background =
+            "#35d68a";
+
+        dot.style.boxShadow =
+            "0 0 8px rgba(53,214,138,.7)";
+
+        text.textContent =
+            "LIVE";
+
+    } else {
+
+        dot.style.background =
+            "#ff5252";
+
+        dot.style.boxShadow =
+            "0 0 8px rgba(255,82,82,.7)";
+
+        text.textContent =
+            "OFFLINE";
+
+    }
+
+}
+
+
+// =========================================================
+// FIREBASE LIVE READBACK
+// =========================================================
+
+onValue(
+
+    scorebugRef,
+
+    async snapshot => {
+
+        setConnection(true);
+
+
+        const data =
+            snapshot.val();
+
+
+        // -------------------------------------------------
+        // DATABASE DOES NOT EXIST
+        // -------------------------------------------------
+
+        if (!data) {
+
+            console.log(
+                "Scorebug database is empty. Creating defaults..."
+            );
+
+
+            try {
+
+                await set(
+                    scorebugRef,
+                    DEFAULT_STATE
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Could not initialize Firebase:",
+                    error
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        // -------------------------------------------------
+        // LIVE FIREBASE DATA
+        // -------------------------------------------------
+
+        console.log(
+            "LIVE FIREBASE UPDATE:",
+            data
+        );
+
+
+        syncController(data);
+
+    },
+
+    error => {
+
+        console.error(
+            "Firebase read error:",
+            error
+        );
+
+
+        setConnection(false);
+
+
+        console.error(
+            "Firebase error details:",
+            error.message
+        );
+
+    }
+
+);
+
+
+// =========================================================
+// SYNC CONTROLLER FROM FIREBASE
+// =========================================================
+
+function syncController(data) {
+
+    const home =
+        data.home || {};
+
+    const away =
+        data.away || {};
+
+    const match =
+        data.match || {};
+
+    const settings =
+        data.settings || {};
+
+
+    // =====================================================
+    // HOME TEAM
+    // =====================================================
+
+    homeName.value =
+        home.abbreviation ??
+        "HOME";
+
+
+    homeLogo.value =
+        home.logo ??
+        "";
+
+
+    setDisplay(
+        homeScore,
+        home.score ?? 0
+    );
+
+
+    setDisplay(
+        homeSets,
+        home.sets ?? 0
+    );
+
+
+    setDisplay(
+        homeTimeouts,
+        home.timeouts ?? 0
+    );
+
+
+    // =====================================================
+    // AWAY TEAM
+    // =====================================================
+
+    awayName.value =
+        away.abbreviation ??
+        "AWAY";
+
+
+    awayLogo.value =
+        away.logo ??
+        "";
+
+
+    setDisplay(
+        awayScore,
+        away.score ?? 0
+    );
+
+
+    setDisplay(
+        awaySets,
+        away.sets ?? 0
+    );
+
+
+    setDisplay(
+        awayTimeouts,
+        away.timeouts ?? 0
+    );
+
+
+    // =====================================================
+    // MATCH
+    // =====================================================
+
+    setDisplay(
+        currentSet,
+        match.set ?? 1
+    );
+
+
+    status.value =
+        match.status ??
+        "NCAA VOLLEYBALL";
+
+
+    // =====================================================
+    // SERVING
+    // =====================================================
+
+    document
+        .querySelectorAll(".serve-button")
+        .forEach(button => {
+
+            button.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    if (
+        match.serving === "home"
+    ) {
+
+        $("serveHome")
+            .classList.add("active");
+
+    }
+
+
+    if (
+        match.serving === "away"
+    ) {
+
+        $("serveAway")
+            .classList.add("active");
+
+    }
+
+
+    // =====================================================
+    // VISIBILITY
+    // =====================================================
+
+    $("showBug").checked =
+        settings.visible !== false;
+
+}
+
+
+// =========================================================
+// FIREBASE WRITE HELPER
+// =========================================================
+
+async function write(path, values) {
+
+    try {
+
+        await update(
+            ref(db, path),
+            values
+        );
+
+
+        console.log(
+            "Firebase WRITE:",
+            path,
+            values
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Firebase write failed:",
+            error
+        );
+
+
+        alert(
+            "Firebase write failed:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// =========================================================
+// HOME TEAM
+// =========================================================
+
+window.updateHome = async function () {
+
+    await write(
+
+        "scorebug/home",
+
+        {
+
+            abbreviation:
+                homeName.value
+                    .trim()
+                    .toUpperCase(),
+
+            logo:
+                homeLogo.value
+                    .trim(),
+
+            score:
+                getDisplayNumber(
+                    homeScore
+                ),
+
+            sets:
+                getDisplayNumber(
+                    homeSets
+                ),
+
+            timeouts:
+                getDisplayNumber(
+                    homeTimeouts
+                )
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// AWAY TEAM
+// =========================================================
+
+window.updateAway = async function () {
+
+    await write(
+
+        "scorebug/away",
+
+        {
+
+            abbreviation:
+                awayName.value
+                    .trim()
+                    .toUpperCase(),
+
+            logo:
+                awayLogo.value
+                    .trim(),
+
+            score:
+                getDisplayNumber(
+                    awayScore
+                ),
+
+            sets:
+                getDisplayNumber(
+                    awaySets
+                ),
+
+            timeouts:
+                getDisplayNumber(
+                    awayTimeouts
+                )
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// SCORE
+// =========================================================
+
+window.score = async function (
+    team,
+    amount
+) {
+
+    const input =
+        team === "home"
+            ? homeScore
+            : awayScore;
+
+
+    let value =
+        getDisplayNumber(input);
+
+
+    value += amount;
+
+
+    if (value < 0)
+        value = 0;
+
+
+    // Immediately update controller
+
+    setDisplay(
+        input,
+        value
+    );
+
+
+    // Update Firebase
+
+    await write(
+
+        `scorebug/${team}`,
+
+        {
+
+            score:
+                value
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// SETS
+// =========================================================
+
+window.sets = async function (
+    team,
+    amount
+) {
+
+    const input =
+        team === "home"
+            ? homeSets
+            : awaySets;
+
+
+    let value =
+        getDisplayNumber(input);
+
+
+    value += amount;
+
+
+    if (value < 0)
+        value = 0;
+
+
+    if (value > 5)
+        value = 5;
+
+
+    setDisplay(
+        input,
+        value
+    );
+
+
+    await write(
+
+        `scorebug/${team}`,
+
+        {
+
+            sets:
+                value
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// TIMEOUTS
+// =========================================================
+
+window.timeout = async function (
+    team,
+    amount
+) {
+
+    const input =
+        team === "home"
+            ? homeTimeouts
+            : awayTimeouts;
+
+
+    let value =
+        getDisplayNumber(input);
+
+
+    value += amount;
+
+
+    if (value < 0)
+        value = 0;
+
+
+    if (value > 2)
+        value = 2;
+
+
+    setDisplay(
+        input,
+        value
+    );
+
+
+    await write(
+
+        `scorebug/${team}`,
+
+        {
+
+            timeouts:
+                value
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// SERVING
+// =========================================================
+
+window.serving = async function (
+    team
+) {
+
+    await write(
+
+        "scorebug/match",
+
+        {
+
+            serving:
+                team
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// CHANGE SET
+// =========================================================
+
+window.changeSet = async function (
+    amount
+) {
+
+    let value =
+        getDisplayNumber(
+            currentSet
+        );
+
+
+    if (value < 1)
+        value = 1;
+
+
+    value += amount;
+
+
+    if (value < 1)
+        value = 1;
+
+
+    if (value > 5)
+        value = 5;
+
+
+    setDisplay(
+        currentSet,
+        value
+    );
+
+
+    await write(
+
+        "scorebug/match",
+
+        {
+
+            set:
+                value
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// STATUS
+// =========================================================
+
+window.updateStatus = async function () {
+
+    await write(
+
+        "scorebug/match",
+
+        {
+
+            status:
+                status.value.trim()
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// NEW SET
+// =========================================================
+
+window.newSet = async function () {
+
+    const current =
+        getDisplayNumber(
+            currentSet
+        );
+
+
+    const nextSet =
+        Math.min(
+            current + 1,
+            5
+        );
+
+
+    try {
+
+        await update(
+
+            scorebugRef,
+
+            {
+
+                "home/score":
+                    0,
+
+                "home/timeouts":
+                    0,
+
+                "away/score":
+                    0,
+
+                "away/timeouts":
+                    0,
+
+                "match/set":
+                    nextSet,
+
+                "match/serving":
+                    "home",
+
+                "match/status":
+                    "NCAA VOLLEYBALL"
+
+            }
+
+        );
+
+
+        console.log(
+            "Started set:",
+            nextSet
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "New set failed:",
+            error
+        );
+
+    }
+
+};
+
+
+// =========================================================
+// RESET CURRENT SET
+// =========================================================
+
+window.resetSet = async function () {
+
+    try {
+
+        await update(
+
+            scorebugRef,
+
+            {
+
+                "home/score":
+                    0,
+
+                "home/timeouts":
+                    0,
+
+                "away/score":
+                    0,
+
+                "away/timeouts":
+                    0
+
+            }
+
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Reset set failed:",
+            error
+        );
+
+    }
+
+};
+
+
+// =========================================================
+// RESET MATCH
+// =========================================================
+
+window.resetMatch = async function () {
+
+    if (
+        !confirm(
+            "Reset the entire match?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await set(
+
+            scorebugRef,
+
+            {
+
+                home: {
+
+                    abbreviation:
+                        homeName.value
+                            .trim()
+                            .toUpperCase(),
+
+                    logo:
+                        homeLogo.value
+                            .trim(),
+
+                    score:
+                        0,
+
+                    sets:
+                        0,
+
+                    timeouts:
+                        0,
+
+                    seed:
+                        "",
+
+                    record:
+                        "",
+
+                    color:
+                        "#c77800"
+
+                },
+
+
+                away: {
+
+                    abbreviation:
+                        awayName.value
+                            .trim()
+                            .toUpperCase(),
+
+                    logo:
+                        awayLogo.value
+                            .trim(),
+
+                    score:
+                        0,
+
+                    sets:
+                        0,
+
+                    timeouts:
+                        0,
+
+                    seed:
+                        "",
+
+                    record:
+                        "",
+
+                    color:
+                        "#d71945"
+
+                },
+
+
+                match: {
+
+                    set:
+                        1,
+
+                    status:
+                        status.value.trim(),
+
+                    serving:
+                        "home",
+
+                    title:
+                        "NCAA VOLLEYBALL NATIONAL CHAMPIONSHIP"
+
+                },
+
+
+                settings: {
+
+                    visible:
+                        true
+
+                }
+
+            }
+
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Reset match failed:",
+            error
+        );
+
+    }
+
+};
+
+
+// =========================================================
+// SHOW / HIDE SCOREBUG
+// =========================================================
+
+window.toggleBug = async function () {
+
+    const visible =
+        $("showBug").checked;
+
+
+    await write(
+
+        "scorebug/settings",
+
+        {
+
+            visible:
+                visible
+
+        }
+
+    );
+
+};
+
+
+// =========================================================
+// ENTER KEY SUPPORT
+// =========================================================
+
+homeName.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            homeName.blur();
+
+        }
+
+    }
+);
+
+
+homeLogo.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            homeLogo.blur();
+
+        }
+
+    }
+);
+
+
+awayName.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            awayName.blur();
+
+        }
+
+    }
+);
+
+
+awayLogo.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            awayLogo.blur();
+
+        }
+
+    }
+);
+
+
+status.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            status.blur();
+
+        }
+
+    }
+);
+
+</script>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    background:
+        #080a0d;
+
+    color:
+        white;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+
+    touch-action:
+        manipulation;
+
+}
+
+
+button,
+input {
+
+    font-family:
+        inherit;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+
+    height: 68px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 22px;
+
+    background:
+        #101318;
+
+    border-bottom:
+        1px solid #252a31;
+
+}
+
+
+.brand {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+}
+
+
+.brand-icon {
+
+    width: 38px;
+    height: 38px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        9px;
+
+    background:
+        white;
+
+    color:
+        #080a0d;
+
+    font-size:
+        13px;
+
+    font-weight:
+        950;
+
+}
+
+
+.brand-title {
+
+    font-size:
+        16px;
+
+    font-weight:
+        900;
+
+}
+
+
+.brand-sub {
+
+    margin-top:
+        2px;
+
+    color:
+        #747c86;
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.2px;
+
+}
+
+
+.connection {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    color:
+        #818993;
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.connection-dot {
+
+    width:
+        8px;
+
+    height:
+        8px;
+
+    border-radius:
+        50%;
+
+    background:
+        #35d68a;
+
+    box-shadow:
+        0 0 8px
+        rgba(53,214,138,.7);
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+
+    height:
+        calc(100vh - 68px);
+
+    padding:
+        16px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    grid-template-rows:
+        minmax(0, 1fr)
+        180px;
+
+    gap:
+        14px;
+
+}
+
+
+/* =========================================================
+   TEAM PANELS
+========================================================= */
+
+.team-panel {
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    border-radius:
+        13px;
+
+    overflow:
+        hidden;
+
+    background:
+        #111419;
+
+    border:
+        1px solid #292e35;
+
+}
+
+
+.team-header {
+
+    height:
+        48px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 16px;
+
+    border-bottom:
+        1px solid #292e35;
+
+}
+
+
+.home-header {
+
+    background:
+        linear-gradient(
+            90deg,
+            #801821,
+            #5d1017
+        );
+
+}
+
+
+.away-header {
+
+    background:
+        linear-gradient(
+            90deg,
+            #272c32,
+            #171a1f
+        );
+
+}
+
+
+.team-header-title {
+
+    font-size:
+        11px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        1.5px;
+
+}
+
+
+/* =========================================================
+   TEAM BODY
+========================================================= */
+
+.team-body {
+
+    height:
+        calc(100% - 48px);
+
+    padding:
+        13px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.2fr .8fr;
+
+    gap:
+        13px;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings {
+
+    display:
+        grid;
+
+    grid-template-rows:
+        48px 48px 1fr;
+
+    gap:
+        9px;
+
+}
+
+
+.field {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+}
+
+
+.field-label {
+
+    width:
+        55px;
+
+    flex-shrink:
+        0;
+
+    color:
+        #707781;
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+input {
+
+    min-width:
+        0;
+
+    width:
+        100%;
+
+    height:
+        43px;
+
+    border-radius:
+        8px;
+
+    border:
+        1px solid #30363e;
+
+    background:
+        #090b0e;
+
+    color:
+        white;
+
+    outline:
+        none;
+
+    padding:
+        0 11px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+}
+
+
+input:focus {
+
+    border-color:
+        #737c87;
+
+}
+
+
+/* =========================================================
+   SCORE AREA
+========================================================= */
+
+.score-area {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap:
+        9px;
+
+}
+
+
+.score-box {
+
+    min-width:
+        0;
+
+    border-radius:
+        10px;
+
+    background:
+        #0a0c0f;
+
+    border:
+        1px solid #292e35;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+
+.score-label {
+
+    color:
+        #717983;
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.score-number {
+
+    margin:
+        2px 0 7px;
+
+    font-size:
+        clamp(42px, 6vw, 68px);
+
+    line-height:
+        .9;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        -3px;
+
+}
+
+
+.score-buttons {
+
+    display:
+        flex;
+
+    gap:
+        7px;
+
+}
+
+
+.score-button {
+
+    width:
+        50px;
+
+    height:
+        38px;
+
+    border:
+        0;
+
+    border-radius:
+        7px;
+
+    background:
+        #242930;
+
+    color:
+        white;
+
+    font-size:
+        19px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+
+    touch-action:
+        manipulation;
+
+}
+
+
+.score-button:active {
+
+    transform:
+        scale(.94);
+
+    background:
+        white;
+
+    color:
+        #090b0e;
+
+}
+
+
+/* =========================================================
+   TEAM BOTTOM
+========================================================= */
+
+.team-bottom {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        9px;
+
+}
+
+
+.small-control {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        9px;
+
+    background:
+        #0b0d10;
+
+    border:
+        1px solid #292e35;
+
+}
+
+
+.small-label {
+
+    color:
+        #6e7680;
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        1px;
+
+    margin-bottom:
+        6px;
+
+}
+
+
+.small-value {
+
+    font-size:
+        25px;
+
+    font-weight:
+        950;
+
+}
+
+
+.small-buttons {
+
+    display:
+        flex;
+
+    gap:
+        5px;
+
+    margin-top:
+        6px;
+
+}
+
+
+.small-button {
+
+    width:
+        36px;
+
+    height:
+        27px;
+
+    border:
+        0;
+
+    border-radius:
+        5px;
+
+    background:
+        #252a31;
+
+    color:
+        white;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+
+}
+
+
+/* =========================================================
+   MATCH PANEL
+========================================================= */
+
+.match-panel {
+
+    min-width:
+        0;
+
+    border-radius:
+        13px;
+
+    background:
+        #111419;
+
+    border:
+        1px solid #292e35;
+
+    padding:
+        13px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        160px 1fr 1fr 1fr;
+
+    gap:
+        10px;
+
+}
+
+
+/* =========================================================
+   MATCH BOX
+========================================================= */
+
+.match-box {
+
+    min-width:
+        0;
+
+    border-radius:
+        9px;
+
+    background:
+        #0a0c0f;
+
+    border:
+        1px solid #292e35;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    padding:
+        10px;
+
+}
+
+
+.match-label {
+
+    color:
+        #6e7680;
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        1px;
+
+    margin-bottom:
+        7px;
+
+}
+
+
+/* =========================================================
+   SET
+========================================================= */
+
+.set-control {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        42px 1fr 42px;
+
+    gap:
+        5px;
+
+}
+
+
+.set-button {
+
+    border:
+        0;
+
+    border-radius:
+        6px;
+
+    background:
+        #252a31;
+
+    color:
+        white;
+
+    font-size:
+        17px;
+
+    font-weight:
+        900;
+
+}
+
+
+.set-value {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        6px;
+
+    background:
+        #171a1f;
+
+    font-size:
+        23px;
+
+    font-weight:
+        950;
+
+}
+
+
+/* =========================================================
+   SERVING
+========================================================= */
+
+.serving {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        7px;
+
+}
+
+
+.serve-button {
+
+    border:
+        1px solid #30363e;
+
+    border-radius:
+        7px;
+
+    background:
+        #181c21;
+
+    color:
+        #7b838d;
+
+    font-size:
+        8px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        .5px;
+
+}
+
+
+.serve-button.active {
+
+    background:
+        white;
+
+    color:
+        #080a0d;
+
+    border-color:
+        white;
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        7px;
+
+}
+
+
+.action {
+
+    border:
+        1px solid #30363e;
+
+    border-radius:
+        7px;
+
+    background:
+        #191d23;
+
+    color:
+        white;
+
+    font-size:
+        9px;
+
+    font-weight:
+        950;
+
+    letter-spacing:
+        .4px;
+
+}
+
+
+.action.primary {
+
+    background:
+        white;
+
+    color:
+        #080a0d;
+
+    border-color:
+        white;
+
+}
+
+
+.action.danger {
+
+    color:
+        #ff8888;
+
+    border-color:
+        #602b2e;
+
+}
+
+
+/* =========================================================
+   IPAD LANDSCAPE
+========================================================= */
+
+@media
+(max-width: 1100px)
+and (orientation: landscape) {
+
+    .header {
+
+        height:
+            58px;
+
+    }
+
+
+    .main {
+
+        height:
+            calc(100vh - 58px);
+
+        padding:
+            10px;
+
+        gap:
+            10px;
+
+        grid-template-rows:
+            minmax(0, 1fr)
+            150px;
+
+    }
+
+
+    .team-header {
+
+        height:
+            42px;
+
+    }
+
+
+    .team-body {
+
+        height:
+            calc(100% - 42px);
+
+        padding:
+            9px;
+
+        gap:
+            9px;
+
+    }
+
+
+    .field-label {
+
+        display:
+            none;
+
+    }
+
+
+    .settings {
+
+        grid-template-rows:
+            38px 38px 1fr;
+
+        gap:
+            7px;
+
+    }
+
+
+    input {
+
+        height:
+            36px;
+
+    }
+
+
+    .score-number {
+
+        font-size:
+            50px;
+
+    }
+
+
+    .score-button {
+
+        width:
+            45px;
+
+        height:
+            34px;
+
+    }
+
+
+    .match-panel {
+
+        padding:
+            9px;
+
+        gap:
+            8px;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL IPAD LANDSCAPE
+========================================================= */
+
+@media
+(max-height: 700px)
+and (orientation: landscape) {
+
+    .header {
+
+        height:
+            54px;
+
+        padding:
+            0 14px;
+
+    }
+
+
+    .brand-icon {
+
+        width:
+            32px;
+
+        height:
+            32px;
+
+    }
+
+
+    .brand-title {
+
+        font-size:
+            14px;
+
+    }
+
+
+    .main {
+
+        height:
+            calc(100vh - 54px);
+
+        padding:
+            7px;
+
+        gap:
+            7px;
+
+        grid-template-rows:
+            minmax(0, 1fr)
+            125px;
+
+    }
+
+
+    .team-header {
+
+        height:
+            36px;
+
+        padding:
+            0 12px;
+
+    }
+
+
+    .team-body {
+
+        height:
+            calc(100% - 36px);
+
+        padding:
+            7px;
+
+        gap:
+            7px;
+
+    }
+
+
+    .settings {
+
+        grid-template-rows:
+            32px 32px 1fr;
+
+        gap:
+            6px;
+
+    }
+
+
+    input {
+
+        height:
+            31px;
+
+        font-size:
+            11px;
+
+        padding:
+            0 8px;
+
+    }
+
+
+    .score-number {
+
+        font-size:
+            42px;
+
+        margin:
+            2px 0 5px;
+
+    }
+
+
+    .score-button {
+
+        width:
+            40px;
+
+        height:
+            29px;
+
+    }
+
+
+    .small-value {
+
+        font-size:
+            21px;
+
+    }
+
+
+    .small-button {
+
+        width:
+            32px;
+
+        height:
+            24px;
+
+    }
+
+
+    .match-panel {
+
+        padding:
+            7px;
+
+        gap:
+            6px;
+
+    }
+
+
+    .match-box {
+
+        padding:
+            7px;
+
+    }
+
+
+    .match-label {
+
+        margin-bottom:
+            5px;
+
+    }
+
+
+    .set-button {
+
+        font-size:
+            14px;
+
+    }
+
+
+    .set-value {
+
+        font-size:
+            19px;
+
+    }
+
+}
+
+
+/* =========================================================
+   PORTRAIT
+========================================================= */
+
+@media
+(orientation: portrait) {
+
+    .main {
+
+        grid-template-columns:
+            1fr;
+
+        grid-template-rows:
+            1fr 1fr 150px;
+
+        overflow:
+            hidden;
+
+    }
+
+
+    .match-panel {
+
+        grid-column:
+            1;
+
+    }
+
+
+    .connection {
+
+        display:
+            none;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            VB
+        </div>
+
+        <div>
+
+            <div class="brand-title">
+                Volleyball Control
+            </div>
+
+            <div class="brand-sub">
+                NCAA SCOREBUG
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="connection">
+
+        <span class="connection-dot"></span>
+
+        <span class="connection-status">
+            LIVE
+        </span>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+
+<!-- =========================================================
+     HOME TEAM
+========================================================= -->
+
+<section class="team-panel">
+
+    <div class="team-header home-header">
+
+        <span class="team-header-title">
+            HOME TEAM
+        </span>
+
+        <span>
+            HOME
+        </span>
+
+    </div>
+
+
+    <div class="team-body">
+
+
+        <div class="settings">
+
+
+            <!-- TEAM NAME -->
+
+            <div class="field">
+
+                <span class="field-label">
+                    TEAM
+                </span>
+
+                <input
+                    id="homeName"
+                    value="HOME"
+                    maxlength="12"
+                    autocomplete="off"
+                    onchange="updateHome()"
+                >
+
+            </div>
+
+
+            <!-- LOGO -->
+
+            <div class="field">
+
+                <span class="field-label">
+                    LOGO
+                </span>
+
+                <input
+                    id="homeLogo"
+                    placeholder="Logo URL"
+                    autocomplete="off"
+                    onchange="updateHome()"
+                >
+
+            </div>
+
+
+            <!-- SETS / TIMEOUTS -->
+
+            <div class="team-bottom">
+
+
+                <div class="small-control">
+
+                    <span class="small-label">
+                        SETS
+                    </span>
+
+                    <span
+                        id="homeSets"
+                        class="small-value"
+                    >
+                        0
+                    </span>
+
+                    <div class="small-buttons">
+
+                        <button
+                            class="small-button"
+                            onclick="sets('home', -1)"
+                        >
+                            −
+                        </button>
+
+                        <button
+                            class="small-button"
+                            onclick="sets('home', 1)"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="small-control">
+
+                    <span class="small-label">
+                        TIMEOUTS
+                    </span>
+
+                    <span
+                        id="homeTimeouts"
+                        class="small-value"
+                    >
+                        0
+                    </span>
+
+                    <div class="small-buttons">
+
+                        <button
+                            class="small-button"
+                            onclick="timeout('home', -1)"
+                        >
+                            −
+                        </button>
+
+                        <button
+                            class="small-button"
+                            onclick="timeout('home', 1)"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- HOME SCORE -->
+
+        <div class="score-area">
+
+            <div class="score-box">
+
+                <span class="score-label">
+                    SCORE
+                </span>
+
+                <span
+                    id="homeScore"
+                    class="score-number"
+                >
+                    0
+                </span>
+
+                <div class="score-buttons">
+
+                    <button
+                        class="score-button"
+                        onclick="score('home', -1)"
+                    >
+                        −
+                    </button>
+
+                    <button
+                        class="score-button"
+                        onclick="score('home', 1)"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     AWAY TEAM
+========================================================= -->
+
+<section class="team-panel">
+
+    <div class="team-header away-header">
+
+        <span class="team-header-title">
+            AWAY TEAM
+        </span>
+
+        <span>
+            AWAY
+        </span>
+
+    </div>
+
+
+    <div class="team-body">
+
+
+        <div class="settings">
+
+
+            <!-- TEAM NAME -->
+
+            <div class="field">
+
+                <span class="field-label">
+                    TEAM
+                </span>
+
+                <input
+                    id="awayName"
+                    value="AWAY"
+                    maxlength="12"
+                    autocomplete="off"
+                    onchange="updateAway()"
+                >
+
+            </div>
+
+
+            <!-- LOGO -->
+
+            <div class="field">
+
+                <span class="field-label">
+                    LOGO
+                </span>
+
+                <input
+                    id="awayLogo"
+                    placeholder="Logo URL"
+                    autocomplete="off"
+                    onchange="updateAway()"
+                >
+
+            </div>
+
+
+            <!-- SETS / TIMEOUTS -->
+
+            <div class="team-bottom">
+
+
+                <div class="small-control">
+
+                    <span class="small-label">
+                        SETS
+                    </span>
+
+                    <span
+                        id="awaySets"
+                        class="small-value"
+                    >
+                        0
+                    </span>
+
+                    <div class="small-buttons">
+
+                        <button
+                            class="small-button"
+                            onclick="sets('away', -1)"
+                        >
+                            −
+                        </button>
+
+                        <button
+                            class="small-button"
+                            onclick="sets('away', 1)"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="small-control">
+
+                    <span class="small-label">
+                        TIMEOUTS
+                    </span>
+
+                    <span
+                        id="awayTimeouts"
+                        class="small-value"
+                    >
+                        0
+                    </span>
+
+                    <div class="small-buttons">
+
+                        <button
+                            class="small-button"
+                            onclick="timeout('away', -1)"
+                        >
+                            −
+                        </button>
+
+                        <button
+                            class="small-button"
+                            onclick="timeout('away', 1)"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- AWAY SCORE -->
+
+        <div class="score-area">
+
+            <div class="score-box">
+
+                <span class="score-label">
+                    SCORE
+                </span>
+
+                <span
+                    id="awayScore"
+                    class="score-number"
+                >
+                    0
+                </span>
+
+                <div class="score-buttons">
+
+                    <button
+                        class="score-button"
+                        onclick="score('away', -1)"
+                    >
+                        −
+                    </button>
+
+                    <button
+                        class="score-button"
+                        onclick="score('away', 1)"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     MATCH CONTROLS
+========================================================= -->
+
+<section class="match-panel">
+
+
+    <!-- SET -->
+
+    <div class="match-box">
+
+        <span class="match-label">
+            SET
+        </span>
+
+        <div class="set-control">
+
+            <button
+                class="set-button"
+                onclick="changeSet(-1)"
+            >
+                −
+            </button>
+
+            <div
+                id="currentSet"
+                class="set-value"
+            >
+                1
+            </div>
+
+            <button
+                class="set-button"
+                onclick="changeSet(1)"
+            >
+                +
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="match-box">
+
+        <span class="match-label">
+            STATUS
+        </span>
+
+        <input
+            id="status"
+            value="NCAA VOLLEYBALL"
+            maxlength="24"
+            autocomplete="off"
+            onchange="updateStatus()"
+        >
+
+    </div>
+
+
+    <!-- SERVING -->
+
+    <div class="match-box">
+
+        <span class="match-label">
+            SERVING
+        </span>
+
+        <div class="serving">
+
+            <button
+                id="serveHome"
+                class="serve-button"
+                onclick="serving('home')"
+            >
+                HOME
+            </button>
+
+            <button
+                id="serveAway"
+                class="serve-button"
+                onclick="serving('away')"
+            >
+                AWAY
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="match-box">
+
+        <span class="match-label">
+            MATCH
+        </span>
+
+        <div class="actions">
+
+            <button
+                class="action primary"
+                onclick="newSet()"
+            >
+                NEW SET
+            </button>
+
+            <button
+                class="action"
+                onclick="resetSet()"
+            >
+                RESET SET
+            </button>
+
+            <button
+                class="action danger"
+                onclick="resetMatch()"
+            >
+                RESET MATCH
+            </button>
+
+            <button
+                class="action"
+                onclick="toggleBug()"
+            >
+                SHOW / HIDE
+            </button>
+
+        </div>
+
+
+        <input
+            id="showBug"
+            type="checkbox"
+            checked
+            hidden
+        >
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+
+</body>
+
+</html>
