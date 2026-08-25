@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>My Dashboard</title>
+
+
+    <link rel="stylesheet" href="css/style.css">
+
+
+    <!-- Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<div class="background"></div>
+
+
+
+<div class="container">
+
+
+    <!-- =========================
+            HEADER
+    ========================== -->
+
+
+    <header>
+
+
+        <div class="logo">
+
+            <i class="fa-solid fa-house"></i>
+
+            Dashboard
+
+        </div>
+
+
+
+        <a href="schedule.html" class="scheduleButton">
+
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+
+            Edit Schedule
+
+
+        </a>
+
+
+    </header>
+
+
+
+
+
+    <!-- =========================
+            DASHBOARD GRID
+    ========================== -->
+
+
+    <main class="dashboardGrid">
+
+
+
+        <!-- GREETING -->
+
+
+        <section class="card greetingCard">
+
+
+            <p class="smallTitle">
+
+                Welcome Back
+
+            </p>
+
+
+
+            <h1 id="greeting">
+
+                Loading...
+
+            </h1>
+
+
+
+            <p id="greetingDate">
+
+                Loading...
+
+            </p>
+
+
+        </section>
+
+
+
+
+
+        <!-- WEATHER -->
+
+
+        <section class="card weatherCard">
+
+
+            <div class="cardHeader">
+
+
+                <h2>
+
+                    Weather
+
+                </h2>
+
+
+
+                <i class="fa-solid fa-cloud-sun"></i>
+
+
+            </div>
+
+
+
+
+            <p id="locationName">
+
+                Detecting location...
+
+            </p>
+
+
+
+
+            <div class="weatherContent">
+
+
+                <div class="temperature">
+
+
+                    <span id="temperature">
+
+                        --
+
+                    </span>
+
+
+
+                    <sup>
+
+                        °
+
+                    </sup>
+
+
+                </div>
+
+
+
+
+
+                <div class="weatherInfo">
+
+
+                    <p id="weatherDescription">
+
+                        Loading...
+
+                    </p>
+
+
+
+
+                    <p>
+
+                        High:
+
+                        <span id="highTemp">
+
+                            --
+
+                        </span>
+
+                        °
+
+                    </p>
+
+
+
+
+                    <p>
+
+                        Low:
+
+                        <span id="lowTemp">
+
+                            --
+
+                        </span>
+
+                        °
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+
+
+
+
+        <!-- CLOCK -->
+
+
+        <section class="card clockCard">
+
+
+            <div class="cardHeader">
+
+
+                <h2>
+
+                    Time
+
+                </h2>
+
+
+
+                <i class="fa-solid fa-clock"></i>
+
+
+            </div>
+
+
+
+
+
+            <div id="clock">
+
+                --:--
+
+            </div>
+
+
+
+
+
+            <div id="dayName">
+
+                Loading...
+
+            </div>
+
+
+
+
+
+            <p id="todayDate">
+
+                Loading...
+
+            </p>
+
+
+
+        </section>
+
+
+
+
+
+
+
+        <!-- TODAY'S SCHEDULE -->
+
+
+        <section class="card scheduleCard">
+
+
+            <div class="cardHeader">
+
+
+                <h2>
+
+                    Today's Schedule
+
+                </h2>
+
+
+
+                <i class="fa-solid fa-list-check"></i>
+
+
+            </div>
+
+
+
+
+
+            <div id="scheduleList">
+
+
+                <div class="loading">
+
+                    Loading schedule...
+
+                </div>
+
+
+            </div>
+
+
+
+        </section>
+
+
+
+
+
+
+
+        <!-- UPCOMING -->
+
+
+        <section class="card upcomingCard">
+
+
+            <div class="cardHeader">
+
+
+                <h2>
+
+                    Upcoming
+
+                </h2>
+
+
+
+                <i class="fa-solid fa-calendar-week"></i>
+
+
+            </div>
+
+
+
+
+
+            <div id="upcomingList">
+
+
+                <div class="loading">
+
+                    No upcoming events.
+
+                </div>
+
+
+            </div>
+
+
+
+        </section>
+
+
+
+
+
+
+
+        <!-- NOTES -->
+
+
+        <section class="card notesCard">
+
+
+            <div class="cardHeader">
+
+
+                <h2>
+
+                    Quick Notes
+
+                </h2>
+
+
+
+                <i class="fa-solid fa-note-sticky"></i>
+
+
+            </div>
+
+
+
+
+
+            <textarea
+                id="notes"
+                placeholder="Write something..."></textarea>
+
+
+
+
+
+            <button id="saveNotes">
+
+
+                Save Notes
+
+
+            </button>
+
+
+
+        </section>
+
+
+
+    </main>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- =========================
+        JAVASCRIPT
+========================== -->
+
+
+<script type="module" src="js/weather.js"></script>
+
+
+<script type="module" src="js/app.js"></script>
+
+
+
+</body>
+
+</html>

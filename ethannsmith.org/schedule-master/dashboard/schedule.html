@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Schedule</title>
+
+    <link rel="stylesheet" href="css/schedule.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+
+    <header>
+
+        <div>
+
+            <h1>
+
+                Schedule Manager
+
+            </h1>
+
+            <p>
+
+                Add, edit, or delete your events.
+
+            </p>
+
+        </div>
+
+        <a href="index.html" class="backButton">
+
+            <i class="fa-solid fa-house"></i>
+
+            Dashboard
+
+        </a>
+
+    </header>
+
+    <!-- ========================= -->
+    <!-- FORM -->
+    <!-- ========================= -->
+
+    <section class="card">
+
+        <h2>
+
+            Add New Event
+
+        </h2>
+
+        <form id="eventForm">
+
+            <div class="grid">
+
+                <div class="field">
+
+                    <label>
+
+                        Event Title
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        required>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+
+                        Date
+
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date"
+                        required>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+
+                        Time
+
+                    </label>
+
+                    <input
+                        type="time"
+                        id="time"
+                        required>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+
+                        Location
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="location">
+
+                </div>
+
+            </div>
+
+            <div class="field">
+
+                <label>
+
+                    Notes
+
+                </label>
+
+                <textarea
+                        id="notes"
+                        rows="4"></textarea>
+
+            </div>
+
+            <button type="submit">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Event
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- EVENTS -->
+    <!-- ========================= -->
+
+    <section class="card">
+
+        <div class="eventsHeader">
+
+            <h2>
+
+                Your Schedule
+
+            </h2>
+
+        </div>
+
+        <div id="eventList">
+
+            <!-- JavaScript inserts events here -->
+
+        </div>
+
+    </section>
+
+</div>
+
+<script type="module"
+        src="js/schedule.js"></script>
+
+</body>
+</html>
