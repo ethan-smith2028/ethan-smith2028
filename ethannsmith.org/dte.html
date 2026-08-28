@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ethan Smith | Design & Entrepreneurship Bio</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+/* ==========================================
+   RESET & GLOBAL STYLES
+   ========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1a1a1a;
+  background-color: #f8fafc;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ==========================================
+   SECTIONS & LAYOUT
+   ========================================== */
+.section {
+  padding: 80px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section.alt {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 4px;
+  background-color: #0066ff;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* ==========================================
+   HERO / ABOUT SECTION
+   ========================================== */
+.about {
+  padding: 100px 20px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.about-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: #0f172a;
+}
+
+.about-text p {
+  font-size: 1.125rem;
+  color: #475569;
+}
+
+.about-img img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================
+   SKILLS / CAPABILITIES GRID
+   ========================================== */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.skill {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.skill i {
+  font-size: 1.25rem;
+  color: #0066ff;
+}
+
+/* ==========================================
+   CREATIVE TYPE CARD
+   ========================================== */
+.creative-type-card {
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.05);
+}
+
+.creative-type-video {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  background-color: #ffffff;
+}
+
+.creative-type-content h3 {
+  font-size: 1.4rem;
+  color: #0f172a;
+  margin-bottom: 5px;
+}
+
+.creative-type-badge {
+  display: inline-block;
+  background-color: #0066ff;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.creative-type-content p {
+  color: #475569;
+  font-size: 1rem;
+}
+
+/* ==========================================
+   FOOTER & CONTACT FORM
+   ========================================== */
+.footer {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 60px 0 20px;
+  margin-top: 60px;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+@media (max-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .about-text h2 {
+    font-size: 2rem;
+  }
+
+  .creative-type-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+  </style>
+</head>
+
+<body>
+
+<section id="about" class="about">
+  <div class="container about-grid">
+    <div class="about-text">
+      <h2>Innovator · Strategist · Builder</h2>
+      <p>
+        I'm Ethan Smith — a designer and aspiring entrepreneur passionate about 
+        solving real-world problems. I blend empathy, 
+        rapid prototyping, and business strategy to build a multitude solutions.
+      </p>
+    </div>
+
+    <div class="about-img">
+      <img src="hero-image.jpg" alt="Ethan Smith - Design Thinking Portfolio">
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="section">
+  <h2 class="section-title">Core Competencies</h2>
+  <div class="skills-grid">
+    <div class="skill"><i class="fas fa-lightbulb"></i> Design Thinking</div>
+    <div class="skill"><i class="fas fa-users-viewfinder"></i> Product Management</div>
+    <div class="skill"><i class="fas fa-chart-line"></i> Business Model Canvas</div>
+    <div class="skill"><i class="fas fa-handshake"></i> Pitching & Storytelling</div>
+  </div>
+</section>
+
+<!-- ADOBE CREATIVE TYPE SECTION -->
+<section id="creative-style" class="section alt">
+  <h2 class="section-title">Creative Identity</h2>
+  <div class="creative-type-card">
+    <video class="creative-type-video" autoplay loop muted playsinline>
+      <source src="https://mycreativetype.com/videos/characters/catalyst/catalyst-large.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="creative-type-content">
+      <span class="creative-type-badge">Adobe Creative Type</span>
+      <h3>The Catalyst</h3>
+      <p>
+        The quintessential thought leader, the Catalyst is what John F. Kennedy called “an idealist without illusions.” Your expansive vision is grounded in rigorous thought, rooted in an honest assessment of the problems at hand. While you see clearly what’s not working, your real passion lies in discovering what does work.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; 2026 Ethan Smith. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
