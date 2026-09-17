@@ -2,1276 +2,591 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Beyond the Lens</title>
+<title>Beyond the Lens — Modern Photography</title>
 <link rel="icon" type="image/png" href="beyond-the-lens.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-W10LYE96HV"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-W10LYE96HV');
 </script>
 
 <style>
 /* =========================================================
-   BEYOND THE LENS — MODERN PHOTOGRAPHY GALLERY
+   DESIGN SYSTEM & VARIABLES
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
 :root {
-  --bg: #08090b;
-  --surface: #101216;
-  --surface-2: #15171c;
-  --surface-3: #1b1e24;
+  --bg-dark: #0a0c10;
+  --surface-1: #12161f;
+  --surface-2: #1a202c;
+  --surface-3: #242c3d;
 
-  --text: #f5f7fa;
-  --muted: #9298a3;
-  --muted-2: #686e79;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(255, 255, 255, 0.22);
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.16);
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-subtle: #94a3b8;
 
-  --accent: #ffffff;
-  --green: #22c55e;
+  --accent-google: #4285f4;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
 
-  --radius: 16px;
-  --radius-lg: 22px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
 
-  --shadow: 0 20px 60px rgba(0, 0, 0, .35);
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+
+  --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* =========================================================
-   RESET
+   BASE RESET
    ========================================================= */
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--bg-dark);
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
-
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-  background:
-    radial-gradient(
-      circle at 50% -20%,
-      rgba(255,255,255,.055),
-      transparent 35%
-    ),
-    var(--bg);
-
-  color: var(--text);
-
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 img {
+  display: block;
   max-width: 100%;
 }
 
-button,
-select,
-input {
+button, select, input {
   font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 999px; border: 2px solid var(--bg-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--surface-3); }
 
 /* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #08090b;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #292d35;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #3a3f49;
-}
-
-/* =========================================================
-   HERO
+   HERO SECTION
    ========================================================= */
 
 .hero {
   position: relative;
-
-  height: min(62vh, 620px);
-  min-height: 380px;
-
+  height: clamp(340px, 45vh, 520px);
+  width: 100%;
   overflow: hidden;
-
-  background: #050506;
+  background: #000;
 }
 
-.hero img {
+.hero-img {
   position: absolute;
   inset: 0;
-
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
-  transform: scale(1.015);
-
-  filter:
-    saturate(.9)
-    contrast(1.04);
-
-  transition:
-    opacity .5s ease,
-    transform 1s cubic-bezier(.2,.8,.2,1);
+  filter: brightness(0.65) contrast(1.05);
+  transform: scale(1.02);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
 }
 
-.hero::before {
-  content: "";
-
+.hero-overlay {
   position: absolute;
   inset: 0;
-
-  z-index: 1;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0,0,0,.08) 0%,
-      rgba(0,0,0,.08) 35%,
-      rgba(0,0,0,.42) 65%,
-      rgba(8,9,11,.98) 100%
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 16, 0.2) 0%,
+    rgba(10, 12, 16, 0.6) 60%,
+    var(--bg-dark) 100%
+  );
 }
 
-.hero::after {
-  content: "";
-
+.hero-content {
   position: absolute;
-  inset: 0;
-
-  z-index: 1;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0,0,0,.32),
-      transparent 45%,
-      rgba(0,0,0,.18)
-    );
+  bottom: clamp(28px, 4vw, 56px);
+  left: clamp(20px, 5vw, 80px);
+  right: clamp(20px, 5vw, 80px);
+  z-index: 2;
+  max-width: 1100px;
 }
 
 .hero-title {
-  position: absolute;
-
-  left: clamp(24px, 5vw, 80px);
-  bottom: clamp(36px, 6vw, 72px);
-
-  z-index: 3;
-
-  max-width: 900px;
-
-  font-family: Manrope, Inter, sans-serif;
-
-  font-size: clamp(2rem, 4.5vw, 4.5rem);
-  line-height: 1.02;
-
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
   font-weight: 800;
-  letter-spacing: -.055em;
-
-  text-shadow:
-    0 3px 20px rgba(0,0,0,.35);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
 }
 
 /* =========================================================
-   TOP BAR
+   STICKY TOP BAR & NAVIGATION
    ========================================================= */
 
 .topbar {
   position: sticky;
-
   top: 0;
-  z-index: 1000;
-
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  gap: 20px;
-
-  min-height: 76px;
-
-  padding: 12px clamp(18px, 4vw, 64px);
-
-  background: rgba(8,9,11,.78);
-
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-
-  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  padding: 16px clamp(20px, 5vw, 80px);
+  background: rgba(10, 12, 16, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.topbar::before {
-  content: "";
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-
-  height: 1px;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.12),
-    transparent
-  );
-
-  pointer-events: none;
-}
-
-.status {
-  font-size: 13px;
-  font-weight: 600;
-
-  color: var(--muted);
-
-  letter-spacing: .01em;
-}
-
-.topbar > div:last-child {
+.topbar-actions {
   display: flex;
-
   align-items: center;
-
-  gap: 10px;
-
+  gap: 12px;
   flex-wrap: wrap;
 }
 
+.select-wrapper {
+  position: relative;
+  min-width: 260px;
+}
+
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.custom-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 38px 0 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  appearance: none;
+  transition: var(--transition-smooth);
+}
+
+.custom-select:hover {
+  border-color: var(--border-active);
+  background: var(--surface-2);
+}
+
+.custom-select:focus-visible {
+  outline: 2px solid var(--accent-google);
+  outline-offset: 2px;
+}
+
+.custom-select option {
+  background: var(--surface-2);
+  color: var(--text-main);
+}
+
 /* =========================================================
-   BUTTONS
+   BUTTON STYLES
    ========================================================= */
 
 .btn {
-  appearance: none;
-
-  border: 1px solid var(--border);
-
-  border-radius: 11px;
-
-  min-height: 42px;
-
-  padding: 0 16px;
-
-  background: rgba(255,255,255,.055);
-  color: var(--text);
-
-  font-size: 13px;
-  font-weight: 700;
-
-  letter-spacing: -.01em;
-
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   cursor: pointer;
-
-  transition:
-    transform .2s ease,
-    background .2s ease,
-    border-color .2s ease,
-    box-shadow .2s ease;
+  transition: var(--transition-smooth);
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-
-  background: rgba(255,255,255,.09);
-
-  border-color: var(--border-hover);
-
-  box-shadow:
-    0 8px 24px rgba(0,0,0,.2);
-}
-
-.btn:active {
-  transform: translateY(0);
+.btn:focus-visible {
+  outline: 2px solid var(--accent-google);
+  outline-offset: 2px;
 }
 
 .btn-primary {
-  background: #f5f5f5;
-  color: #0a0a0b;
-
-  border-color: #f5f5f5;
+  background: var(--accent-green);
+  color: #022c22;
+  font-weight: 700;
 }
 
 .btn-primary:hover {
-  background: #fff;
-  color: #000;
+  background: var(--accent-green-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
 }
 
-.btn-green {
-  background: var(--green);
-  color: #031108;
-
-  border-color: var(--green);
-
-  box-shadow:
-    0 8px 25px rgba(34,197,94,.12);
-}
-
-.btn-green:hover {
-  background: #2dd36a;
-  border-color: #2dd36a;
-}
-
-.btn-purple {
-  background: #7c3aed;
-  color: white;
-
-  border-color: #7c3aed;
-}
-
-/* =========================================================
-   GALLERY SELECT
-   ========================================================= */
-
-#gallerySelect {
-  min-width: 230px;
-
-  appearance: none;
-
-  padding-right: 38px;
-
-  background:
-    linear-gradient(45deg, transparent 50%, #858b96 50%) calc(100% - 17px) 18px / 6px 6px no-repeat,
-    linear-gradient(135deg, #858b96 50%, transparent 50%) calc(100% - 12px) 18px / 6px 6px no-repeat,
-    rgba(255,255,255,.055);
-
-  color: var(--text);
-}
-
-#gallerySelect option {
-  background: #15171c;
-  color: white;
-}
-
-/* =========================================================
-   LOGIN PANEL
-   ========================================================= */
-
-.login-panel {
-  display: none;
-
-  padding: 20px clamp(18px, 4vw, 64px);
-
-  background: #0e1014;
-
-  border-bottom: 1px solid var(--border);
-}
-
-.login-panel input {
-  width: 100%;
-
-  padding: 13px 14px;
-
-  margin-bottom: 10px;
-
-  background: #090a0d;
-
-  color: white;
-
-  border: 1px solid var(--border);
-
-  border-radius: 10px;
-
-  outline: none;
-
-  transition: border-color .2s ease;
-}
-
-.login-panel input:focus {
-  border-color: rgba(255,255,255,.25);
-}
-
-/* =========================================================
-   STATS
-   ========================================================= */
-
-.stats {
-  display: grid;
-
-  grid-template-columns:
-    repeat(auto-fit, minmax(180px, 1fr));
-
-  gap: 12px;
-
-  max-width: 1500px;
-
-  margin: 0 auto;
-
-  padding: 28px clamp(18px, 4vw, 64px);
-}
-
-.stat {
-  padding: 20px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.055),
-      rgba(255,255,255,.025)
-    );
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.12);
-}
-
-.stat span {
-  display: block;
-
-  margin-bottom: 5px;
-
-  font-family: Manrope, Inter, sans-serif;
-
-  font-size: 30px;
-  line-height: 1;
-
-  font-weight: 800;
-
-  letter-spacing: -.04em;
-}
-
-.stat small {
-  color: var(--muted);
-
-  font-size: 12px;
+.btn-google {
+  background: #ffffff;
+  color: #1f2937;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-google:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,255,255,0.2);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-3);
+  border-color: var(--border-active);
+}
+
+/* User Auth Profile Chip */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.btn-logout {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
 }
 
 /* =========================================================
-   GALLERY
+   AUTHENTICATION OVERLAY / LOCK SCREEN
+   ========================================================= */
+
+.auth-overlay {
+  position: relative;
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  padding: 80px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px;
+  text-align: center;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.auth-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(66, 133, 244, 0.12);
+  border-radius: 50%;
+  color: var(--accent-google);
+}
+
+.auth-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.auth-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.auth-card .btn-google {
+  width: 100%;
+  height: 48px;
+  font-size: 14px;
+}
+
+/* =========================================================
+   GALLERY GRID & CARDS
    ========================================================= */
 
 .gallery {
   width: min(1600px, 100%);
-
   margin: 0 auto;
-
   display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 18px;
-
-  padding:
-    20px
-    clamp(18px, 4vw, 64px)
-    40px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  padding: 40px clamp(20px, 5vw, 80px);
 }
-
-/* =========================================================
-   PHOTO CARD
-   ========================================================= */
 
 .card {
   position: relative;
-
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius);
-
-  box-shadow:
-    0 12px 35px rgba(0,0,0,.22);
-
-  transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    border-color .35s ease,
-    box-shadow .35s ease;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-
-  border-color: var(--border-hover);
-
-  box-shadow:
-    0 25px 55px rgba(0,0,0,.4);
+  transform: translateY(-4px);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-hover);
 }
-
-/* =========================================================
-   IMAGE
-   ========================================================= */
 
 .img-wrapper {
   position: relative;
-
   width: 100%;
-
   aspect-ratio: 4 / 5;
-
   overflow: hidden;
-
-  background: #0c0d10;
-
+  background: var(--surface-2);
   cursor: zoom-in;
-}
-
-.img-wrapper::after {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      180deg,
-      transparent 60%,
-      rgba(0,0,0,.16)
-    );
-
-  pointer-events: none;
-
-  opacity: 0;
-
-  transition: opacity .3s ease;
-}
-
-.card:hover .img-wrapper::after {
-  opacity: 1;
 }
 
 .img-wrapper img {
   width: 100%;
   height: 100%;
-
-  display: block;
-
   object-fit: cover;
-
-  user-select: none;
-  -webkit-user-drag: none;
-
-  transition:
-    transform .65s cubic-bezier(.2,.8,.2,1),
-    filter .4s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 
 .card:hover .img-wrapper img {
-  transform: scale(1.045);
-
-  filter: brightness(1.04);
+  transform: scale(1.04);
+  filter: brightness(1.05);
 }
-
-/* =========================================================
-   WATERMARK
-   ========================================================= */
 
 .watermark {
   position: absolute;
-
   inset: 0;
-
   pointer-events: none;
-
-  overflow: hidden;
-
-  opacity: .55;
-
-  background:
-    repeating-linear-gradient(
-      -32deg,
-      transparent 0,
-      transparent 74px,
-      rgba(255,255,255,.055) 74px,
-      rgba(255,255,255,.055) 75px
-    );
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    -35deg,
+    transparent 0,
+    transparent 80px,
+    rgba(255,255,255,0.03) 80px,
+    rgba(255,255,255,0.03) 81px
+  );
 }
 
 .watermark::after {
   content: "BEYOND THE LENS";
-
   position: absolute;
-
   top: 50%;
   left: 50%;
-
-  transform:
-    translate(-50%, -50%)
-    rotate(-30deg);
-
-  width: 500px;
-
-  text-align: center;
-
-  font-family: Manrope, Inter, sans-serif;
-
-  font-size: clamp(18px, 2vw, 28px);
-
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
   font-weight: 800;
-
-  letter-spacing: 6px;
-
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.16);
   white-space: nowrap;
-
-  color: rgba(255,255,255,.16);
 }
 
-/* =========================================================
-   ACTION AREA
-   ========================================================= */
-
-.actions {
-  display: flex;
-
-  align-items: center;
-
-  padding: 10px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #15171c,
-      #111318
-    );
+.card-actions {
+  padding: 12px;
+  background: var(--surface-1);
 }
 
-.download {
+.btn-download {
   width: 100%;
-
-  min-height: 40px;
-
-  border: 1px solid rgba(255,255,255,.08);
-
-  border-radius: 9px;
-
-  background: rgba(255,255,255,.06);
-
-  color: #f5f5f5;
-
-  font-size: 12px;
-
-  font-weight: 700;
-
-  letter-spacing: .01em;
-
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-
-  transition:
-    background .2s ease,
-    border-color .2s ease,
-    transform .2s ease;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
 }
 
-.download:hover {
-  background: rgba(255,255,255,.11);
-
-  border-color: rgba(255,255,255,.15);
-
-  transform: translateY(-1px);
-}
-
-.download:active {
-  transform: translateY(0);
+.btn-download:hover {
+  background: var(--surface-3);
+  border-color: var(--border-active);
+  color: #ffffff;
 }
 
 /* =========================================================
-   LOAD MORE
+   LOAD MORE & LIGHTBOX
    ========================================================= */
 
 .load-more-container {
   display: flex;
-
   justify-content: center;
-
-  padding:
-    10px
-    20px
-    70px;
+  padding: 0 20px 80px;
 }
-
-#loadMoreBtn {
-  min-width: 170px;
-
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-/* =========================================================
-   LIGHTBOX
-   ========================================================= */
 
 .lightbox {
   position: fixed;
-
   inset: 0;
-
+  z-index: 10000;
   display: none;
-
   justify-content: center;
   align-items: center;
-
   padding: 30px;
-
-  background: rgba(0,0,0,.94);
-
-  backdrop-filter: blur(14px);
-
-  z-index: 9999;
-
+  background: rgba(6, 8, 12, 0.96);
+  backdrop-filter: blur(16px);
   cursor: zoom-out;
-
-  animation: fadeIn .2s ease;
 }
 
 .lightbox img {
-  max-width: 96vw;
+  max-width: 95vw;
   max-height: 92vh;
-
   object-fit: contain;
-
-  border-radius: 8px;
-
-  box-shadow:
-    0 30px 100px rgba(0,0,0,.65);
-
-  animation: lightboxIn .3s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes lightboxIn {
-  from {
-    opacity: 0;
-    transform: scale(.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  border-radius: var(--radius-sm);
+  box-shadow: 0 25px 80px rgba(0,0,0,0.8);
 }
 
 /* =========================================================
-   DONATION FAB
+   DONATION & MODALS
    ========================================================= */
 
 #donateFab {
   position: fixed;
-
   right: 28px;
   bottom: 28px;
-
-  z-index: 99999;
-
+  z-index: 999;
   display: flex;
-
   align-items: center;
-  justify-content: center;
-
-  gap: 9px;
-
-  min-height: 48px;
-
-  padding: 0 18px;
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  border-radius: 999px;
-
-  background:
-    rgba(20,21,25,.9);
-
-  color: white;
-
+  gap: 8px;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--border-active);
+  color: var(--text-main);
   font-size: 13px;
-
-  font-weight: 800;
-
+  font-weight: 600;
   cursor: pointer;
-
-  box-shadow:
-    0 12px 35px rgba(0,0,0,.4);
-
-  backdrop-filter: blur(16px);
-
-  transition:
-    transform .25s ease,
-    background .25s ease,
-    border-color .25s ease,
-    box-shadow .25s ease;
+  box-shadow: var(--shadow-hover);
+  backdrop-filter: blur(10px);
+  transition: var(--transition-smooth);
 }
 
 #donateFab:hover {
   transform: translateY(-3px);
-
-  background: #1b1d22;
-
-  border-color: rgba(255,255,255,.2);
-
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.5);
+  background: var(--surface-3);
+  border-color: rgba(255,255,255,0.4);
 }
-
-#donateFab .heart {
-  font-size: 14px;
-
-  line-height: 1;
-
-  color: #ff5c69;
-}
-
-/* =========================================================
-   DONATION PANEL
-   ========================================================= */
 
 #donationPanel {
   position: fixed;
-
   right: 28px;
   bottom: 90px;
-
-  z-index: 99998;
-
+  z-index: 998;
   display: none;
-
-  width: min(420px, calc(100vw - 32px));
-  height: min(650px, calc(100vh - 120px));
-
+  width: min(400px, calc(100vw - 32px));
+  height: min(600px, calc(100vh - 120px));
+  background: #ffffff;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-
-  background: #fff;
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  border-radius: 20px;
-
-  box-shadow:
-    0 30px 100px rgba(0,0,0,.55);
-
-  animation: panelIn .25s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes panelIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(.97);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 
 .donationHeader {
-  height: 58px;
-
+  height: 52px;
+  padding: 0 16px;
   display: flex;
-
   align-items: center;
   justify-content: space-between;
-
-  padding: 0 18px;
-
-  background: #fff;
-
-  color: #101114;
-
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
   font-size: 14px;
-
-  font-weight: 800;
-
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .donationHeader button {
-  display: grid;
-
-  place-items: center;
-
-  width: 32px;
-  height: 32px;
-
-  border: none;
-
-  border-radius: 8px;
-
-  background: #f1f2f4;
-
-  color: #34363a;
-
-  font-size: 15px;
-
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
   cursor: pointer;
-
-  transition: background .2s ease;
-}
-
-.donationHeader button:hover {
-  background: #e5e7eb;
 }
 
 #donationPanel iframe {
   width: 100%;
-  height: calc(100% - 58px);
-
+  height: calc(100% - 52px);
   border: none;
-}
-
-/* =========================================================
-   MODAL
-   ========================================================= */
-
-.modal {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 10000;
-
-  display: none;
-
-  justify-content: center;
-  align-items: center;
-
-  padding: 20px;
-
-  background: rgba(0,0,0,.85);
-
-  backdrop-filter: blur(12px);
-}
-
-.modal-content {
-  position: relative;
-
-  width: min(1000px, 100%);
-
-  height: min(82vh, 800px);
-
-  overflow: hidden;
-
-  background: white;
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 40px 100px rgba(0,0,0,.55);
-}
-
-.modal iframe {
-  width: 100%;
-  height: 100%;
-
-  border: none;
-}
-
-.close {
-  position: absolute;
-
-  top: 12px;
-  right: 12px;
-
-  z-index: 2;
-
-  display: grid;
-
-  place-items: center;
-
-  width: 36px;
-  height: 36px;
-
-  border: 1px solid rgba(255,255,255,.1);
-
-  border-radius: 50%;
-
-  background: rgba(0,0,0,.75);
-
-  color: white;
-
-  font-size: 14px;
-
-  cursor: pointer;
-
-  backdrop-filter: blur(10px);
-
-  transition:
-    transform .2s ease,
-    background .2s ease;
-}
-
-.close:hover {
-  transform: scale(1.08);
-
-  background: #000;
-}
-
-/* =========================================================
-   RESPONSIVE — TABLET
-   ========================================================= */
-
-@media (max-width: 1200px) {
-
-  .gallery {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-  }
-
-}
-
-/* =========================================================
-   RESPONSIVE — SMALL TABLET
-   ========================================================= */
-
-@media (max-width: 900px) {
-
-  .hero {
-    height: 440px;
-  }
-
-  .gallery {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-    gap: 14px;
-  }
-
-  .hero-title {
-    max-width: 700px;
-  }
-
-}
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-  body {
-    overflow-x: hidden;
-  }
-
-  /* HERO */
-
-  .hero {
-    height: 330px;
-    min-height: 330px;
-  }
-
-  .hero::before {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(0,0,0,.05),
-        rgba(0,0,0,.18) 40%,
-        rgba(8,9,11,1) 100%
-      );
-  }
-
-  .hero-title {
-    left: 18px;
-    right: 18px;
-    bottom: 30px;
-
-    font-size: 2rem;
-
-    line-height: 1.04;
-
-    letter-spacing: -.045em;
-  }
-
-  /* TOP BAR */
-
-  .topbar {
-    align-items: stretch;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    padding: 12px;
-  }
-
-  .status {
-    display: none;
-  }
-
-  .topbar > div:last-child {
-    width: 100%;
-
-    display: grid;
-
-    grid-template-columns: 1fr auto;
-
-    gap: 8px;
-  }
-
-  #gallerySelect {
-    width: 100%;
-
-    min-width: 0;
-  }
-
-  #openBtn {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
-  /* GALLERY */
-
-  .gallery {
-    grid-template-columns: 1fr;
-
-    gap: 14px;
-
-    padding:
-      14px
-      14px
-      30px;
-  }
-
-  .card {
-    border-radius: 14px;
-  }
-
-  .img-wrapper {
-    aspect-ratio: 4 / 5;
-  }
-
-  /* BUTTONS */
-
-  .btn {
-    min-height: 40px;
-
-    padding: 0 13px;
-
-    font-size: 12px;
-  }
-
-  /* LOAD MORE */
-
-  .load-more-container {
-    padding:
-      5px
-      14px
-      50px;
-  }
-
-  #loadMoreBtn {
-    width: 100%;
-    max-width: 360px;
-  }
-
-  /* LIGHTBOX */
-
-  .lightbox {
-    padding: 10px;
-  }
-
-  .lightbox img {
-    max-width: 100%;
-    max-height: 88vh;
-
-    border-radius: 5px;
-  }
-
-  /* DONATION */
-
-  #donateFab {
-    right: 14px;
-    bottom: 14px;
-
-    min-height: 44px;
-
-    padding: 0 15px;
-
-    font-size: 12px;
-  }
-
-  #donationPanel {
-    left: 8px;
-    right: 8px;
-
-    bottom: 70px;
-
-    width: auto;
-
-    height: calc(100vh - 90px);
-
-    border-radius: 16px;
-  }
-
-  /* MODAL */
-
-  .modal {
-    padding: 8px;
-  }
-
-  .modal-content {
-    height: 92vh;
-
-    border-radius: 14px;
-  }
-
-}
-
-/* =========================================================
-   VERY SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 380px) {
-
-  .hero {
-    height: 300px;
-  }
-
-  .hero-title {
-    font-size: 1.7rem;
-  }
-
-  .topbar > div:last-child {
-    grid-template-columns: 1fr;
-  }
-
-  #openBtn {
-    width: 100%;
-  }
-
 }
 
 /* =========================================================
@@ -1282,25 +597,13 @@ input {
   position: fixed;
   inset: 0;
   z-index: 999999;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background:
-    radial-gradient(
-      circle at 50% 35%,
-      rgba(255,255,255,.045),
-      transparent 35%
-    ),
-    #08090b;
-
+  background: var(--bg-dark);
   opacity: 1;
   visibility: visible;
-
-  transition:
-    opacity .65s cubic-bezier(.2,.8,.2,1),
-    visibility .65s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 .loading-screen.hidden {
@@ -1310,370 +613,292 @@ input {
 }
 
 .loading-content {
-  width: min(420px, calc(100vw - 48px));
-
+  width: min(360px, calc(100vw - 48px));
   text-align: center;
 }
 
 .loading-brand {
-  margin-bottom: 14px;
-
-  font-family: Manrope, Inter, sans-serif;
-
-  font-size: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
   font-weight: 800;
-
-  letter-spacing: .18em;
-
-  color: #f5f7fa;
-}
-
-.loading-status {
-  margin-bottom: 14px;
-
-  color: #9298a3;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  letter-spacing: .01em;
+  letter-spacing: 0.2em;
+  color: var(--text-main);
+  margin-bottom: 20px;
 }
 
 .progress-track {
-  position: relative;
-
   width: 100%;
   height: 4px;
-
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
   overflow: hidden;
-
-  background: rgba(255,255,255,.08);
-
-  border-radius: 999px;
+  margin-bottom: 12px;
 }
 
 .progress-bar {
   width: 0%;
   height: 100%;
-
-  background: #f5f7fa;
-
-  border-radius: inherit;
-
-  box-shadow:
-    0 0 18px rgba(255,255,255,.25);
-
-  transition:
-    width .25s cubic-bezier(.2,.8,.2,1);
+  background: var(--accent-google);
+  transition: width 0.2s ease;
 }
 
 .loading-percent {
-  margin-top: 10px;
-
-  color: #686e79;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  letter-spacing: .08em;
-}
-
-/* Prevent the page from showing underneath while loading */
-body.is-loading {
-  overflow: hidden;
+  font-size: 13px;
+  color: var(--text-subtle);
+  font-weight: 600;
 }
 
 /* =========================================================
-   REDUCED MOTION
+   RESPONSIVE BREAKPOINTS
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 1200px) {
+  .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
-  }
+@media (max-width: 840px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .topbar { flex-direction: column; align-items: stretch; }
+  .topbar-actions { justify-content: space-between; }
+  .select-wrapper { flex: 1; }
+}
 
+@media (max-width: 520px) {
+  .gallery { grid-template-columns: 1fr; }
+  .auth-card { padding: 28px 20px; }
+  #donateFab { right: 16px; bottom: 16px; }
+  #donationPanel { left: 16px; right: 16px; width: auto; }
 }
 </style>
 </head>
 
 <body>
 
-  <!-- LOADING SCREEN -->
+<!-- LOADING SCREEN -->
 <div class="loading-screen" id="loadingScreen">
   <div class="loading-content">
     <div class="loading-brand">BEYOND THE LENS</div>
-
-    <div class="loading-status" id="loadingStatus">
-      Loading photos...
-    </div>
-
     <div class="progress-track">
       <div class="progress-bar" id="progressBar"></div>
     </div>
-
     <div class="loading-percent" id="loadingPercent">0%</div>
   </div>
 </div>
 
 <!-- HERO -->
 <div class="hero" id="hero">
-  <img id="heroImg" src="https://stadiumconnection.com/simages/2555.jpg">
-  <div class="hero-title" id="heroTitle">
-    WVSLA Linsly vs. Morgantown • 5/16/2026
+  <img id="heroImg" class="hero-img" src="https://stadiumconnection.com/simages/2555.jpg" alt="Hero background">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-title" id="heroTitle">WVSLA Linsly vs. Morgantown • 5/16/2026</h1>
   </div>
 </div>
 
 <!-- TOP BAR -->
 <div class="topbar">
-
-  <div class="status" ></div>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <select id="gallerySelect" class="btn"></select>
-
-    <!--<button class="btn btn-primary" id="loginBtn">Sign In</button> 
-    <button class="btn btn-purple" id="purchaseBtn">Purchase Access</button> -->
-    <button class="btn btn-green" id="openBtn">Load Gallery</button>
+  <div class="select-wrapper">
+    <select id="gallerySelect" class="custom-select"></select>
   </div>
 
+  <div class="topbar-actions">
+    <button class="btn btn-primary" id="openBtn">Load Gallery</button>
+    <div id="userContainer"></div>
+  </div>
 </div>
 
-<!-- GALLERY -->
-<div class="gallery" id="gallery"></div>
+<!-- LOGIN PROTECTION OVERLAY (SHOWN WHEN LOGGED OUT) -->
+<div class="auth-overlay" id="authOverlay" style="display: none;">
+  <div class="auth-card">
+    <div class="auth-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    </div>
+    <h2 class="auth-title">Restricted Access</h2>
+    <p class="auth-desc">Please sign in with your Google account to view and download full-resolution photos from this collection.</p>
+    <button class="btn btn-google" id="googleSignInBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+      Sign in with Google
+    </button>
+  </div>
+</div>
 
-<div class="load-more-container">
-  <button id="loadMoreBtn" class="btn btn-primary">Load More</button>
+<!-- GALLERY GRID (HIDDEN UNTIL AUTHENTICATED) -->
+<div class="gallery" id="gallery" style="display: none;"></div>
+
+<div class="load-more-container" id="loadMoreContainer" style="display: none;">
+  <button id="loadMoreBtn" class="btn btn-secondary">Load More Photos</button>
 </div>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
-  <img id="lightboxImg">
-</div>
-
-<!-- PURCHASE MODAL (UNCHANGED) -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <button class="close" id="close">✕</button>
-    <iframe src="https://tally.so/r/PdkvPd"></iframe>
-  </div>
+  <img id="lightboxImg" alt="Enlarged gallery photo">
 </div>
 
 <!-- DONATION FLOAT BUTTON -->
 <button id="donateFab">
-  <span class="heart">❤</span>
-  <span>Donate</span>
+  <span style="color: #ef4444;">❤</span>
+  <span>Support Gallery</span>
 </button>
 
 <!-- DONATION PANEL -->
 <div id="donationPanel">
   <div class="donationHeader">
-    Support Beyond The Lens
+    <span>Support Beyond The Lens</span>
     <button id="closeDonation">✕</button>
   </div>
   <iframe src="https://tally.so/r/PdkvPd"></iframe>
 </div>
 
+<!-- FIREBASE SDK & APPLICATION CODE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
-  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* ================= FIREBASE ================= */
+/* ================= FIREBASE INITIALIZATION ================= */
 const firebaseConfig = {
-  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
-  authDomain: "email-list-83dfb.firebaseapp.com",
-  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
-  projectId: "email-list-83dfb",
-  storageBucket: "email-list-83dfb.firebasestorage.app",
-  messagingSenderId: "471452404510",
-  appId: "1:471452404510:web:e91752174f6f0000c1570f"
+   apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
+
+  authDomain: "beyond-the-lens-ed6ed.firebaseapp.com",
+
+  projectId: "beyond-the-lens-ed6ed",
+
+  storageBucket: "beyond-the-lens-ed6ed.firebasestorage.app",
+
+  messagingSenderId: "554251151085",
+
+  appId: "1:554251151085:web:549e78e910c1826ee9cee4",
+
+  measurementId: "G-RP4NZG99ZZ"
+
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+/* ================= APP STATE ================= */
+let currentUser = null;
+let activeGallery = 0;
+let allFiles = [];
+let currentIndex = 0;
+const PAGE_SIZE = 24;
+
+const GALLERIES = [
+  { name: "WVSLA Linsly vs Morgantown", folderId: "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5", hero: "https://stadiumconnection.com/simages/2555.jpg", date: "5/16/2026" },
+  { name: "Seattle Selects Spring Classic Game 1", folderId: "1Vt-9N1L5KrLQRUbzmkwWip87FXxtpdix", hero: "https://www.seevirtual360.com/photos/tours/337989.jpg", date: "5/29/2026" },
+  { name: "Seattle Selects Spring Classic Game 2", folderId: "1naJH_DoxupO6LSG_c7sRwoR8I94518hW", hero: "https://www.seevirtual360.com/photos/tours/337989.jpg", date: "5/29/2026" },
+  { name: "Linsly Football Practice | 8/19", folderId: "1h7Cp97ejfIgqUjIisVP7V_MOght_svUv", hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png", date: "8/19/2026" },
+  { name: "Linsly Football Scrimmage | 8/20", folderId: "10-HgB4c33iqOrd-FL5LmDL0CoJT7Lkiy", hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png", date: "8/20/2026" },
+  { name: "Linsly Soccer Match (Boys)| 8/21", folderId: "1AfCp0hc6clygVIFnjgcVFiqo76fc7Q86", hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png", date: "8/21/2026" },
+  { name: "Linsly Soccer Match (Girls) | 8/24", folderId: "1yBoso0ErcCaDwlJ0nR8DZRcqH0XFrbdW", hero: "https://i.postimg.cc/TwYWLhR6/Linsly-Soccer-(1).png", date: "8/24/2026" },
+  { name: "Linsly Football Game | 8/28", folderId: "1vG--BqBwjZKCh39SQ8qRNz3WqUxH7Kis", hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png", date: "8/28/2026" },
+  { name: "Linsly Soccer Match (Girls) | 9/1", folderId: "1Q44otXKHS8FCZEvOrbplz1bGbPaU8_3U", hero: "https://i.postimg.cc/TwYWLhR6/Linsly-Soccer-(1).png", date: "9/1/2026" },
+  { name: "Linsly Volleyball Match | 9/8", folderId: "1iBnPYaOE3rHJBEMDNEIrTJqL2HNEId8M", hero: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flinslyline.com%2Fwp-content%2Fuploads%2F2024%2F10%2Fvol.jpg&f=1&nofb=1", date: "9/8/2026" },
+  { name: "Linsly Football Game | 9/11", folderId: "1PL7Ee5un7gJjjINeD78rJCY6GvX0a5jP", hero: "https://i.postimg.cc/HLZB7chJ/Linsly-Football.png", date: "9/11/2026" },
+  { name: "Linsly Soccer Match (Boys)| 9/13", folderId: "1tNztAELtAlqw2YfDda0_BMNbFo8R_GW6", hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png", date: "9/13/2026" },
+  { name: "Linsly Soccer Match (Girls)| 9/14", folderId: "1juLJG2dApJflAMpNliSy2oXqOnhaMUAG", hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png", date: "9/14/2026" }
+];
+
+/* ================= DOM ELEMENTS ================= */
+const el = (id) => document.getElementById(id);
+const gallerySelect = el("gallerySelect");
+const heroImg = el("heroImg");
+const heroTitle = el("heroTitle");
+const gallery = el("gallery");
+const loadMoreBtn = el("loadMoreBtn");
+const loadMoreContainer = el("loadMoreContainer");
+const authOverlay = el("authOverlay");
+const googleSignInBtn = el("googleSignInBtn");
+const userContainer = el("userContainer");
+const lightbox = el("lightbox");
+const lightboxImg = el("lightboxImg");
+const donateFab = el("donateFab");
+const donationPanel = el("donationPanel");
+const closeDonation = el("closeDonation");
+const openBtn = el("openBtn");
 
 /* ================= LOADING SCREEN ================= */
-
-const loadingScreen = document.getElementById("loadingScreen");
-const progressBar = document.getElementById("progressBar");
-const loadingPercent = document.getElementById("loadingPercent");
-const loadingStatus = document.getElementById("loadingStatus");
-
-document.body.classList.add("is-loading");
-
 let loadingTotal = 0;
 let loadingCompleted = 0;
 
 function startLoading(total) {
   loadingTotal = Math.max(total, 1);
   loadingCompleted = 0;
-
-  loadingScreen.classList.remove("hidden");
-
-  progressBar.style.width = "0%";
-  loadingPercent.textContent = "0%";
-  loadingStatus.textContent = "Loading photos...";
-
-  document.body.classList.add("is-loading");
+  el("loadingScreen").classList.remove("hidden");
+  el("progressBar").style.width = "0%";
+  el("loadingPercent").textContent = "0%";
 }
 
 function updateLoading() {
   loadingCompleted++;
-
-  const percent = Math.min(
-    100,
-    Math.round((loadingCompleted / loadingTotal) * 100)
-  );
-
-  progressBar.style.width = `${percent}%`;
-  loadingPercent.textContent = `${percent}%`;
-
-  if (percent >= 100) {
-    loadingStatus.textContent = "Ready";
-  }
+  const percent = Math.min(100, Math.round((loadingCompleted / loadingTotal) * 100));
+  el("progressBar").style.width = `${percent}%`;
+  el("loadingPercent").textContent = `${percent}%`;
 }
 
 function finishLoading() {
-  progressBar.style.width = "100%";
-  loadingPercent.textContent = "100%";
-  loadingStatus.textContent = "Ready";
-
-  setTimeout(() => {
-    loadingScreen.classList.add("hidden");
-    document.body.classList.remove("is-loading");
-  }, 350);
+  el("progressBar").style.width = "100%";
+  el("loadingPercent").textContent = "100%";
+  setTimeout(() => el("loadingScreen").classList.add("hidden"), 300);
 }
 
-/* Load an image and report when it finishes */
 function preloadImage(src) {
   return new Promise(resolve => {
     const img = new Image();
-
-    img.onload = () => {
-      updateLoading();
-      resolve();
-    };
-
-    img.onerror = () => {
-      // Don't let one broken image hold the entire page hostage
-      updateLoading();
-      resolve();
-    };
-
+    img.onload = () => { updateLoading(); resolve(); };
+    img.onerror = () => { updateLoading(); resolve(); };
     img.src = src;
   });
 }
 
-/* ================= GALLERIES ================= */
-const GALLERIES = [
-  {
-    name: "WVSLA Linsly vs Morgantown",
-    folderId: "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5",
-    hero: "https://stadiumconnection.com/simages/2555.jpg",
-    date: "5/16/2026"
-  },
-  {
-    name: "Seattle Selects Spring Classic Game 1",
-    folderId: "1Vt-9N1L5KrLQRUbzmkwWip87FXxtpdix",
-    hero: "https://www.seevirtual360.com/photos/tours/337989.jpg",
-    date: "5/29/2026"
-  },
-  {
-    name: "Seattle Selects Spring Classic Game 2",
-    folderId: "1naJH_DoxupO6LSG_c7sRwoR8I94518hW",
-    hero: "https://www.seevirtual360.com/photos/tours/337989.jpg",
-    date: "5/29/2026"
-  },
-    {
-    name: "Linsly Football Practice | 8/19",
-    folderId: "1h7Cp97ejfIgqUjIisVP7V_MOght_svUv",
-    hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png/v1/fill/w_1685,h_608,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png",
-    date: "8/19/2026"
-  },
-      {
-    name: "Linsly Football Scrimmage | 8/20",
-    folderId: "10-HgB4c33iqOrd-FL5LmDL0CoJT7Lkiy",
-    hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png/v1/fill/w_1685,h_608,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png",
-    date: "8/20/2026"
-  },
-  {
-    name: "Linsly Soccer Match (Boys)| 8/21",
-    folderId: "1AfCp0hc6clygVIFnjgcVFiqo76fc7Q86",
-    hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png",
-    date: "8/21/2026"
-  },
-  {
-    name: "Linsly Soccer Match (Girls) | 8/24",
-    folderId: "1yBoso0ErcCaDwlJ0nR8DZRcqH0XFrbdW",
-    hero: "https://i.postimg.cc/TwYWLhR6/Linsly-Soccer-(1).png",
-    date: "8/24/2026"
-  },
-  {
-    name: "Linsly Football Game | 8/28",
-    folderId: "1vG--BqBwjZKCh39SQ8qRNz3WqUxH7Kis",
-    hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png/v1/fill/w_1685,h_608,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png",
-    date: "8/28/2026"
-  },
-    {
-    name: "Linsly Soccer Match (Girls) | 9/1",
-    folderId: "1Q44otXKHS8FCZEvOrbplz1bGbPaU8_3U",
-    hero: "https://i.postimg.cc/TwYWLhR6/Linsly-Soccer-(1).png",
-    date: "9/1/2026"
-  },
-   {
-    name: "Linsly Volleyball Match | 9/8",
-    folderId: "1iBnPYaOE3rHJBEMDNEIrTJqL2HNEId8M",
-    hero: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flinslyline.com%2Fwp-content%2Fuploads%2F2024%2F10%2Fvol.jpg&f=1&nofb=1&ipt=2b691af5c538afc17187568ec806d707949a443e7c918ae5e86e4b6790b28ad9",
-    date: "9/8/2026"
-  },
-  {
-    name: "Linsly Football Game | 9/11",
-    folderId: "1PL7Ee5un7gJjjINeD78rJCY6GvX0a5jP",
-    hero: "https://i.postimg.cc/HLZB7chJ/Linsly-Football.png",
-    date: "9/11/2026"
-  },
-  {
-    name: "Linsly Soccer Match (Boys)| 9/13",
-    folderId: "1tNztAELtAlqw2YfDda0_BMNbFo8R_GW6",
-    hero: "https://i.postimg.cc/MZB4dSCk/Linsly-Soccer.png",
-    date: "9/13/2026"
-  },
-];
+/* ================= GOOGLE AUTHENTICATION ================= */
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  if (user) {
+    // Render logged in state
+    authOverlay.style.display = "none";
+    gallery.style.display = "grid";
+    userContainer.innerHTML = `
+      <div class="user-profile">
+        <img class="user-avatar" src="${user.photoURL || 'https://via.placeholder.com/28'}" alt="${user.displayName}">
+        <span class="user-name">${user.displayName.split(' ')[0]}</span>
+        <button class="btn-logout" id="logoutBtn">Sign Out</button>
+      </div>
+    `;
+    el("logoutBtn").onclick = () => signOut(auth);
+    
+    // Load current gallery contents
+    loadGallery(true);
+  } else {
+    // Render locked state
+    gallery.style.display = "none";
+    loadMoreContainer.style.display = "none";
+    authOverlay.style.display = "flex";
+    userContainer.innerHTML = `
+      <button class="btn btn-secondary" id="topSignInBtn">Sign In with Google</button>
+    `;
+    el("topSignInBtn").onclick = handleGoogleSignIn;
+    finishLoading();
+  }
+});
 
-let activeGallery = 0;
-let allFiles = [];
-let currentIndex = 0;
+async function handleGoogleSignIn() {
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    alert("Could not complete Google Sign-In. Please try again.");
+  }
+}
 
-const PAGE_SIZE = 24;
+googleSignInBtn.onclick = handleGoogleSignIn;
 
-/* ================= ELEMENTS ================= */
-const el = (id) => document.getElementById(id);
-
-const status = el("status");
-const gallerySelect = el("gallerySelect");
-const heroImg = el("heroImg");
-const heroTitle = el("heroTitle");
-
-const gallery = el("gallery");
-const loadMoreBtn = el("loadMoreBtn");
-const modal = el("modal");
-const closeBtn = el("close");
-const lightbox = el("lightbox");
-const lightboxImg = el("lightboxImg");
-
-const donateFab = el("donateFab");
-const donationPanel = el("donationPanel");
-const closeDonation = el("closeDonation");
-
-/* ================= HERO ================= */
+/* ================= GALLERY DROPDOWN & HERO ================= */
 GALLERIES.forEach((g, i) => {
   const opt = document.createElement("option");
   opt.value = i;
@@ -1683,31 +908,26 @@ GALLERIES.forEach((g, i) => {
 
 gallerySelect.onchange = async () => {
   activeGallery = Number(gallerySelect.value);
-
   updateHero();
-
-  await loadGallery(true);
+  if (currentUser) {
+    await loadGallery(true);
+  }
 };
 
-async function updateHero() {
+openBtn.onclick = () => {
+  if (currentUser) {
+    loadGallery(true);
+  } else {
+    handleGoogleSignIn();
+  }
+};
+
+function updateHero() {
   const g = GALLERIES[activeGallery];
-
-  loadingStatus.textContent = "Loading gallery...";
-
   startLoading(1);
-
-  heroImg.onload = () => {
-    updateLoading();
-    finishLoading();
-  };
-
-  heroImg.onerror = () => {
-    updateLoading();
-    finishLoading();
-  };
-
+  heroImg.onload = () => { updateLoading(); finishLoading(); };
+  heroImg.onerror = () => { updateLoading(); finishLoading(); };
   heroImg.src = g.hero;
-
   heroTitle.textContent = `${g.name} • ${g.date}`;
 }
 
@@ -1719,8 +939,7 @@ async function fetchImages(folderId) {
   let files = [];
 
   do {
-    const url =
-      `https://www.googleapis.com/drive/v3/files` +
+    const url = `https://www.googleapis.com/drive/v3/files` +
       `?q='${folderId}'+in+parents` +
       `&key=${API_KEY}` +
       `&pageSize=1000` +
@@ -1729,7 +948,6 @@ async function fetchImages(folderId) {
 
     const res = await fetch(url);
     const data = await res.json();
-
     if (data.error) break;
 
     files.push(...(data.files || []));
@@ -1739,190 +957,90 @@ async function fetchImages(folderId) {
   return files.filter(f => f.mimeType?.startsWith("image/"));
 }
 
-/* ================= RENDER ================= */
+/* ================= GALLERY RENDER ================= */
 async function loadGallery(reset = true) {
-  loadMoreBtn.style.display = "none";
+  if (!currentUser) return;
+
+  loadMoreContainer.style.display = "none";
 
   if (reset) {
     gallery.innerHTML = "";
     currentIndex = 0;
-
-    const g = GALLERIES[activeGallery];
-
-    loadingStatus.textContent = "Finding photos...";
     startLoading(1);
-
+    const g = GALLERIES[activeGallery];
     allFiles = await fetchImages(g.folderId);
-
     updateLoading();
-
     gallery.innerHTML = "";
   }
 
   if (!allFiles.length) {
-    gallery.innerHTML =
-      "<p style='opacity:.7;padding:20px'>No photos found.</p>";
-
+    gallery.innerHTML = "<p style='grid-column: 1/-1; opacity:0.6; text-align:center; padding: 60px 0;'>No photos available in this collection.</p>";
     finishLoading();
     return;
   }
 
-  const nextBatch = allFiles.slice(
-    currentIndex,
-    currentIndex + PAGE_SIZE
-  );
-
-  /*
-   * Only preload the images we're actually about
-   * to display. This keeps the loading screen fast
-   * even when a gallery contains hundreds of photos.
-   */
+  const nextBatch = allFiles.slice(currentIndex, currentIndex + PAGE_SIZE);
   startLoading(nextBatch.length);
 
-  const imageUrls = nextBatch.map(
-    file =>
-      `https://lh3.googleusercontent.com/d/${file.id}=w1200`
-  );
-
-  /*
-   * Start loading all images at the same time.
-   * Each completed image updates the progress bar.
-   */
-  const imagePromises = imageUrls.map(preloadImage);
+  const imageUrls = nextBatch.map(file => `https://lh3.googleusercontent.com/d/${file.id}=w1200`);
+  await Promise.all(imageUrls.map(preloadImage));
 
   nextBatch.forEach((file, index) => {
     const imgUrl = imageUrls[index];
-
-    const downloadUrl =
-      `https://drive.google.com/uc?export=download&id=${file.id}`;
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
 
     const card = document.createElement("div");
     card.className = "card";
 
-    const wrap = document.createElement("div");
-    wrap.className = "img-wrapper";
+    card.innerHTML = `
+      <div class="img-wrapper">
+        <img src="${imgUrl}" alt="${file.name}" loading="lazy">
+        <div class="watermark"></div>
+      </div>
+      <div class="card-actions">
+        <a href="${downloadUrl}" target="_blank" download class="btn-download">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download Photo
+        </a>
+      </div>
+    `;
 
-    const img = document.createElement("img");
-
-    /*
-     * The image was preloaded above, so it should
-     * appear immediately when inserted.
-     */
-    img.src = imgUrl;
-
-    img.onclick = () => {
-      lightbox.style.display = "flex";
+    card.querySelector(".img-wrapper").onclick = () => {
       lightboxImg.src = imgUrl;
+      lightbox.style.display = "flex";
     };
-
-    const watermark = document.createElement("div");
-    watermark.className = "watermark";
-
-    wrap.appendChild(img);
-    wrap.appendChild(watermark);
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const btn = document.createElement("button");
-    btn.className = "download";
-    btn.textContent = "Download";
-
-    btn.onclick = e => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      sessionStorage.setItem(
-        "scrollPos",
-        window.scrollY
-      );
-
-      sessionStorage.setItem(
-        "activeGallery",
-        activeGallery
-      );
-
-      sessionStorage.setItem(
-        "currentIndex",
-        currentIndex
-      );
-
-      location.href = downloadUrl;
-    };
-
-    actions.appendChild(btn);
-
-    card.appendChild(wrap);
-    card.appendChild(actions);
 
     gallery.appendChild(card);
   });
 
-  /*
-   * Wait until every visible image has finished loading.
-   */
-  await Promise.all(imagePromises);
-
-  currentIndex += PAGE_SIZE;
+  currentIndex += nextBatch.length;
 
   if (currentIndex < allFiles.length) {
-    loadMoreBtn.style.display = "block";
+    loadMoreContainer.style.display = "flex";
+  } else {
+    loadMoreContainer.style.display = "none";
   }
 
   finishLoading();
 }
 
-/* ================= RESTORE AFTER MOBILE DOWNLOAD ================= */
-window.addEventListener("load", async () => {
-  const savedGallery = sessionStorage.getItem("activeGallery");
-  const savedIndex = sessionStorage.getItem("currentIndex");
-  const savedScroll = sessionStorage.getItem("scrollPos");
-
-  updateHero();
-
-  if (savedGallery !== null) {
-    activeGallery = Number(savedGallery);
-    gallerySelect.value = activeGallery;
-
-    const g = GALLERIES[activeGallery];
-    allFiles = await fetchImages(g.folderId);
-
-    gallery.innerHTML = "";
-    currentIndex = 0;
-
-    const target = Number(savedIndex || PAGE_SIZE);
-
-    while (currentIndex < target) {
-      await loadGallery(false);
-    }
-
-    requestAnimationFrame(() => {
-      window.scrollTo(0, Number(savedScroll || 0));
-    });
-  }
-});
-
-/* ================= BUTTONS ================= */
 loadMoreBtn.onclick = () => loadGallery(false);
-document.getElementById("openBtn").onclick = () => loadGallery(true);
 
-/* ================= LIGHTBOX ================= */
+/* ================= LIGHTBOX & DONATIONS ================= */
 lightbox.onclick = () => {
   lightbox.style.display = "none";
 };
 
-/* ================= DONATION ================= */
 donateFab.onclick = () => {
-  donationPanel.style.display = "block";
+  donationPanel.style.display = donationPanel.style.display === "block" ? "none" : "block";
 };
 
 closeDonation.onclick = () => {
   donationPanel.style.display = "none";
 };
 
-/* ================= INIT ================= */
+// Initial state setup
 updateHero();
 </script>
-
 </body>
 </html>
