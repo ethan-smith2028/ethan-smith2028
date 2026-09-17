@@ -758,28 +758,56 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ================= FIREBASE INITIALIZATION ================= */
 const firebaseConfig = {
-   apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
-
+  apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
   authDomain: "beyond-the-lens-ed6ed.firebaseapp.com",
-
   projectId: "beyond-the-lens-ed6ed",
-
   storageBucket: "beyond-the-lens-ed6ed.firebasestorage.app",
-
   messagingSenderId: "554251151085",
-
   appId: "1:554251151085:web:549e78e910c1826ee9cee4",
-
   measurementId: "G-RP4NZG99ZZ"
-
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+
+/* ================= FIRESTORE LOGGING HELPER ================= */
+async function logActivity(eventType, details) {
+  if (!currentUser || !currentUser.email) return;
+
+  try {
+    // Extract everything before '@' in the user's email
+    const emailPrefix = currentUser.email.split('@')[0];
+    
+    // Create custom document ID: prefix_action_timestamp
+    const customDocId = `${emailPrefix}_${eventType}_${Date.now()}`;
+
+    // Write to Firestore using the custom document ID
+    const docRef = doc(db, "user_logs", customDocId);
+    
+    await setDoc(docRef, {
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      userName: currentUser.displayName,
+      action: eventType,
+      details: details,
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Error logging activity to Firestore:", error);
+  }
+}
 
 /* ================= APP STATE ================= */
 let currentUser = null;
@@ -962,12 +990,20 @@ async function loadGallery(reset = true) {
   if (!currentUser) return;
 
   loadMoreContainer.style.display = "none";
+  const g = GALLERIES[activeGallery];
 
   if (reset) {
     gallery.innerHTML = "";
     currentIndex = 0;
     startLoading(1);
-    const g = GALLERIES[activeGallery];
+    
+    // Log the album view action in Firestore
+    logActivity("view_album", {
+      galleryName: g.name,
+      folderId: g.folderId,
+      date: g.date
+    });
+
     allFiles = await fetchImages(g.folderId);
     updateLoading();
     gallery.innerHTML = "";
@@ -1004,6 +1040,16 @@ async function loadGallery(reset = true) {
         </a>
       </div>
     `;
+
+    // Log photo download action
+    const downloadBtn = card.querySelector(".btn-download");
+    downloadBtn.onclick = () => {
+      logActivity("download_photo", {
+        fileName: file.name,
+        fileId: file.id,
+        galleryName: g.name
+      });
+    };
 
     card.querySelector(".img-wrapper").onclick = () => {
       lightboxImg.src = imgUrl;
