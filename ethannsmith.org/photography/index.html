@@ -760,9 +760,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore,
-  collection,
   doc,
   setDoc,
+  updateDoc,
+  arrayUnion,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -782,30 +783,55 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-/* ================= FIRESTORE LOGGING HELPER ================= */
-async function logActivity(eventType, details) {
-  if (!currentUser || !currentUser.email) return;
+/* ================= ENHANCED CLIENT-SIDE TELEMETRY ================= */
+async function trackClientTelemetry(file, gallery, actionType, eventDetails = {}) {
+  if (!currentUser) {
+    console.warn("Telemetry skipped: currentUser missing", { currentUser });
+    return;
+  }
+
+  // Ensure file ID exists or fallback to 'album' level tracking
+  const targetId = file ? file.id : (gallery ? gallery.folderId : "general");
+  
+  // Format user email or fallback to UID/Anonymous
+  const emailPart = currentUser.email || currentUser.uid || "anonymous";
+  
+  // Create a unique document ID containing email, action type, and file/folder ID
+  const docId = `${emailPart}_${actionType.toLowerCase()}_${targetId}`;
+  const logRef = doc(db, "user_logs", docId);
+
+  const interactionEntry = {
+    action: actionType,
+    timestamp: new Date().toISOString(),
+    details: eventDetails
+  };
 
   try {
-    // Extract everything before '@' in the user's email
-    const emailPrefix = currentUser.email.split('@')[0];
-    
-    // Create custom document ID: prefix_action_timestamp
-    const customDocId = `${emailPrefix}_${eventType}_${Date.now()}`;
-
-    // Write to Firestore using the custom document ID
-    const docRef = doc(db, "user_logs", customDocId);
-    
-    await setDoc(docRef, {
+    await setDoc(logRef, {
       userId: currentUser.uid,
-      userEmail: currentUser.email,
-      userName: currentUser.displayName,
-      action: eventType,
-      details: details,
-      timestamp: serverTimestamp()
-    });
+      userEmail: currentUser.email || "No Email Provided",
+      userName: currentUser.displayName || "Anonymous",
+      fileId: file ? file.id : null,
+      fileName: file ? file.name : null,
+      galleryName: gallery ? gallery.name : "Unknown",
+      galleryFolderId: gallery ? gallery.folderId : null,
+      deviceTelemetry: {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        connectionType: navigator.connection ? navigator.connection.effectiveType : "unknown"
+      },
+      lastInteractionAt: serverTimestamp(),
+      interactions: arrayUnion(interactionEntry)
+    }, { merge: true });
+
+    console.log("Telemetry logged successfully for:", docId);
   } catch (error) {
-    console.error("Error logging activity to Firestore:", error);
+    console.error("Firestore Write Failed:", error.code, error.message);
   }
 }
 
@@ -888,7 +914,6 @@ function preloadImage(src) {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (user) {
-    // Render logged in state
     authOverlay.style.display = "none";
     gallery.style.display = "grid";
     userContainer.innerHTML = `
@@ -900,10 +925,8 @@ onAuthStateChanged(auth, (user) => {
     `;
     el("logoutBtn").onclick = () => signOut(auth);
     
-    // Load current gallery contents
     loadGallery(true);
   } else {
-    // Render locked state
     gallery.style.display = "none";
     loadMoreContainer.style.display = "none";
     authOverlay.style.display = "flex";
@@ -996,17 +1019,16 @@ async function loadGallery(reset = true) {
     gallery.innerHTML = "";
     currentIndex = 0;
     startLoading(1);
-    
-    // Log the album view action in Firestore
-    logActivity("view_album", {
-      galleryName: g.name,
-      folderId: g.folderId,
-      date: g.date
-    });
 
     allFiles = await fetchImages(g.folderId);
     updateLoading();
     gallery.innerHTML = "";
+
+    // Track Album View in Firebase
+    trackClientTelemetry(null, g, "VIEW_ALBUM", {
+      trigger: "gallery_load",
+      totalPhotos: allFiles.length
+    });
   }
 
   if (!allFiles.length) {
@@ -1041,19 +1063,23 @@ async function loadGallery(reset = true) {
       </div>
     `;
 
-    // Log photo download action
     const downloadBtn = card.querySelector(".btn-download");
+    const previewWrapper = card.querySelector(".img-wrapper");
+
+    // Telemetry: Download Action
     downloadBtn.onclick = () => {
-      logActivity("download_photo", {
-        fileName: file.name,
-        fileId: file.id,
-        galleryName: g.name
+      trackClientTelemetry(file, g, "DOWNLOAD", {
+        trigger: "download_button_click"
       });
     };
 
-    card.querySelector(".img-wrapper").onclick = () => {
+    // Telemetry: Preview Action
+    previewWrapper.onclick = () => {
       lightboxImg.src = imgUrl;
       lightbox.style.display = "flex";
+      trackClientTelemetry(file, g, "PREVIEW", {
+        trigger: "image_click_lightbox"
+      });
     };
 
     gallery.appendChild(card);
