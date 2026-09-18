@@ -762,7 +762,6 @@ import {
   getFirestore,
   doc,
   setDoc,
-  updateDoc,
   arrayUnion,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -783,39 +782,36 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-/* ================= ENHANCED CLIENT-SIDE TELEMETRY ================= */
+/* ================= PROFILE TELEMETRY LOGGING ================= */
 async function trackClientTelemetry(file, gallery, actionType, eventDetails = {}) {
   if (!currentUser) {
     console.warn("Telemetry skipped: currentUser missing", { currentUser });
     return;
   }
 
-  // Ensure file ID exists or fallback to 'album' level tracking
-  const targetId = file ? file.id : (gallery ? gallery.folderId : "general");
-  
-  // Format user email or fallback to UID/Anonymous
-  const emailPart = currentUser.email || currentUser.uid || "anonymous";
-  
-  // Create a unique document ID containing email, action type, and file/folder ID
-  const docId = `${emailPart}_${actionType.toLowerCase()}_${targetId}`;
-  const logRef = doc(db, "user_logs", docId);
+  // Store all activity directly under the user's document using their Firebase UID
+  const userProfileRef = doc(db, "user_logs", currentUser.uid);
 
   const interactionEntry = {
     action: actionType,
     timestamp: new Date().toISOString(),
+    fileId: file ? file.id : null,
+    fileName: file ? file.name : null,
+    galleryName: gallery ? gallery.name : "Unknown",
+    galleryFolderId: gallery ? gallery.folderId : null,
     details: eventDetails
   };
 
   try {
-    await setDoc(logRef, {
+    // Write directly into the user's profile document
+    await setDoc(userProfileRef, {
       userId: currentUser.uid,
       userEmail: currentUser.email || "No Email Provided",
       userName: currentUser.displayName || "Anonymous",
-      fileId: file ? file.id : null,
-      fileName: file ? file.name : null,
-      galleryName: gallery ? gallery.name : "Unknown",
-      galleryFolderId: gallery ? gallery.folderId : null,
-      deviceTelemetry: {
+      photoURL: currentUser.photoURL || null,
+      lastActiveAt: serverTimestamp(),
+      lastAction: actionType,
+      deviceInfo: {
         userAgent: navigator.userAgent,
         language: navigator.language,
         platform: navigator.platform,
@@ -825,11 +821,11 @@ async function trackClientTelemetry(file, gallery, actionType, eventDetails = {}
         viewportHeight: window.innerHeight,
         connectionType: navigator.connection ? navigator.connection.effectiveType : "unknown"
       },
-      lastInteractionAt: serverTimestamp(),
+      // Append every action into their consolidated interactions array
       interactions: arrayUnion(interactionEntry)
     }, { merge: true });
 
-    console.log("Telemetry logged successfully for:", docId);
+    console.log(`Action logged under user profile (${currentUser.uid}):`, actionType);
   } catch (error) {
     console.error("Firestore Write Failed:", error.code, error.message);
   }
@@ -843,7 +839,6 @@ let currentIndex = 0;
 const PAGE_SIZE = 24;
 
 const GALLERIES = [
-  { name: "WVSLA Linsly vs Morgantown", folderId: "1IZN4UlPhh8PHnQP5IHSzlq4xncvnWXP5", hero: "https://stadiumconnection.com/simages/2555.jpg", date: "5/16/2026" },
   { name: "Seattle Selects Spring Classic Game 1", folderId: "1Vt-9N1L5KrLQRUbzmkwWip87FXxtpdix", hero: "https://www.seevirtual360.com/photos/tours/337989.jpg", date: "5/29/2026" },
   { name: "Seattle Selects Spring Classic Game 2", folderId: "1naJH_DoxupO6LSG_c7sRwoR8I94518hW", hero: "https://www.seevirtual360.com/photos/tours/337989.jpg", date: "5/29/2026" },
   { name: "Linsly Football Practice | 8/19", folderId: "1h7Cp97ejfIgqUjIisVP7V_MOght_svUv", hero: "https://static.wixstatic.com/media/10f073_b555d83812d14a209fd5f5d69fa7c7dc~mv2.png", date: "8/19/2026" },
@@ -925,6 +920,9 @@ onAuthStateChanged(auth, (user) => {
     `;
     el("logoutBtn").onclick = () => signOut(auth);
     
+    // Log User Sign-In Action
+    trackClientTelemetry(null, null, "USER_LOGIN", { trigger: "auth_state_changed" });
+
     loadGallery(true);
   } else {
     gallery.style.display = "none";
@@ -1024,7 +1022,7 @@ async function loadGallery(reset = true) {
     updateLoading();
     gallery.innerHTML = "";
 
-    // Track Album View in Firebase
+    // Track Album View under Profile
     trackClientTelemetry(null, g, "VIEW_ALBUM", {
       trigger: "gallery_load",
       totalPhotos: allFiles.length
@@ -1104,7 +1102,14 @@ lightbox.onclick = () => {
 };
 
 donateFab.onclick = () => {
-  donationPanel.style.display = donationPanel.style.display === "block" ? "none" : "block";
+  const isOpening = donationPanel.style.display !== "block";
+  donationPanel.style.display = isOpening ? "block" : "none";
+
+  if (isOpening) {
+    trackClientTelemetry(null, GALLERIES[activeGallery], "DONATION_PANEL_OPEN", {
+      trigger: "donate_fab_click"
+    });
+  }
 };
 
 closeDonation.onclick = () => {
