@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Beyond the Lens — Modern Photography</title>
+<title>Beyond the Lens</title>
 <link rel="icon" type="image/png" href="beyond-the-lens.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -955,6 +955,94 @@ button, select, input {
 }
 </style>
 </head>
+
+<!-- SCROLLING HEADER BANNER (HTML) -->
+<div class="announcement-banner">
+  <div class="announcement-track">
+    <div class="announcement-item">
+      <span class="announcement-badge">Notice</span>
+      <span>Starting December 1st, 2026, all photos will be available for purchase due to the lapse in credit.</span>
+    </div>
+    <div class="announcement-item">
+      <span class="announcement-badge">Notice</span>
+      <span>Starting December 1st, 2026, all photos will be available for purchase due to the lapse in credit.</span>
+    </div>
+    <div class="announcement-item">
+      <span class="announcement-badge">Notice</span>
+      <span>Starting December 1st, 2026, all photos will be available for purchase due to the lapse in credit.</span>
+    </div>
+    <div class="announcement-item">
+      <span class="announcement-badge">Notice</span>
+      <span>Starting December 1st, 2026, all photos will be available for purchase due to the lapse in credit.</span>
+    </div>
+  </div>
+</div>
+
+<style>
+/* SCROLLING HEADER STYLES (CSS) */
+.announcement-banner {
+  width: 100%;
+  background: rgba(234, 117, 17, 0.15);
+  border-bottom: 1px solid rgba(234, 117, 17, 0.3);
+  color: #fca5a5;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 101;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.announcement-track {
+  display: inline-flex;
+  gap: 50px;
+  animation: marquee 25s linear infinite;
+}
+
+.announcement-banner:hover .announcement-track {
+  animation-play-state: paused;
+}
+
+.announcement-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.announcement-badge {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+</style>
+
+<script>
+// OPTIONAL JS: Dynamically update message or toggle banner visibility if needed
+function setHeaderNoticeMessage(message) {
+  const items = document.querySelectorAll('.announcement-item span:last-child');
+  items.forEach(item => {
+    item.textContent = message;
+  });
+}
+</script>
 
 <body>
 
