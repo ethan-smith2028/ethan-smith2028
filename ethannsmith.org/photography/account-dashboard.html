@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond the Lens - Account & Telemetry Dashboard</title>
+
+  <!-- Google Fonts & Tailwind CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bgDark: '#0a0c10',
+            surface1: '#12161f',
+            surface2: '#1a202c',
+            surface3: '#242c3d',
+            accentGoogle: '#ea7511',
+            accentGreen: '#10b981',
+            accentGreenHover: '#059669',
+            textMain: '#f8fafc',
+            textMuted: '#cbd5e1',
+            textSubtle: '#94a3b8',
+            borderSubtle: 'rgba(255, 255, 255, 0.08)',
+            borderActive: 'rgba(255, 255, 255, 0.22)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0a0c10;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0c10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1a202c;
+      border-radius: 9999px;
+      border: 2px solid #0a0c10;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #242c3d;
+    }
+
+    .glass-nav {
+      background: rgba(10, 12, 16, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-bgDark text-textMain selection:bg-accentGoogle selection:text-white">
+
+  <!-- AUTHENTICATION OVERLAY / LOGIN FORM -->
+  <div id="loginView" class="fixed inset-0 z-[100] flex items-center justify-center bg-bgDark/95 backdrop-blur-md px-4">
+    <div class="w-full max-w-md p-8 rounded-2xl bg-surface1 border border-borderSubtle shadow-2xl space-y-6">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accentGoogle to-amber-600 flex items-center justify-center font-display font-extrabold text-white text-2xl shadow-lg shadow-amber-900/30 mx-auto">
+          B
+        </div>
+        <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">Admin Access</h2>
+        <p class="text-xs text-textSubtle">Sign in with your Firebase credentials to view logs.</p>
+      </div>
+
+      <div id="authError" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium text-center">
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Email Address</label>
+          <input type="email" id="authEmail" required placeholder="admin@example.com" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Password</label>
+          <input type="password" id="authPassword" required placeholder="••••••••" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+        </div>
+
+        <button type="submit" id="btnLogin" class="w-full h-11 bg-accentGoogle hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2">
+          <span>Sign In</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PROTECTED DASHBOARD CONTENT (Hidden until authenticated) -->
+  <div id="dashboardView" class="hidden min-h-screen flex flex-col">
+    <!-- Topbar Header -->
+    <header class="sticky top-0 z-50 glass-nav px-4 sm:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accentGoogle to-amber-600 flex items-center justify-center font-display font-extrabold text-white text-xl shadow-lg shadow-amber-900/30">
+          B
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-white">BEYOND THE LENS</h1>
+            <span class="px-2 py-0.5 text-xs font-bold uppercase rounded-full bg-accentGoogle/20 border border-accentGoogle/40 text-amber-400">Admin</span>
+          </div>
+          <p class="text-xs text-textSubtle">User Accounts & Telemetry Logs (`user_logs` Collection)</p>
+        </div>
+      </div>
+
+      <!-- Quick Navigation & Status -->
+      <div class="flex items-center gap-3 flex-wrap">
+        <div id="connectionBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface2 border border-borderSubtle text-xs font-medium text-textMuted">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" id="statusDot"></span>
+          <span id="statusText">Connecting...</span>
+        </div>
+
+        <button id="btnRefreshData" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-surface2 hover:bg-surface3 border border-borderSubtle transition-all flex items-center gap-2">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          Refresh
+        </button>
+
+        <a href="./index.html" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-surface2 hover:bg-surface3 border border-borderSubtle text-textMuted hover:text-white transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          Back to Gallery
+        </a>
+
+        <button id="btnLogout" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 space-y-6">
+
+      <!-- KPI Stats Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col justify-between">
+          <div class="text-xs font-semibold tracking-wider text-textSubtle uppercase">Total Accounts</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <span class="font-display text-3xl font-extrabold text-white" id="statTotalAccounts">0</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">user_logs</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col justify-between">
+          <div class="text-xs font-semibold tracking-wider text-textSubtle uppercase">Opted-In Telemetry</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <span class="font-display text-3xl font-extrabold text-accentGreen" id="statOptedIn">0</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col justify-between">
+          <div class="text-xs font-semibold tracking-wider text-textSubtle uppercase">Opted-Out / Pending</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <span class="font-display text-3xl font-extrabold text-amber-400" id="statOptedOut">0</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Restricted</span>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col justify-between">
+          <div class="text-xs font-semibold tracking-wider text-textSubtle uppercase">Total Logged Actions</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <span class="font-display text-3xl font-extrabold text-accentGoogle" id="statTotalInteractions">0</span>
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">Events</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions & Filter Bar -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-surface1 border border-borderSubtle space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          
+          <!-- Search Input -->
+          <div class="relative flex-1 min-w-[260px]">
+            <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-textSubtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="searchInput" placeholder="Search by UID, Name, or Email..." class="w-full h-11 pl-10 pr-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+          </div>
+
+          <!-- Telemetry Status Filter -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <select id="telemetryFilter" class="h-11 px-3.5 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+              <option value="ALL">All Consent Statuses</option>
+              <option value="opted_in">Opted In</option>
+              <option value="opted_out">Opted Out</option>
+            </select>
+
+            <button id="btnCopyEmails" class="h-11 px-5 rounded-xl bg-accentGreen hover:bg-accentGreenHover text-emerald-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/40 active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              <span>Copy Emails</span>
+              <span id="copyEmailCountBadge" class="ml-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-950 text-[10px] font-extrabold">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Actions Info -->
+        <div class="flex items-center justify-between text-xs text-textSubtle pt-2 border-t border-borderSubtle flex-wrap gap-2">
+          <div id="filterResultCount">Showing 0 accounts</div>
+          <button id="btnCopyIDs" class="hover:text-white transition-colors flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            <span>Copy User IDs (UIDs)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Accounts Container -->
+      <div id="accountsContainer" class="space-y-4">
+        <div class="p-8 text-center text-textSubtle bg-surface1 border border-borderSubtle rounded-2xl">
+          Loading accounts from user_logs...
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Firebase Script Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
+      authDomain: "beyond-the-lens-ed6ed.firebaseapp.com",
+      projectId: "beyond-the-lens-ed6ed",
+      storageBucket: "beyond-the-lens-ed6ed.firebasestorage.app",
+      messagingSenderId: "554251151085",
+      appId: "1:554251151085:web:549e78e910c1826ee9cee4",
+      measurementId: "G-RP4NZG99ZZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let allAccounts = [];
+
+    // UI Elements
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const authError = document.getElementById('authError');
+    const btnLogout = document.getElementById('btnLogout');
+
+    const accountsContainer = document.getElementById('accountsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const telemetryFilter = document.getElementById('telemetryFilter');
+    const filterResultCount = document.getElementById('filterResultCount');
+    const copyEmailCountBadge = document.getElementById('copyEmailCountBadge');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+
+    // Authentication State Observer
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginView.classList.add('hidden');
+        dashboardView.classList.remove('hidden');
+        loadAccounts();
+      } else {
+        dashboardView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      }
+    });
+
+    // Handle Login
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      authError.classList.add('hidden');
+      
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        console.error("Auth error:", error);
+        authError.innerText = error.message.replace("Firebase: ", "");
+        authError.classList.remove('hidden');
+      }
+    });
+
+    // Handle Logout
+    btnLogout.addEventListener('click', () => {
+      signOut(auth);
+    });
+
+    async function loadAccounts() {
+      try {
+        statusText.innerText = "Fetching user_logs...";
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse";
+        
+        const querySnapshot = await getDocs(collection(db, "user_logs"));
+        
+        allAccounts = [];
+        querySnapshot.forEach((docSnapshot) => {
+          allAccounts.push({
+            id: docSnapshot.id,
+            ...docSnapshot.data()
+          });
+        });
+
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-accentGreen";
+        statusText.innerText = "Connected";
+
+        updateStats();
+        renderAccounts();
+      } catch (error) {
+        console.error("Error loading user_logs:", error);
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+        statusText.innerText = "Permission / Connection Error";
+        
+        accountsContainer.innerHTML = `
+          <div class="p-8 text-center bg-surface1 border border-red-500/20 rounded-2xl space-y-2">
+            <p class="text-red-400 font-semibold">Failed to load user logs.</p>
+            <p class="text-xs text-textSubtle">Reason: ${error.message}</p>
+            <p class="text-xs text-textSubtle">If permission was denied, ensure your Firestore Rules allow reads on <code>user_logs</code>.</p>
+          </div>`;
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('statTotalAccounts').innerText = allAccounts.length;
+      
+      const optedIn = allAccounts.filter(a => a.telemetryConsent === true || a.telemetryStatus === 'opted_in').length;
+      document.getElementById('statOptedIn').innerText = optedIn;
+
+      const optedOut = allAccounts.length - optedIn;
+      document.getElementById('statOptedOut').innerText = optedOut;
+
+      const totalInteractions = allAccounts.reduce((acc, a) => {
+        return acc + (Array.isArray(a.interactions) ? a.interactions.length : 0);
+      }, 0);
+      document.getElementById('statTotalInteractions').innerText = totalInteractions;
+    }
+
+    function formatDate(timestamp) {
+      if (!timestamp) return 'Never';
+      if (timestamp.toDate) return timestamp.toDate().toLocaleString();
+      if (typeof timestamp === 'string') return new Date(timestamp).toLocaleString();
+      return 'N/A';
+    }
+
+    function renderAccounts() {
+      const query = searchInput.value.toLowerCase().trim();
+      const selectedConsent = telemetryFilter.value;
+
+      const filtered = allAccounts.filter(acc => {
+        const name = (acc.userName || '').toLowerCase();
+        const email = (acc.userEmail || '').toLowerCase();
+        const uid = (acc.userId || acc.id || '').toLowerCase();
+
+        const matchesQuery = name.includes(query) || email.includes(query) || uid.includes(query);
+        const consentStatus = acc.telemetryStatus || (acc.telemetryConsent ? 'opted_in' : 'opted_out');
+        const matchesConsent = selectedConsent === 'ALL' || consentStatus === selectedConsent;
+
+        return matchesQuery && matchesConsent;
+      });
+
+      filterResultCount.innerText = `Showing ${filtered.length} of ${allAccounts.length} accounts`;
+      
+      const validEmails = filtered.map(a => a.userEmail).filter(e => e && e !== 'No Email Provided');
+      copyEmailCountBadge.innerText = validEmails.length;
+
+      if (filtered.length === 0) {
+        accountsContainer.innerHTML = `
+          <div class="p-8 text-center text-textSubtle bg-surface1 border border-borderSubtle rounded-2xl">
+            No matching accounts found.
+          </div>`;
+        return;
+      }
+
+      accountsContainer.innerHTML = filtered.map((acc, index) => {
+        const isOptedIn = acc.telemetryConsent === true || acc.telemetryStatus === 'opted_in';
+        const interactions = Array.isArray(acc.interactions) ? acc.interactions : [];
+        const device = acc.deviceInfo || {};
+        const avatar = acc.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.userName || 'User')}&background=ea7511&color=fff`;
+
+        return `
+          <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle hover:border-borderActive transition-all space-y-4">
+            
+            <!-- User Header Row -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5">
+                <img src="${avatar}" alt="${acc.userName || 'User'}" class="w-12 h-12 rounded-full object-cover border border-borderSubtle">
+                <div>
+                  <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    ${acc.userName || 'Anonymous User'}
+                  </h3>
+                  <p class="text-xs text-textSubtle font-mono">${acc.userEmail || 'No Email Provided'}</p>
+                  <p class="text-[11px] text-textSubtle/70 font-mono mt-0.5">UID: ${acc.userId || acc.id}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${isOptedIn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'} uppercase">
+                  ${isOptedIn ? 'Telemetry: Opted In' : 'Telemetry: Opted Out'}
+                </span>
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-surface2 border border-borderSubtle text-textMuted">
+                  ${interactions.length} Events Logged
+                </span>
+              </div>
+            </div>
+
+            <!-- Activity & Device Info Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-borderSubtle/60 text-xs text-textSubtle">
+              <div class="bg-surface2/50 p-3 rounded-xl border border-borderSubtle">
+                <span class="text-textSubtle block font-semibold mb-1 uppercase text-[10px]">Last Activity</span>
+                <div class="text-textMuted font-medium">${formatDate(acc.lastActiveAt)}</div>
+                <div class="mt-1 text-accentGoogle font-mono text-[11px]">Last Action: ${acc.lastAction || 'N/A'}</div>
+              </div>
+
+              <div class="bg-surface2/50 p-3 rounded-xl border border-borderSubtle">
+                <span class="text-textSubtle block font-semibold mb-1 uppercase text-[10px]">Device & Browser</span>
+                <div class="text-textMuted font-medium truncate" title="${device.userAgent || 'Unknown'}">${device.platform || 'Unknown OS'} (${device.connectionType || 'net'})</div>
+                <div class="mt-1 text-textSubtle font-mono text-[11px]">${device.screenWidth || '?'}x${device.screenHeight || '?'} • ${device.language || 'en'}</div>
+              </div>
+
+              <div class="bg-surface2/50 p-3 rounded-xl border border-borderSubtle flex items-center justify-between">
+                <div>
+                  <span class="text-textSubtle block font-semibold mb-1 uppercase text-[10px]">Interactions Log</span>
+                  <div class="text-textMuted font-medium">${interactions.length} Total Recorded</div>
+                </div>
+                ${interactions.length > 0 ? `
+                  <button onclick="toggleLogs('log-${index}')" class="px-3 py-1 rounded-lg bg-surface3 hover:bg-surface3/80 text-white font-medium text-xs transition-colors">
+                    View Logs
+                  </button>
+                ` : '<span class="text-textSubtle text-xs italic">No logs</span>'}
+              </div>
+            </div>
+
+            <!-- Expandable Interaction History -->
+            ${interactions.length > 0 ? `
+              <div id="log-${index}" class="hidden pt-2">
+                <div class="bg-bgDark p-3 rounded-xl border border-borderSubtle space-y-2 max-h-60 overflow-y-auto">
+                  <div class="text-[11px] font-bold uppercase tracking-wider text-textSubtle border-b border-borderSubtle pb-1">Recent Interactions</div>
+                  ${interactions.slice().reverse().map(item => `
+                    <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-1 border-b border-borderSubtle/30 last:border-0">
+                      <div class="flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono text-[10px] uppercase">${item.action}</span>
+                        <span class="text-textMuted">${item.galleryName || 'Gallery'}</span>
+                        ${item.fileName ? `<span class="text-textSubtle font-mono text-[11px]">(${item.fileName})</span>` : ''}
+                      </div>
+                      <span class="text-[10px] text-textSubtle font-mono">${item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Toggle interaction dropdown
+    window.toggleLogs = function(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('hidden');
+      }
+    };
+
+    // Event Listeners
+    searchInput.addEventListener('input', renderAccounts);
+    telemetryFilter.addEventListener('change', renderAccounts);
+    document.getElementById('btnRefreshData').addEventListener('click', loadAccounts);
+
+    document.getElementById('btnCopyEmails').addEventListener('click', () => {
+      const emails = allAccounts.map(a => a.userEmail).filter(e => e && e !== 'No Email Provided');
+      const uniqueEmails = [...new Set(emails)].join(', ');
+      navigator.clipboard.writeText(uniqueEmails);
+      alert(`${uniqueEmails ? emails.length : 0} Email address(es) copied to clipboard!`);
+    });
+
+    document.getElementById('btnCopyIDs').addEventListener('click', () => {
+      const ids = allAccounts.map(a => a.userId || a.id).join('\n');
+      navigator.clipboard.writeText(ids);
+      alert('User UIDs copied to clipboard!');
+    });
+  </script>
+</body>
+</html>
