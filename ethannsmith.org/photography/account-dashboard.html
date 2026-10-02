@@ -67,6 +67,12 @@
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
+
+    /* Style dark inputs for browser native controls */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-bgDark text-textMain selection:bg-accentGoogle selection:text-white">
@@ -184,31 +190,82 @@
 
       <!-- Actions & Filter Bar -->
       <div class="p-4 sm:p-5 rounded-2xl bg-surface1 border border-borderSubtle space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
+        <!-- Primary Filter Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           
           <!-- Search Input -->
-          <div class="relative flex-1 min-w-[260px]">
+          <div class="relative">
             <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-textSubtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="text" id="searchInput" placeholder="Search by UID, Name, or Email..." class="w-full h-11 pl-10 pr-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+            <input type="text" id="searchInput" placeholder="Search UID, Name, or Email..." class="w-full h-10 pl-10 pr-4 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
           </div>
 
           <!-- Telemetry Status Filter -->
-          <div class="flex items-center gap-3 flex-wrap">
-            <select id="telemetryFilter" class="h-11 px-3.5 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+          <div>
+            <select id="telemetryFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
               <option value="ALL">All Consent Statuses</option>
               <option value="opted_in">Opted In</option>
               <option value="opted_out">Opted Out</option>
             </select>
+          </div>
 
-            <button id="btnCopyEmails" class="h-11 px-5 rounded-xl bg-accentGreen hover:bg-accentGreenHover text-emerald-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/40 active:scale-95">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          <!-- Device Type Filter -->
+          <div>
+            <select id="deviceFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+              <option value="ALL">All Device Types</option>
+              <option value="desktop">Desktop</option>
+              <option value="mobile">Mobile</option>
+              <option value="tablet">Tablet</option>
+              <option value="unknown">Unknown</option>
+            </select>
+          </div>
+
+          <!-- Sort Order Selector -->
+          <div>
+            <select id="sortBy" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="name">Sort: Name (A-Z)</option>
+              <option value="activity">Sort: Most Activity</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Secondary Filter Row: Date Range & Action Buttons -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2 border-t border-borderSubtle/50">
+          
+          <!-- Date Created Filter -->
+          <div class="flex items-center gap-2 flex-wrap text-xs text-textSubtle">
+            <span class="font-semibold uppercase text-[10px] tracking-wider text-textSubtle">Date Created:</span>
+            
+            <div class="flex items-center gap-1.5">
+              <label for="startDate" class="text-[11px]">From</label>
+              <input type="date" id="startDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <label for="endDate" class="text-[11px]">To</label>
+              <input type="date" id="endDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+            </div>
+
+            <button id="btnClearDates" class="h-9 px-2.5 text-[11px] font-semibold text-textSubtle hover:text-white bg-surface2 hover:bg-surface3 border border-borderSubtle rounded-lg transition-colors">
+              Clear
+            </button>
+          </div>
+
+          <!-- Global Actions -->
+          <div class="flex items-center gap-3">
+            <button id="btnCopyEmails" class="h-9 px-4 rounded-xl bg-accentGreen hover:bg-accentGreenHover text-emerald-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/40 active:scale-95">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
               <span>Copy Emails</span>
               <span id="copyEmailCountBadge" class="ml-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-950 text-[10px] font-extrabold">0</span>
             </button>
           </div>
+
         </div>
 
-        <!-- Quick Actions Info -->
+        <!-- Quick Actions Info Footer -->
         <div class="flex items-center justify-between text-xs text-textSubtle pt-2 border-t border-borderSubtle flex-wrap gap-2">
           <div id="filterResultCount">Showing 0 accounts</div>
           <button id="btnCopyIDs" class="hover:text-white transition-colors flex items-center gap-1">
@@ -216,6 +273,7 @@
             <span>Copy User IDs (UIDs)</span>
           </button>
         </div>
+
       </div>
 
       <!-- Accounts Container -->
@@ -261,6 +319,12 @@
     const accountsContainer = document.getElementById('accountsContainer');
     const searchInput = document.getElementById('searchInput');
     const telemetryFilter = document.getElementById('telemetryFilter');
+    const deviceFilter = document.getElementById('deviceFilter');
+    const sortBy = document.getElementById('sortBy');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const btnClearDates = document.getElementById('btnClearDates');
+
     const filterResultCount = document.getElementById('filterResultCount');
     const copyEmailCountBadge = document.getElementById('copyEmailCountBadge');
     const statusDot = document.getElementById('statusDot');
@@ -349,27 +413,79 @@
       document.getElementById('statTotalInteractions').innerText = totalInteractions;
     }
 
+    function parseDate(val) {
+      if (!val) return null;
+      if (val.toDate) return val.toDate();
+      const parsed = new Date(val);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
     function formatDate(timestamp) {
-      if (!timestamp) return 'Never';
-      if (timestamp.toDate) return timestamp.toDate().toLocaleString();
-      if (typeof timestamp === 'string') return new Date(timestamp).toLocaleString();
-      return 'N/A';
+      const parsed = parseDate(timestamp);
+      return parsed ? parsed.toLocaleString() : 'N/A';
+    }
+
+    function detectDeviceType(acc) {
+      const device = acc.deviceInfo || {};
+      const userAgent = (device.userAgent || '').toLowerCase();
+      const platform = (device.platform || '').toLowerCase();
+      
+      if (acc.deviceType) return acc.deviceType.toLowerCase();
+
+      if (/ipad|tablet|playbook|silk/i.test(userAgent)) return 'tablet';
+      if (/mobile|iphone|ipod|android|blackberry|opera mini|windows phone/i.test(userAgent) || /android|iphone/i.test(platform)) return 'mobile';
+      if (platform.includes('win') || platform.includes('mac') || platform.includes('linux') || userAgent.includes('mozilla')) return 'desktop';
+      
+      return 'unknown';
     }
 
     function renderAccounts() {
       const query = searchInput.value.toLowerCase().trim();
       const selectedConsent = telemetryFilter.value;
+      const selectedDevice = deviceFilter.value;
+      const sortVal = sortBy.value;
+
+      const startDate = startDateInput.value ? new Date(startDateInput.value + "T00:00:00") : null;
+      const endDate = endDateInput.value ? new Date(endDateInput.value + "T23:59:59") : null;
 
       const filtered = allAccounts.filter(acc => {
+        // Search query check
         const name = (acc.userName || '').toLowerCase();
         const email = (acc.userEmail || '').toLowerCase();
         const uid = (acc.userId || acc.id || '').toLowerCase();
-
         const matchesQuery = name.includes(query) || email.includes(query) || uid.includes(query);
+
+        // Consent status check
         const consentStatus = acc.telemetryStatus || (acc.telemetryConsent ? 'opted_in' : 'opted_out');
         const matchesConsent = selectedConsent === 'ALL' || consentStatus === selectedConsent;
 
-        return matchesQuery && matchesConsent;
+        // Device type check
+        const computedDevice = detectDeviceType(acc);
+        const matchesDevice = selectedDevice === 'ALL' || computedDevice === selectedDevice;
+
+        // Creation Date check
+        const createdAt = parseDate(acc.createdAt || acc.dateCreated || acc.createdTimestamp);
+        let matchesDate = true;
+        if (startDate && (!createdAt || createdAt < startDate)) matchesDate = false;
+        if (endDate && (!createdAt || createdAt > endDate)) matchesDate = false;
+
+        return matchesQuery && matchesConsent && matchesDevice && matchesDate;
+      });
+
+      // Sorting
+      filtered.sort((a, b) => {
+        const dateA = parseDate(a.createdAt || a.dateCreated || a.createdTimestamp) || new Date(0);
+        const dateB = parseDate(b.createdAt || b.dateCreated || b.createdTimestamp) || new Date(0);
+
+        if (sortVal === 'newest') return dateB - dateA;
+        if (sortVal === 'oldest') return dateA - dateB;
+        if (sortVal === 'name') return (a.userName || '').localeCompare(b.userName || '');
+        if (sortVal === 'activity') {
+          const actA = Array.isArray(a.interactions) ? a.interactions.length : 0;
+          const actB = Array.isArray(b.interactions) ? b.interactions.length : 0;
+          return actB - actA;
+        }
+        return 0;
       });
 
       filterResultCount.innerText = `Showing ${filtered.length} of ${allAccounts.length} accounts`;
@@ -380,7 +496,7 @@
       if (filtered.length === 0) {
         accountsContainer.innerHTML = `
           <div class="p-8 text-center text-textSubtle bg-surface1 border border-borderSubtle rounded-2xl">
-            No matching accounts found.
+            No matching accounts found with current filters.
           </div>`;
         return;
       }
@@ -389,6 +505,8 @@
         const isOptedIn = acc.telemetryConsent === true || acc.telemetryStatus === 'opted_in';
         const interactions = Array.isArray(acc.interactions) ? acc.interactions : [];
         const device = acc.deviceInfo || {};
+        const deviceType = detectDeviceType(acc);
+        const createdDateFormatted = formatDate(acc.createdAt || acc.dateCreated || acc.createdTimestamp);
         const avatar = acc.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.userName || 'User')}&background=ea7511&color=fff`;
 
         return `
@@ -411,6 +529,9 @@
                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${isOptedIn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'} uppercase">
                   ${isOptedIn ? 'Telemetry: Opted In' : 'Telemetry: Opted Out'}
                 </span>
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-surface2 border border-borderSubtle text-textMuted capitalize">
+                  Device: ${deviceType}
+                </span>
                 <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-surface2 border border-borderSubtle text-textMuted">
                   ${interactions.length} Events Logged
                 </span>
@@ -418,7 +539,13 @@
             </div>
 
             <!-- Activity & Device Info Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-borderSubtle/60 text-xs text-textSubtle">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-3 border-t border-borderSubtle/60 text-xs text-textSubtle">
+              
+              <div class="bg-surface2/50 p-3 rounded-xl border border-borderSubtle">
+                <span class="text-textSubtle block font-semibold mb-1 uppercase text-[10px]">Date Created</span>
+                <div class="text-textMuted font-medium">${createdDateFormatted}</div>
+              </div>
+
               <div class="bg-surface2/50 p-3 rounded-xl border border-borderSubtle">
                 <span class="text-textSubtle block font-semibold mb-1 uppercase text-[10px]">Last Activity</span>
                 <div class="text-textMuted font-medium">${formatDate(acc.lastActiveAt)}</div>
@@ -442,6 +569,7 @@
                   </button>
                 ` : '<span class="text-textSubtle text-xs italic">No logs</span>'}
               </div>
+
             </div>
 
             <!-- Expandable Interaction History -->
@@ -479,6 +607,17 @@
     // Event Listeners
     searchInput.addEventListener('input', renderAccounts);
     telemetryFilter.addEventListener('change', renderAccounts);
+    deviceFilter.addEventListener('change', renderAccounts);
+    sortBy.addEventListener('change', renderAccounts);
+    startDateInput.addEventListener('change', renderAccounts);
+    endDateInput.addEventListener('change', renderAccounts);
+
+    btnClearDates.addEventListener('click', () => {
+      startDateInput.value = '';
+      endDateInput.value = '';
+      renderAccounts();
+    });
+
     document.getElementById('btnRefreshData').addEventListener('click', loadAccounts);
 
     document.getElementById('btnCopyEmails').addEventListener('click', () => {
