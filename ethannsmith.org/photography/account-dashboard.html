@@ -150,8 +150,8 @@
       </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 space-y-6">
+    <!-- Main Content Container with Layout Grid -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-8 py-8 space-y-6">
 
       <!-- KPI Stats Bar -->
       <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -188,99 +188,131 @@
         </div>
       </div>
 
-      <!-- Actions & Filter Bar -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-surface1 border border-borderSubtle space-y-4">
+      <!-- Main Section: Split into Dashboard on Left and Global Action Stream Log Box on Right -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         
-        <!-- Primary Filter Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          
-          <!-- Search Input -->
-          <div class="relative">
-            <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-textSubtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="text" id="searchInput" placeholder="Search UID, Name, or Email..." class="w-full h-10 pl-10 pr-4 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
-          </div>
+        <!-- Left Column: Accounts & Controls (Span 3 Columns) -->
+        <div class="lg:col-span-3 space-y-6">
 
-          <!-- Telemetry Status Filter -->
-          <div>
-            <select id="telemetryFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
-              <option value="ALL">All Consent Statuses</option>
-              <option value="opted_in">Opted In</option>
-              <option value="opted_out">Opted Out</option>
-            </select>
-          </div>
-
-          <!-- Device Type Filter -->
-          <div>
-            <select id="deviceFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
-              <option value="ALL">All Device Types</option>
-              <option value="desktop">Desktop</option>
-              <option value="mobile">Mobile</option>
-              <option value="tablet">Tablet</option>
-              <option value="unknown">Unknown</option>
-            </select>
-          </div>
-
-          <!-- Sort Order Selector -->
-          <div>
-            <select id="sortBy" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
-              <option value="newest">Sort: Newest First</option>
-              <option value="oldest">Sort: Oldest First</option>
-              <option value="name">Sort: Name (A-Z)</option>
-              <option value="activity">Sort: Most Activity</option>
-            </select>
-          </div>
-
-        </div>
-
-        <!-- Secondary Filter Row: Date Range & Action Buttons -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2 border-t border-borderSubtle/50">
-          
-          <!-- Date Created Filter -->
-          <div class="flex items-center gap-2 flex-wrap text-xs text-textSubtle">
-            <span class="font-semibold uppercase text-[10px] tracking-wider text-textSubtle">Date Created:</span>
+          <!-- Actions & Filter Bar -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-surface1 border border-borderSubtle space-y-4">
             
-            <div class="flex items-center gap-1.5">
-              <label for="startDate" class="text-[11px]">From</label>
-              <input type="date" id="startDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+            <!-- Primary Filter Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              
+              <!-- Search Input -->
+              <div class="relative">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-textSubtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="searchInput" placeholder="Search UID, Name, or Email..." class="w-full h-10 pl-10 pr-4 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+              </div>
+
+              <!-- Telemetry Status Filter -->
+              <div>
+                <select id="telemetryFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+                  <option value="ALL">All Consent Statuses</option>
+                  <option value="opted_in">Opted In</option>
+                  <option value="opted_out">Opted Out</option>
+                </select>
+              </div>
+
+              <!-- Device Type Filter -->
+              <div>
+                <select id="deviceFilter" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+                  <option value="ALL">All Device Types</option>
+                  <option value="desktop">Desktop</option>
+                  <option value="mobile">Mobile</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="unknown">Unknown</option>
+                </select>
+              </div>
+
+              <!-- Sort Order Selector -->
+              <div>
+                <select id="sortBy" class="w-full h-10 px-3 bg-surface2 border border-borderSubtle rounded-xl text-xs font-medium text-textMain focus:outline-none focus:border-accentGoogle cursor-pointer">
+                  <option value="newest">Sort: Newest First</option>
+                  <option value="oldest">Sort: Oldest First</option>
+                  <option value="name">Sort: Name (A-Z)</option>
+                  <option value="activity">Sort: Most Activity</option>
+                </select>
+              </div>
+
             </div>
 
-            <div class="flex items-center gap-1.5">
-              <label for="endDate" class="text-[11px]">To</label>
-              <input type="date" id="endDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+            <!-- Secondary Filter Row: Date Range & Action Buttons -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2 border-t border-borderSubtle/50">
+              
+              <!-- Date Created Filter -->
+              <div class="flex items-center gap-2 flex-wrap text-xs text-textSubtle">
+                <span class="font-semibold uppercase text-[10px] tracking-wider text-textSubtle">Date Created:</span>
+                
+                <div class="flex items-center gap-1.5">
+                  <label for="startDate" class="text-[11px]">From</label>
+                  <input type="date" id="startDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                  <label for="endDate" class="text-[11px]">To</label>
+                  <input type="date" id="endDate" class="h-9 px-2.5 bg-surface2 border border-borderSubtle rounded-lg text-xs font-medium text-white focus:outline-none focus:border-accentGoogle">
+                </div>
+
+                <button id="btnClearDates" class="h-9 px-2.5 text-[11px] font-semibold text-textSubtle hover:text-white bg-surface2 hover:bg-surface3 border border-borderSubtle rounded-lg transition-colors">
+                  Clear
+                </button>
+              </div>
+
+              <!-- Global Actions -->
+              <div class="flex items-center gap-3">
+                <button id="btnCopyEmails" class="h-9 px-4 rounded-xl bg-accentGreen hover:bg-accentGreenHover text-emerald-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/40 active:scale-95">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  <span>Copy Emails</span>
+                  <span id="copyEmailCountBadge" class="ml-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-950 text-[10px] font-extrabold">0</span>
+                </button>
+              </div>
+
             </div>
 
-            <button id="btnClearDates" class="h-9 px-2.5 text-[11px] font-semibold text-textSubtle hover:text-white bg-surface2 hover:bg-surface3 border border-borderSubtle rounded-lg transition-colors">
-              Clear
-            </button>
+            <!-- Quick Actions Info Footer -->
+            <div class="flex items-center justify-between text-xs text-textSubtle pt-2 border-t border-borderSubtle flex-wrap gap-2">
+              <div id="filterResultCount">Showing 0 accounts</div>
+              <button id="btnCopyIDs" class="hover:text-white transition-colors flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span>Copy User IDs (UIDs)</span>
+              </button>
+            </div>
+
           </div>
 
-          <!-- Global Actions -->
-          <div class="flex items-center gap-3">
-            <button id="btnCopyEmails" class="h-9 px-4 rounded-xl bg-accentGreen hover:bg-accentGreenHover text-emerald-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-emerald-950/40 active:scale-95">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-              <span>Copy Emails</span>
-              <span id="copyEmailCountBadge" class="ml-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-950 text-[10px] font-extrabold">0</span>
-            </button>
+          <!-- Accounts Container -->
+          <div id="accountsContainer" class="space-y-4">
+            <div class="p-8 text-center text-textSubtle bg-surface1 border border-borderSubtle rounded-2xl">
+              Loading accounts from user_logs...
+            </div>
           </div>
 
         </div>
 
-        <!-- Quick Actions Info Footer -->
-        <div class="flex items-center justify-between text-xs text-textSubtle pt-2 border-t border-borderSubtle flex-wrap gap-2">
-          <div id="filterResultCount">Showing 0 accounts</div>
-          <button id="btnCopyIDs" class="hover:text-white transition-colors flex items-center gap-1">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-            <span>Copy User IDs (UIDs)</span>
-          </button>
+        <!-- Right Column: Global Actions Chronological Log Stream Sidebar (Span 1 Column) -->
+        <div class="lg:col-span-1 sticky top-24">
+          <div class="p-5 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col max-h-[85vh]">
+            <div class="flex items-center justify-between pb-3 border-b border-borderSubtle mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-accentGoogle"></span>
+                <h3 class="font-display font-bold text-sm text-white">Live Activity Log</h3>
+              </div>
+              <span id="actionLogCount" class="text-[10px] font-mono px-2 py-0.5 rounded bg-surface2 text-textSubtle">0 events</span>
+            </div>
+
+            <p class="text-[11px] text-textSubtle mb-3">Chronological feed of user actions across all sessions.</p>
+
+            <!-- Scrollable Log Box -->
+            <div id="globalActionLogBox" class="flex-1 overflow-y-auto space-y-2.5 pr-1 text-xs">
+              <div class="p-4 text-center text-textSubtle italic">
+                Awaiting logs...
+              </div>
+            </div>
+          </div>
         </div>
 
-      </div>
-
-      <!-- Accounts Container -->
-      <div id="accountsContainer" class="space-y-4">
-        <div class="p-8 text-center text-textSubtle bg-surface1 border border-borderSubtle rounded-2xl">
-          Loading accounts from user_logs...
-        </div>
       </div>
 
     </main>
@@ -317,6 +349,8 @@
     const btnLogout = document.getElementById('btnLogout');
 
     const accountsContainer = document.getElementById('accountsContainer');
+    const globalActionLogBox = document.getElementById('globalActionLogBox');
+    const actionLogCount = document.getElementById('actionLogCount');
     const searchInput = document.getElementById('searchInput');
     const telemetryFilter = document.getElementById('telemetryFilter');
     const deviceFilter = document.getElementById('deviceFilter');
@@ -384,6 +418,7 @@
 
         updateStats();
         renderAccounts();
+        renderGlobalActionLog();
       } catch (error) {
         console.error("Error loading user_logs:", error);
         statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
@@ -395,6 +430,8 @@
             <p class="text-xs text-textSubtle">Reason: ${error.message}</p>
             <p class="text-xs text-textSubtle">If permission was denied, ensure your Firestore Rules allow reads on <code>user_logs</code>.</p>
           </div>`;
+
+        globalActionLogBox.innerHTML = `<div class="p-4 text-center text-red-400 text-xs">Failed to load logs</div>`;
       }
     }
 
@@ -437,6 +474,67 @@
       if (platform.includes('win') || platform.includes('mac') || platform.includes('linux') || userAgent.includes('mozilla')) return 'desktop';
       
       return 'unknown';
+    }
+
+    // Render Global Chronological Action Box (User, Time, Action)
+    function renderGlobalActionLog() {
+      const allActions = [];
+
+      allAccounts.forEach(acc => {
+        const userName = acc.userName || acc.userEmail || acc.userId || 'Anonymous User';
+        const interactions = Array.isArray(acc.interactions) ? acc.interactions : [];
+
+        // Add explicit interactions array items
+        interactions.forEach(item => {
+          allActions.push({
+            user: userName,
+            action: item.action || 'Unknown Action',
+            details: item.fileName || item.galleryName || '',
+            timestamp: parseDate(item.timestamp) || new Date(0)
+          });
+        });
+
+        // Add lastAction if present and not duplicated
+        if (acc.lastAction && acc.lastActiveAt) {
+          const actionTime = parseDate(acc.lastActiveAt);
+          if (actionTime) {
+            allActions.push({
+              user: userName,
+              action: acc.lastAction,
+              details: '',
+              timestamp: actionTime
+            });
+          }
+        }
+      });
+
+      // Sort all logged actions by date descending (Newest first)
+      allActions.sort((a, b) => b.timestamp - a.timestamp);
+
+      actionLogCount.innerText = `${allActions.length} actions`;
+
+      if (allActions.length === 0) {
+        globalActionLogBox.innerHTML = `
+          <div class="p-4 text-center text-textSubtle text-xs italic">
+            No action events recorded yet.
+          </div>`;
+        return;
+      }
+
+      globalActionLogBox.innerHTML = allActions.map(log => `
+        <div class="p-2.5 rounded-xl bg-surface2/60 border border-borderSubtle/60 hover:border-borderActive transition-all space-y-1">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold text-white truncate max-w-[130px]" title="${log.user}">${log.user}</span>
+            <span class="text-[10px] font-mono text-textSubtle">${log.timestamp ? log.timestamp.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'N/A'}</span>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <span class="px-1.5 py-0.5 rounded bg-accentGoogle/10 text-amber-400 font-mono text-[10px] font-semibold uppercase truncate">
+              ${log.action}
+            </span>
+            ${log.details ? `<span class="text-[10px] text-textSubtle truncate font-mono" title="${log.details}">${log.details}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
     }
 
     function renderAccounts() {
@@ -622,15 +720,22 @@
 
     document.getElementById('btnCopyEmails').addEventListener('click', () => {
       const emails = allAccounts.map(a => a.userEmail).filter(e => e && e !== 'No Email Provided');
-      const uniqueEmails = [...new Set(emails)].join(', ');
-      navigator.clipboard.writeText(uniqueEmails);
-      alert(`${uniqueEmails ? emails.length : 0} Email address(es) copied to clipboard!`);
+      if (emails.length > 0) {
+        navigator.clipboard.writeText(emails.join(', '));
+        alert(`Copied ${emails.length} emails to clipboard!`);
+      } else {
+        alert('No valid emails to copy.');
+      }
     });
 
     document.getElementById('btnCopyIDs').addEventListener('click', () => {
-      const ids = allAccounts.map(a => a.userId || a.id).join('\n');
-      navigator.clipboard.writeText(ids);
-      alert('User UIDs copied to clipboard!');
+      const ids = allAccounts.map(a => a.userId || a.id).filter(Boolean);
+      if (ids.length > 0) {
+        navigator.clipboard.writeText(ids.join(', '));
+        alert(`Copied ${ids.length} User IDs to clipboard!`);
+      } else {
+        alert('No user IDs found to copy.');
+      }
     });
   </script>
 </body>
