@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scoreboard Control</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #0d0d0d;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  color: #00bfff;
+  margin-bottom: 20px;
+}
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 900px;
+}
+.card {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 0 10px #000;
+}
+.card b {
+  display: block;
+  margin-bottom: 8px;
+  color: #00bfff;
+  font-size: 1.1em;
+}
+.card input,
+.card select,
+.card button {
+  font-size: 1em;
+  border: none;
+  border-radius: 8px;
+  background: #333;
+  color: #fff;
+  padding: 10px 15px;
+  margin: 6px 0;
+  width: 90%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.card input[type="range"] {
+  width: 90%;
+}
+.card button:hover,
+.card input:hover,
+.card select:hover {
+  background: #555;
+}
+#connectBtn {
+  background: #0077cc;
+  font-weight: bold;
+}
+#disconnectBtn {
+  background: #b22222;
+  font-weight: bold;
+}
+#yardsDisplay {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #00ff88;
+  margin-top: 4px;
+}
+#liveReadout {
+  margin-top: 30px;
+  background: #141414;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 0 10px #000;
+}
+#liveReadout h2 {
+  color: #00bfff;
+  margin-bottom: 10px;
+}
+.live-values {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 1.1em;
+}
+.live-item span {
+  display: block;
+  font-weight: bold;
+  color: #00ff88;
+  margin-top: 4px;
+}
+
+/* New styles for down buttons */
+.down-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.down-buttons button {
+  flex: 1;
+  background: #333;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+.down-buttons button.active {
+  background: #00bfff;
+  color: #fff;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+<h1><i class="fa-solid fa-sliders"></i> Scoreboard Control</h1>
+
+<div class="dashboard">
+  <!-- Team Names -->
+  <div class="card">
+    <b>Teams</b>
+    <input id="homeName" type="text" value="DOVER" placeholder="Home Team" oninput="updateTeam('home')">
+    <input id="awayName" type="text" value="LINSLY" placeholder="Away Team" oninput="updateTeam('away')">
+  </div>
+
+  <!-- Scores -->
+  <div class="card">
+    <b>Scores</b>
+    <button onclick="score('home', 1)">+1 Home</button>
+    <button onclick="score('home', 6)">+6 Home</button>
+    <button onclick="score('home', -1)">-1 Home</button>
+    <button onclick="score('away', 1)">+1 Away</button>
+    <button onclick="score('away', 6)">+6 Away</button>
+    <button onclick="score('away', -1)">-1 Away</button>
+  </div>
+
+  <!-- Quarter / Down / Distance -->
+  <div class="card">
+    <b>Game Info</b>
+
+    <label>Quarter</label>
+    <select id="quarterSelect" onchange="updateQuarter()">
+      <option value="1">1st</option>
+      <option value="2">2nd</option>
+      <option value="3">3rd</option>
+      <option value="4">4th</option>
+      <option value="OT">OT</option>
+    </select>
+
+    <label>Down</label>
+    <div class="down-buttons">
+      <button id="down1" onclick="setDown(1)">1st</button>
+      <button id="down2" onclick="setDown(2)">2nd</button>
+      <button id="down3" onclick="setDown(3)">3rd</button>
+      <button id="down4" onclick="setDown(4)">4th</button>
+    </div>
+
+    <label>Yards To Go</label>
+    <input id="yardsSlider" type="range" min="0" max="30" value="10" oninput="showYards()">
+    <div id="yardsDisplay">10</div>
+
+    <button onclick="setYards()">Set</button>
+    <button onclick="resetDownDistance()" style="background:#444;">Reset 1st & 10</button>
+  </div>
+
+  <!-- Firebase Connect -->
+  <div class="card" style="grid-column: span 3;">
+    <b>Database Connection</b>
+    <button id="connectBtn" onclick="connectFirebase()"><i class="fa-solid fa-plug"></i> Connect</button>
+    <button id="disconnectBtn" onclick="disconnectFirebase()"><i class="fa-solid fa-power-off"></i> Disconnect</button>
+  </div>
+</div>
+
+<!-- Live Readout -->
+<div id="liveReadout">
+  <h2>Live Scoreboard Readout</h2>
+  <div class="live-values">
+    <div class="live-item">Home Team<span id="liveHome">--</span></div>
+    <div class="live-item">Away Team<span id="liveAway">--</span></div>
+    <div class="live-item">Home Score<span id="liveScoreHome">--</span></div>
+    <div class="live-item">Away Score<span id="liveScoreAway">--</span></div>
+    <div class="live-item">Quarter<span id="liveQuarter">--</span></div>
+    <div class="live-item">Down + Yards<span id="liveDown">--</span></div>
+    <!-- <div class="live-item">Yards<span id="liveYards">--</span></div> -->
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, set, get, child, onValue, off } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZjXZtfqEscgVBYOYDZS-vRwxBuXuVsbQ",
+  authDomain: "email-list-83dfb.firebaseapp.com",
+  databaseURL: "https://email-list-83dfb-default-rtdb.firebaseio.com",
+  projectId: "email-list-83dfb",
+  storageBucket: "email-list-83dfb.firebasestorage.app",
+  messagingSenderId: "471452404510",
+  appId: "1:471452404510:web:e91752174f6f0000c1570f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const sbRef = ref(db, "scoreboard");
+let listenerAttached = false;
+
+let state = {
+  home: "DOVER",
+  away: "LINSLY",
+  score: { home: 0, away: 0 },
+  quarter: "1",
+  down: 1,
+  yards: 10
+};
+
+async function connectFirebase() {
+  const btn = document.getElementById("connectBtn");
+  btn.textContent = "Connecting...";
+  btn.disabled = true;
+
+  try {
+    const snap = await get(child(ref(db), "scoreboard"));
+    if (!snap.exists()) await set(sbRef, state);
+    else state = snap.val();
+
+    if (!listenerAttached) {
+      onValue(sbRef, (s) => {
+        state = s.val();
+        updateLiveReadout();
+        highlightDownButton(state.down);
+      });
+      listenerAttached = true;
+    }
+
+    await set(sbRef, state);
+    btn.textContent = "Connected ✅";
+    btn.style.background = "#228B22";
+  } catch (err) {
+    console.error(err);
+    btn.textContent = "Error ❌";
+    btn.style.background = "#b22222";
+    btn.disabled = false;
+  }
+}
+
+async function disconnectFirebase() {
+  try {
+    off(sbRef);
+    listenerAttached = false;
+    await set(sbRef, {
+      home: "",
+      away: "",
+      score: { home: 0, away: 0 },
+      quarter: "",
+      down: 0,
+      yards: 0
+    });
+    document.getElementById("connectBtn").textContent = "Connect";
+    document.getElementById("connectBtn").disabled = false;
+    document.getElementById("connectBtn").style.background = "#0077cc";
+    updateLiveReadout({
+      home: "--",
+      away: "--",
+      score: { home: "--", away: "--" },
+      quarter: "--",
+      down: "--",
+      yards: "--"
+    });
+    highlightDownButton(null);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function save() {
+  set(sbRef, state);
+  updateLiveReadout();
+}
+
+function updateTeam(team) {
+  state[team] = document.getElementById(team + "Name").value.toUpperCase();
+  save();
+}
+
+function score(team, value) {
+  state.score[team] = Math.max(0, state.score[team] + value);
+  save();
+}
+
+function updateQuarter() {
+  state.quarter = document.getElementById("quarterSelect").value;
+  save();
+}
+
+function setDown(downNum) {
+  state.down = downNum;
+  highlightDownButton(downNum);
+  save();
+}
+
+function highlightDownButton(activeDown) {
+  for (let i = 1; i <= 4; i++) {
+    const btn = document.getElementById("down" + i);
+    if (btn) btn.classList.toggle("active", i === activeDown);
+  }
+}
+
+function showYards() {
+  const val = parseInt(document.getElementById("yardsSlider").value);
+  document.getElementById("yardsDisplay").innerText = val <= 0 ? "GOAL" : val;
+}
+
+function setYards() {
+  const val = parseInt(document.getElementById("yardsSlider").value);
+  state.yards = val <= 1 ? 0 : val;
+  save();
+}
+
+function resetDownDistance() {
+  state.down = 1;
+  state.yards = 10;
+  document.getElementById("yardsSlider").value = 10;
+  document.getElementById("yardsDisplay").innerText = "10";
+  highlightDownButton(1);
+  save();
+}
+
+function updateLiveReadout(customState) {
+  const s = customState || state;
+  document.getElementById("liveHome").innerText = s.home;
+  document.getElementById("liveAway").innerText = s.away;
+  document.getElementById("liveScoreHome").innerText = s.score.home;
+  document.getElementById("liveScoreAway").innerText = s.score.away;
+  document.getElementById("liveQuarter").innerText = s.quarter;
+  const downText = ["", "1st", "2nd", "3rd", "4th"][s.down] || "--";
+const distanceText = s.yards <= 1 ? "Goal" : `${s.yards}`;
+document.getElementById("liveDown").innerText = `${downText} & ${distanceText}`;
+document.getElementById("liveYards").innerText = "";
+
+}
+
+highlightDownButton(state.down);
+
+window.connectFirebase = connectFirebase;
+window.disconnectFirebase = disconnectFirebase;
+window.updateTeam = updateTeam;
+window.score = score;
+window.updateQuarter = updateQuarter;
+window.setDown = setDown;
+window.showYards = showYards;
+window.setYards = setYards;
+window.resetDownDistance = resetDownDistance;
+</script>
+</body>
+</html>
