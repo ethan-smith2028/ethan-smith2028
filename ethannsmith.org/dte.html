@@ -29,6 +29,14 @@ a {
   text-decoration: none;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+  /* Improves sharpness on scaled images across modern browsers */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -68,6 +76,15 @@ a {
   background-color: #ea7511;
   margin: 10px auto 0;
   border-radius: 2px;
+}
+
+.subsection-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 60px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 /* ==========================================
@@ -189,6 +206,47 @@ a {
 }
 
 /* ==========================================
+   NOTES & TALK SECTION
+   ========================================== */
+.notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.notes-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notes-content li {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.notes-content li::before {
+  content: "\f00c";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 2px;
+  color: #ea7511;
+}
+
+.notes-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  object-fit: cover;
+}
+
+/* ==========================================
    PROJECTS / WORK SECTION
    ========================================== */
 .projects-grid {
@@ -279,6 +337,68 @@ a {
 }
 
 /* ==========================================
+   PROJECT GALLERY & CAPTIONS
+   ========================================== */
+.project-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.gallery-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-image-wrapper {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+  /* Centering properties added below: */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-image-wrapper img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain; /* Changed from 'cover' to 'contain' so it scales neatly without clipping */
+  transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image-wrapper img {
+  transform: scale(1.03);
+}
+
+.gallery-caption {
+  padding: 20px;
+}
+
+.gallery-caption h4 {
+  font-size: 1.1rem;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.gallery-caption p {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ==========================================
    FOOTER & CONTACT FORM
    ========================================== */
 .footer {
@@ -298,7 +418,7 @@ a {
    RESPONSIVE DESIGN
    ========================================== */
 @media (max-width: 768px) {
-  .about-grid {
+  .about-grid, .notes-grid {
     grid-template-columns: 1fr;
     text-align: center;
   }
@@ -313,7 +433,7 @@ a {
     text-align: center;
   }
 
-  .projects-grid {
+  .projects-grid, .project-gallery-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -323,14 +443,16 @@ a {
    ========================================== */
 .header-banner {
   width: 100%;
-  height: 200px;
+  max-height: 350px;
   overflow: hidden;
   position: relative;
+  background-color: #0f172a;
 }
 
 .header-banner img {
   width: 100%;
   height: 100%;
+  max-height: 350px;
   object-fit: cover;
   display: block;
 }
@@ -339,7 +461,7 @@ a {
 
 <body>
 
-    <header class="header-banner">
+<header class="header-banner">
   <img src="ethan smith (1).png" alt="Ethan Smith Design & Entrepreneurship Header">
 </header>
 
@@ -350,7 +472,7 @@ a {
       <p>
         I'm Ethan Smith — a designer and aspiring entrepreneur passionate about 
         solving real-world problems. I blend empathy, 
-        rapid prototyping, and business strategy to build a multitude solutions.
+        rapid prototyping, and business strategy to build a multitude of solutions.
       </p>
     </div>
 
@@ -384,6 +506,24 @@ a {
       <p>
         The quintessential thought leader, the Catalyst is what John F. Kennedy called “an idealist without illusions.” Your expansive vision is grounded in rigorous thought, rooted in an honest assessment of the problems at hand. While you see clearly what’s not working, your real passion lies in discovering what does work.
       </p>
+    </div>
+  </div>
+</section>
+
+<!-- EMPATHIZE INTERVIEW SECTION -->
+<section id="talk-notes" class="section alt">
+  <h2 class="section-title">Empathize Interview</h2>
+  <div class="container notes-grid">
+    <div class="notes-content">
+      <ul>
+        <li>When Interviewing: Come prepared, use open-ended questions, listen actively.</li>
+        <li>Build rapport with the interviewee to create a comfortable environment.</li>
+        <li>Take notes during the interview to capture key insights and quotes.</li>
+      </ul>
+    </div>
+    <div class="notes-image">
+      <!-- High-resolution Unsplash URL (w=1600&q=90) -->
+      <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1600&q=90" alt="Discussion & Notes Session">
     </div>
   </div>
 </section>
@@ -442,18 +582,56 @@ a {
       <h3><i class="fas fa-presentation-screen"></i> Ms. Defazio Presentation</h3>
       
       <!-- Embedded Canva Presentation -->
-     <div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
- padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https://www.canva.com/design/DAHVRhy7MRI/WYkh5VyiTrYe249tIgUkVA/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>
-<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAHVRhy7MRI&#x2F;WYkh5VyiTrYe249tIgUkVA&#x2F;view?utm_content=DAHVRhy7MRI&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">
+      <div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%; padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden; border-radius: 8px; will-change: transform;">
+        <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0;"
+          src="https://www.canva.com/design/DAHVRhy7MRI/WYkh5VyiTrYe249tIgUkVA/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+        </iframe>
+      </div>
 
       <div class="project-subtitle">Feedback + Takeaways</div>
       <p>The kitchen staff were very grateful for the feedback from the students. They are excited to implement the suggestions and improve the dining experience.</p>
     </div>
+  </div>
+
+  <!-- PROJECT GALLERY SUBSECTION -->
+  <h3 class="subsection-title">Project Visuals & Highlights</h3>
+  <div class="project-gallery-grid">
+    
+    <!-- Gallery Item 1 -->
+    <div class="gallery-card">
+      <div class="gallery-image-wrapper">
+        <!-- High-resolution Unsplash URL (w=1200&q=90) -->
+        <img src="https://images.unsplash.com/photo-1542744094-3a3121699563?auto=format&fit=crop&w=1200&q=90" alt="School Theme Poster Concept">
+      </div>
+      <div class="gallery-caption">
+        <h4>School Theme Poster</h4>
+        <p>Final poster design iteration blending vibrant school branding with student feedback on layout and footers.</p>
+      </div>
+    </div>
+
+    <!-- Gallery Item 2 -->
+    <div class="gallery-card">
+      <div class="gallery-image-wrapper">
+        <img src="https://i.postimg.cc/zB0WSX27/logo-write.png" alt="The Write Way Logo Concepts">
+      </div>
+      <div class="gallery-caption">
+        <h4>The Write Way Logo</h4>
+        <p>Final logo design for Ms. Zatezalo's writing class, incorporating student feedback and preferences.</p>
+      </div>
+    </div>
+
+    <!-- Gallery Item 3 -->
+    <div class="gallery-card">
+      <div class="gallery-image-wrapper">
+        <!-- High-resolution Unsplash URL (w=1200&q=90) -->
+        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=90" alt="Dining Consultation Session">
+      </div>
+      <div class="gallery-caption">
+        <h4>Ms. Defazio Dining Pitch</h4>
+        <p>Highlights from the final presentation given to kitchen staff detailing student dorm dinner preferences.</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
