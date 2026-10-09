@@ -752,9 +752,9 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
-           <button class="btn-primary" id="btnStartStory" disabled style="opacity: 0.6; cursor: not-allowed;">
-    <i class="fa-solid fa-book-journal-whills"></i> Story Mode (Coming Soon)
-</button>
+            <button class="btn-primary" id="btnStartStory" disabled>
+                <i class="fa-solid fa-book-journal-whills"></i> Story / Fill-in-the-Blank
+            </button>
             <button class="btn-secondary" id="btnStartHearing" disabled style="margin-bottom: 0;">
                 <i class="fa-solid fa-ear-listen"></i> Hearing Mode (Spelling)
             </button>
@@ -862,6 +862,28 @@
     const provider = new GoogleAuthProvider();
 
     const MW_API_KEY = 'b481d051-fde2-44a3-bda6-4c3a85529c2d';
+
+    // AUDIO SOUND EFFECTS
+    const completionAudio = new Audio('web/music/completion.mp3');
+    const correctAudio = new Audio('web/sounds/correct.mp3');
+    const incorrectAudio = new Audio('web/sounds/incorrect.mp3');
+
+    function playAudioFeedback(type) {
+        try {
+            if (type === 'correct') {
+                correctAudio.currentTime = 0;
+                correctAudio.play().catch(() => {});
+            } else if (type === 'incorrect') {
+                incorrectAudio.currentTime = 0;
+                incorrectAudio.play().catch(() => {});
+            } else if (type === 'completion') {
+                completionAudio.currentTime = 0;
+                completionAudio.play().catch(() => {});
+            }
+        } catch (e) {
+            console.warn("Audio playback error:", e);
+        }
+    }
 
     let originalWordList = [];
     let wordList = [];
@@ -1089,10 +1111,10 @@
     }
 
     function enableModeButtons(enabled) {
-    btnStartStory.disabled = true; // Always stays disabled while in development
-    btnStartHearing.disabled = !enabled;
-    btnStartDefinition.disabled = !enabled;
-}
+        btnStartStory.disabled = !enabled;
+        btnStartHearing.disabled = !enabled;
+        btnStartDefinition.disabled = !enabled;
+    }
 
     unitSelect.addEventListener('change', () => {
         const selectedKey = unitSelect.value;
@@ -1223,6 +1245,7 @@
 
         if (isCorrect) {
             score++;
+            playAudioFeedback('correct');
             userAttemptInput.classList.add('correct');
             showFeedback(spellingFeedback, true, `<i class="fa-solid fa-circle-check"></i> Correct!`);
             
@@ -1235,6 +1258,7 @@
                 nextQuestion();
             }, 1000);
         } else {
+            playAudioFeedback('incorrect');
             userAttemptInput.classList.add('incorrect');
             incorrectAttempts.push({
                 question: `Spelling Word #${currentIndex + 1}`,
@@ -1307,7 +1331,6 @@
         return null;
     }
 
-    // DYNAMIC DICTIONARY-API INTEGRATED STORY GENERATOR
     async function loadStoryQuiz() {
         storyContent.innerHTML = "Fetching real context sentences and constructing dynamic story...";
 
@@ -1327,11 +1350,9 @@
             let rawSentence = await fetchSentenceFromDictionaryApi(targetWord);
 
             if (rawSentence) {
-                // Strip the target word and turn it into an input field
                 const regex = new RegExp(`\\b${targetWord}(s|ed|ing|es)?\\b`, 'gi');
                 rawSentence = rawSentence.replace(regex, `<input type="text" class="story-input" data-target="${targetWord}" autocomplete="off" />`);
 
-                // Prepend narrative connectors to every second or third sentence to make it flow like a passage
                 if (i > 0 && i % 2 === 0) {
                     const connector = connectors[Math.floor(Math.random() * connectors.length)];
                     rawSentence = `${connector} ${rawSentence.charAt(0).toLowerCase()}${rawSentence.slice(1)}`;
@@ -1343,7 +1364,6 @@
             }
         }
 
-        // Group sentences into dynamic paragraphs of 2-3 sentences each
         let paragraphHTML = "";
         for (let i = 0; i < constructedSentences.length; i += 3) {
             const chunk = constructedSentences.slice(i, i + 3).join(" ");
@@ -1449,6 +1469,7 @@
         const isCorrect = selectedValue.toLowerCase() === correctValue.toLowerCase();
 
         if (isCorrect) {
+            playAudioFeedback('correct');
             selectedBtn.classList.add('opt-correct');
             score++;
             showFeedback(definitionFeedback, true, `<i class="fa-solid fa-circle-check"></i> Correct choice!`);
@@ -1458,6 +1479,7 @@
                 nextQuestion();
             }, 1000);
         } else {
+            playAudioFeedback('incorrect');
             selectedBtn.classList.add('opt-incorrect');
             buttons.forEach(btn => {
                 if (btn.textContent.toLowerCase() === correctValue.toLowerCase()) {
@@ -1517,6 +1539,9 @@
         quizScreen.classList.add('hidden');
         resultsScreen.classList.remove('hidden');
         mainContainer.classList.remove('wide-mode');
+
+        // Play completion sound effect
+        playAudioFeedback('completion');
 
         const percentage = Math.round((score / wordList.length) * 100) || 0;
         finalScore.textContent = `${percentage}%`;
