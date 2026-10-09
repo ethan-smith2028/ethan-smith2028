@@ -3,280 +3,727 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling & Syllable Practice</title>
+    <title>Spelling & Vocabulary Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --secondary: #d97706;
-            --secondary-hover: #b45309;
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #eef2ff;
+            --secondary: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --bg-main: #f8fafc;
+            --surface-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
             --success: #10b981;
-            --success-hover: #059669;
-            --success-bg: #ecfdf5;
-            --error: #ef4444;
-            --error-bg: #fef2f2;
-            --border: #e5e7eb;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --error: #f43f5e;
+            --error-bg: #fff1f2;
+            --error-border: #fecdd3;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.03);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background: var(--bg-gradient);
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 0 16px 40px 16px;
+            color: var(--text-main);
         }
 
-        .container {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 35px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        /* TOP NAVIGATION HEADER */
+        .top-navbar {
             width: 100%;
-            max-width: 480px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            max-width: 720px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            margin-bottom: 32px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-top: none;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-auth {
+            background-color: var(--text-main);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-auth:hover {
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .btn-create-nav {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-create-nav:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-auth-logout {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-auth-logout:hover {
+            background-color: var(--error-bg);
+            color: var(--error);
+            border-color: var(--error-border);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            background: var(--surface-card);
+            padding: 40px 36px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 520px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
         }
 
         .header h2 {
+            font-family: 'Outfit', sans-serif;
             color: var(--text-main);
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.03em;
         }
 
-        .progress-badge {
-            display: inline-block;
-            background: #e0e7ff;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 13px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-top: 6px;
+        .progress-container {
+            width: 100%;
+            background-color: #f1f5f9;
+            border-radius: 99px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 99px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .section {
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
         }
 
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        input[type="text"], input[type="password"] {
+        input[type="text"], textarea, select {
             width: 100%;
             padding: 14px 16px;
-            font-size: 18px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
+            font-size: 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
             outline: none;
-            transition: all 0.25s ease;
-            background-color: #fff;
+            transition: all 0.2s ease;
+            background-color: #ffffff;
             color: var(--text-main);
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        textarea {
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
         }
 
-        .toggle-peek {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
+        select {
             cursor: pointer;
-            font-size: 18px;
-            color: var(--text-muted);
-            opacity: 0.6;
-            padding: 4px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%20%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 18px;
+            padding-right: 40px;
         }
 
-        .toggle-peek:hover {
-            opacity: 1;
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
         }
 
         input.correct {
             border-color: var(--success) !important;
             background-color: var(--success-bg) !important;
             color: #065f46 !important;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
         }
 
         input.incorrect {
             border-color: var(--error) !important;
             background-color: var(--error-bg) !important;
             color: #991b1b !important;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2) !important;
-            animation: shake 0.3s ease-in-out;
+            animation: shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-
-        .button-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        .nav-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
         button {
             border: none;
-            border-radius: 10px;
-            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         button:active {
-            transform: scale(0.97);
+            transform: scale(0.98);
         }
 
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            filter: grayscale(20%);
         }
 
-        .btn-audio {
-            flex: 1;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-normal {
+        .btn-primary {
             background-color: var(--primary);
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
         }
 
-        .btn-normal:hover:not(:disabled) {
+        .btn-primary:hover:not(:disabled) {
             background-color: var(--primary-hover);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
         }
 
-        .btn-slow {
-            background-color: var(--secondary);
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            width: 100%;
+            font-size: 15px;
+            margin-bottom: 12px;
         }
 
-        .btn-slow:hover:not(:disabled) {
-            background-color: var(--secondary-hover);
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #e2e8f0;
+            border-color: var(--border-hover);
         }
 
         .btn-submit {
-            background-color: var(--success);
+            background-color: var(--text-main);
             color: white;
             width: 100%;
-            margin-top: 10px;
-            font-size: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 12px;
+            font-size: 15px;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-submit:hover:not(:disabled) {
-            background-color: var(--success-hover);
+            background-color: #000000;
+            transform: translateY(-1px);
         }
 
-        .btn-nav {
-            background-color: #f3f4f6;
-            color: var(--text-main);
+        .practice-box {
+            background: #f8fafc;
             border: 1px solid var(--border);
-            flex: 1;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .btn-nav:hover:not(:disabled) {
-            background-color: #e5e7eb;
+        .practice-sentence {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: 500;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-option {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
+            padding: 14px;
+            font-size: 15px;
+            border-radius: var(--radius-md);
+            width: 100%;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-option:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-option.opt-correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-option.opt-incorrect {
+            background-color: var(--error) !important;
+            color: white !important;
+            border-color: var(--error) !important;
+        }
+
+        /* INLINE FEEDBACK BANNER */
+        .feedback-banner {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feedback-banner.correct {
+            background-color: var(--success-bg);
+            color: #047857;
+            border: 1px solid var(--success-border);
+        }
+
+        .feedback-banner.incorrect {
+            background-color: var(--error-bg);
+            color: #b91c1c;
+            border: 1px solid var(--error-border);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RESULTS SCREEN & MISSED REVIEW */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 6px solid var(--primary-light);
+            box-shadow: var(--shadow-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px auto;
+        }
+
+        .review-section {
+            text-align: left;
+            margin-top: 28px;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+        }
+
+        .review-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .review-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 99px;
+        }
+
+        .review-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--error);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+        }
+
+        .review-prompt {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .review-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .wrong-text {
+            color: var(--error);
+            font-weight: 600;
+            text-decoration: line-through;
+        }
+
+        .right-text {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 440px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            opacity: 0.8;
+            border-radius: 2px;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 20px;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h2>Spelling Practice</h2>
-        <span class="progress-badge" id="progressCounter">Loading...</span>
+<!-- TOP HEADER -->
+<nav class="top-navbar">
+    <div class="brand-logo">
+        <i class="fa-solid fa-graduation-cap"></i> Lexicon
     </div>
-
-    <!-- Hidden Target Word Field -->
-    <div class="section">
-        <label for="targetWord">Current Word (Hidden):</label>
-        <div class="input-wrapper">
-            <input type="password" id="targetWord" readonly placeholder="Connecting to Firebase...">
-            <button class="toggle-peek" id="btnPeek" title="Peek at Word"><i class="fa-solid fa-eye" id="peekIcon"></i></button>
-        </div>
-        <div class="nav-group">
-            <button class="btn-nav" id="btnPrev" disabled><i class="fa-solid fa-arrow-left"></i> Prev</button>
-            <button class="btn-nav" id="btnRandom" disabled><i class="fa-solid fa-dice"></i> Random</button>
-            <button class="btn-nav" id="btnNext" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-    </div>
-
-    <!-- Audio Speech Controls -->
-    <div class="section">
-        <label>Listen to the Word:</label>
-        <div class="button-group">
-            <button class="btn-audio btn-normal" id="btnRead" disabled><i class="fa-solid fa-volume-high"></i> Full Word</button>
-            <button class="btn-audio btn-slow" id="btnSoundOut" disabled><i class="fa-solid fa-comments"></i> Syllables</button>
+    <div class="user-panel">
+        <button id="btnLogin" class="btn-auth">
+            <i class="fa-brands fa-google"></i> Sign In
+        </button>
+        <div id="userInfo" class="user-profile hidden">
+            <button id="btnOpenCreateModalNav" class="btn-create-nav">
+                <i class="fa-solid fa-plus"></i> Unit
+            </button>
+            <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+            <span id="userName">User</span>
+            <button id="btnLogout" class="btn-auth btn-auth-logout">Logout</button>
         </div>
     </div>
+</nav>
 
-    <!-- User Guess Box & Submit Button -->
-    <div class="section">
-        <label for="userAttempt">Type what you hear:</label>
-        <input type="text" id="userAttempt" placeholder="Type your spelling..." autocomplete="off" disabled>
-        <button class="btn-submit" id="btnSubmit" disabled>Check Answer</button>
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- CREATE UNIT MODAL -->
+<div id="createUnitModal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="header" style="margin-bottom: 20px; text-align: left;">
+            <h3 style="font-size: 20px; font-family: 'Outfit', sans-serif;">Create New Unit</h3>
+        </div>
+        <div class="section">
+            <label for="newUnitName">Unit Name</label>
+            <input type="text" id="newUnitName" placeholder="e.g. Unit 3 - Animals">
+        </div>
+        <div class="section">
+            <label for="newUnitWords">Word List (Comma Separated)</label>
+            <textarea id="newUnitWords" placeholder="apple, banana, cherry, elephant"></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button type="button" id="btnCancelUnit" class="btn-secondary" style="margin: 0;">Cancel</button>
+            <button type="button" id="btnSaveUnit" class="btn-primary" style="margin: 0; padding: 12px;">Save Unit</button>
+        </div>
     </div>
 </div>
 
-<!-- Firebase Modular SDK & Application Logic -->
+<div class="container">
+    <!-- START SCREEN -->
+    <div id="startScreen">
+        <div class="header">
+            <h2>Spelling & Vocabulary</h2>
+            <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px;" id="startSubtitle">Loading units...</p>
+        </div>
+
+        <!-- UNIT SELECTION DROPDOWN -->
+        <div class="section hidden" id="unitSelectionSection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label for="unitSelect" style="margin: 0;">Select Word Unit</label>
+                <button type="button" id="btnOpenCreateModal" style="background: none; border: none; color: var(--primary); font-size: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <i class="fa-solid fa-plus"></i> New Unit
+                </button>
+            </div>
+            <select id="unitSelect">
+                <option value="">-- Choose a Unit --</option>
+            </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
+            <button class="btn-primary" id="btnStartHearing" disabled>
+                <i class="fa-solid fa-ear-listen"></i> Hearing Mode (Spelling)
+            </button>
+            <button class="btn-secondary" id="btnStartDefinition" disabled style="margin-bottom: 0;">
+                <i class="fa-solid fa-book-open"></i> Definition Mode
+            </button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quizScreen" class="hidden">
+        <div class="header">
+            <h2 id="quizTitle">Spelling Quiz</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- HEARING / SPELLING MODE CONTROLS -->
+        <div id="hearingModeContainer">
+            <div class="section">
+                <button type="button" class="btn-secondary" id="btnRepeatAudio" style="margin-bottom: 16px;">
+                    <i class="fa-solid fa-volume-high"></i> Repeat Word Audio
+                </button>
+                <label for="speedSelect">Voice Speed</label>
+                <select id="speedSelect">
+                    <option value="1.0">Normal Speed</option>
+                    <option value="0.7">Slow (0.7x)</option>
+                    <option value="0.5">Slower (0.5x)</option>
+                </select>
+            </div>
+
+            <div class="section">
+                <label for="userAttempt">Type what you hear</label>
+                <input type="text" id="userAttempt" placeholder="Type your spelling..." autocomplete="off">
+                <button class="btn-submit" id="btnSubmit">Submit Answer</button>
+                <div id="spellingFeedback" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- DEFINITION / SENTENCE PRACTICE MODE CONTROLS -->
+        <div id="definitionModeContainer" class="hidden">
+            <div class="practice-box">
+                <div class="practice-sentence" id="practiceSentenceText">Loading sentence...</div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+            <div id="definitionFeedback" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="resultsScreen" class="hidden">
+        <div class="results-container">
+            <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px;">Quiz Completed!</h2>
+            <div class="score-circle" id="finalScore">0%</div>
+            <p id="scoreDetails" style="color: var(--text-muted); font-weight: 500; font-size: 14px; margin-bottom: 12px;">You got 0 out of 0 correct</p>
+            
+            <!-- REVIEW MISSED QUESTIONS SECTION -->
+            <div id="reviewSection" class="review-section hidden">
+                <div class="review-title">
+                    <i class="fa-solid fa-circle-xmark" style="color: var(--error);"></i> Missed Questions Review
+                </div>
+                <div class="review-list" id="reviewList"></div>
+            </div>
+
+            <button class="btn-primary" id="btnRestart" style="margin-top: 24px;"><i class="fa-solid fa-rotate-right"></i> Try Again</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCTg2zD5R8JBbifnPenLJZH39HqqEqvDWM",
@@ -288,228 +735,558 @@
         measurementId: "G-2QSK5LW01S"
     };
 
-    // ElevenLabs API Configuration
-    const ELEVENLABS_API_KEY = "sk_259bc2ab209bb0fe7f5ac840e2173d699e5d3a87c0eefc60";
-    const VOICE_ID = "pNInz6obpgDQGcFmaJgB"; // Default Rachel voice ID
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    // Feedback Sounds
-    const correctAudio = new Audio('sounds/correct.mp3');
-    const incorrectAudio = new Audio('sounds/incorrect.mp3');
+    const MW_API_KEY = 'b481d051-fde2-44a3-bda6-4c3a85529c2d';
 
     let wordList = [];
+    let unitsData = {};
     let currentIndex = 0;
-    let currentRawWord = "";
-    let activeAudio = null;
+    let score = 0;
+    let currentMode = 'hearing';
+    let currentUser = null;
+    let incorrectAttempts = [];
 
-    const targetInput = document.getElementById('targetWord');
+    const synth = window.speechSynthesis;
+
+    const btnLogin = document.getElementById('btnLogin');
+    const btnLogout = document.getElementById('btnLogout');
+    const userInfo = document.getElementById('userInfo');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+
+    const unitSelectionSection = document.getElementById('unitSelectionSection');
+    const unitSelect = document.getElementById('unitSelect');
+
+    const createUnitModal = document.getElementById('createUnitModal');
+    const btnOpenCreateModal = document.getElementById('btnOpenCreateModal');
+    const btnOpenCreateModalNav = document.getElementById('btnOpenCreateModalNav');
+    const btnCancelUnit = document.getElementById('btnCancelUnit');
+    const btnSaveUnit = document.getElementById('btnSaveUnit');
+    const newUnitName = document.getElementById('newUnitName');
+    const newUnitWords = document.getElementById('newUnitWords');
+
+    const startScreen = document.getElementById('startScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultsScreen = document.getElementById('resultsScreen');
+
+    const btnStartHearing = document.getElementById('btnStartHearing');
+    const btnStartDefinition = document.getElementById('btnStartDefinition');
+    const btnRestart = document.getElementById('btnRestart');
+    const startSubtitle = document.getElementById('startSubtitle');
+    const progressBar = document.getElementById('progressBar');
+    const quizTitle = document.getElementById('quizTitle');
+
+    const hearingModeContainer = document.getElementById('hearingModeContainer');
     const userAttemptInput = document.getElementById('userAttempt');
-    const progressCounter = document.getElementById('progressCounter');
-    const btnPeek = document.getElementById('btnPeek');
-    const peekIcon = document.getElementById('peekIcon');
-
-    const btnRead = document.getElementById('btnRead');
-    const btnSoundOut = document.getElementById('btnSoundOut');
     const btnSubmit = document.getElementById('btnSubmit');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btnNext');
-    const btnRandom = document.getElementById('btnRandom');
+    const btnRepeatAudio = document.getElementById('btnRepeatAudio');
+    const speedSelect = document.getElementById('speedSelect');
+    const spellingFeedback = document.getElementById('spellingFeedback');
 
-    function setControlsEnabled(enabled) {
-        btnRead.disabled = !enabled;
-        btnSoundOut.disabled = !enabled;
-        btnSubmit.disabled = !enabled;
-        btnPrev.disabled = !enabled;
-        btnNext.disabled = !enabled;
-        btnRandom.disabled = !enabled;
-        userAttemptInput.disabled = !enabled;
+    const definitionModeContainer = document.getElementById('definitionModeContainer');
+    const practiceSentenceText = document.getElementById('practiceSentenceText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const definitionFeedback = document.getElementById('definitionFeedback');
+
+    const finalScore = document.getElementById('finalScore');
+    const scoreDetails = document.getElementById('scoreDetails');
+    const confettiContainer = document.getElementById('confettiContainer');
+    const reviewSection = document.getElementById('reviewSection');
+    const reviewList = document.getElementById('reviewList');
+
+    btnLogin.addEventListener('click', async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("Auth error:", error);
+            alert(`Sign-in Error: ${error.message}`);
+        }
+    });
+
+    btnLogout.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user) {
+            btnLogin.classList.add('hidden');
+            userInfo.classList.remove('hidden');
+            userName.textContent = user.displayName || 'User';
+            userAvatar.src = user.photoURL || 'https://via.placeholder.com/32';
+            loadUserUnits(user.uid);
+        } else {
+            btnLogin.classList.remove('hidden');
+            userInfo.classList.add('hidden');
+            loadGlobalWordsFallback();
+        }
+    });
+
+    function openModal() {
+        newUnitName.value = '';
+        newUnitWords.value = '';
+        createUnitModal.classList.remove('hidden');
     }
 
-    function playCustomAudio(isCorrect) {
-        if (isCorrect) {
-            correctAudio.currentTime = 0;
-            correctAudio.play().catch(e => console.log("Audio file missing or blocked:", e));
-        } else {
-            incorrectAudio.currentTime = 0;
-            incorrectAudio.play().catch(e => console.log("Audio file missing or blocked:", e));
+    function closeModal() {
+        createUnitModal.classList.add('hidden');
+    }
+
+    btnOpenCreateModal.addEventListener('click', openModal);
+    btnOpenCreateModalNav.addEventListener('click', openModal);
+    btnCancelUnit.addEventListener('click', closeModal);
+
+    btnSaveUnit.addEventListener('click', async () => {
+        if (!currentUser) {
+            alert("You must be logged in to create a unit.");
+            return;
+        }
+
+        const name = newUnitName.value.trim();
+        const rawWords = newUnitWords.value;
+
+        if (!name) {
+            alert("Please enter a unit name.");
+            return;
+        }
+
+        const wordsArray = rawWords.split(',')
+            .map(w => w.trim())
+            .filter(w => w.length > 0);
+
+        if (wordsArray.length === 0) {
+            alert("Please add at least one word.");
+            return;
+        }
+
+        btnSaveUnit.disabled = true;
+
+        try {
+            const docRef = await addDoc(collection(db, "users", currentUser.uid, "units"), {
+                name: name,
+                words: wordsArray,
+                createdAt: new Date()
+            });
+
+            closeModal();
+            btnSaveUnit.disabled = false;
+            await loadUserUnits(currentUser.uid, docRef.id);
+        } catch (error) {
+            console.error("Error creating unit:", error);
+            alert(`Failed to create unit: ${error.message}`);
+            btnSaveUnit.disabled = false;
+        }
+    });
+
+    async function loadUserUnits(uid, autoSelectDocId = null) {
+        startSubtitle.textContent = "Loading your account units...";
+        unitSelect.innerHTML = '<option value="">-- Select a Unit --</option>';
+        unitsData = {};
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "users", uid, "units"));
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                unitsData[doc.id] = data;
+                const opt = document.createElement('option');
+                opt.value = doc.id;
+                opt.textContent = data.name || doc.id;
+                unitSelect.appendChild(opt);
+            });
+
+            unitSelectionSection.classList.remove('hidden');
+
+            if (Object.keys(unitsData).length > 0) {
+                startSubtitle.textContent = "Choose a unit to get started.";
+                if (autoSelectDocId && unitsData[autoSelectDocId]) {
+                    unitSelect.value = autoSelectDocId;
+                    unitSelect.dispatchEvent(new Event('change'));
+                }
+            } else {
+                startSubtitle.textContent = "No units found. Click '+ New Unit' to create one!";
+                btnStartHearing.disabled = true;
+                btnStartDefinition.disabled = true;
+            }
+        } catch (err) {
+            console.error("Error loading account units:", err);
+            loadGlobalWordsFallback();
         }
     }
 
-    async function loadWordsFromFirebase() {
+    async function loadGlobalWordsFallback() {
+        unitSelectionSection.classList.add('hidden');
+        startSubtitle.textContent = "Loading global words...";
         try {
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
             const querySnapshot = await getDocs(collection(db, "spelling_words"));
-            
             const fetchedWords = [];
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                if (data.word) {
-                    fetchedWords.push(data.word.trim());
-                }
+                if (data.word) fetchedWords.push(data.word.trim());
             });
 
             if (fetchedWords.length > 0) {
                 wordList = fetchedWords;
-                setControlsEnabled(true);
-                updateWordDisplay();
+                btnStartHearing.disabled = false;
+                btnStartDefinition.disabled = false;
+                startSubtitle.textContent = `${wordList.length} global words ready! Sign in to create custom units.`;
             } else {
-                progressCounter.textContent = "No Words Found";
-                targetInput.placeholder = "Add documents to 'spelling_words' collection.";
+                startSubtitle.textContent = "No words available.";
             }
         } catch (error) {
-            console.error("Error fetching from Firebase:", error);
-            progressCounter.textContent = "Connection Error";
-            targetInput.placeholder = "Unable to fetch words from Firebase.";
+            console.error("Fallback load error:", error);
+            startSubtitle.textContent = "Error connecting to database.";
         }
     }
 
-    function updateWordDisplay() {
-        if (wordList.length === 0) return;
-        currentRawWord = wordList[currentIndex];
-        targetInput.value = currentRawWord;
-        targetInput.type = "password";
-        peekIcon.className = "fa-solid fa-eye";
-        progressCounter.textContent = `Word ${currentIndex + 1} of ${wordList.length}`;
-        userAttemptInput.value = "";
-        userAttemptInput.className = "";
-    }
+    unitSelect.addEventListener('change', () => {
+        const selectedKey = unitSelect.value;
+        if (selectedKey && unitsData[selectedKey]) {
+            wordList = unitsData[selectedKey].words || [];
+            if (wordList.length > 0) {
+                btnStartHearing.disabled = false;
+                btnStartDefinition.disabled = false;
+                startSubtitle.textContent = `Loaded ${wordList.length} words from "${unitsData[selectedKey].name || selectedKey}"`;
+            } else {
+                btnStartHearing.disabled = true;
+                btnStartDefinition.disabled = true;
+                startSubtitle.textContent = "This unit contains no words.";
+            }
+        } else {
+            btnStartHearing.disabled = true;
+            btnStartDefinition.disabled = true;
+        }
+    });
 
-    function getSyllables(word) {
-        word = word.toLowerCase();
-        if (word.length <= 3) return [word];
+    btnStartHearing.addEventListener('click', () => startQuiz('hearing'));
+    btnStartDefinition.addEventListener('click', () => startQuiz('definition'));
+    btnRestart.addEventListener('click', resetToStartScreen);
 
-        const syllableRegex = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
-        const matches = word.match(syllableRegex);
-        return matches ? matches : [word];
-    }
+    function startQuiz(mode) {
+        currentMode = mode;
+        currentIndex = 0;
+        score = 0;
+        incorrectAttempts = [];
 
-    async function speakWord(soundItOut) {
-        if (!currentRawWord) return;
+        startScreen.classList.add('hidden');
+        resultsScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
 
-        if (activeAudio) {
-            activeAudio.pause();
-            activeAudio = null;
+        if (mode === 'hearing') {
+            quizTitle.textContent = "Spelling Quiz";
+            hearingModeContainer.classList.remove('hidden');
+            definitionModeContainer.classList.add('hidden');
+            userAttemptInput.value = '';
+            userAttemptInput.focus();
+            playCurrentWord();
+        } else {
+            quizTitle.textContent = "Definition Mode";
+            hearingModeContainer.classList.add('hidden');
+            definitionModeContainer.classList.remove('hidden');
+            loadDefinitionQuestion();
         }
 
-        // Prepare text input safely
-        let textToSay = currentRawWord.trim();
-        if (soundItOut) {
-            const syllables = getSyllables(currentRawWord);
-            // Use hyphens or spaces instead of commas/ellipses
-            textToSay = syllables.join(' - '); 
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const percent = (currentIndex / wordList.length) * 100;
+        progressBar.style.width = `${percent}%`;
+    }
+
+    function playCurrentWord() {
+        if (!synth || currentIndex >= wordList.length) return;
+        synth.cancel();
+        const word = wordList[currentIndex];
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.rate = parseFloat(speedSelect.value) || 1.0;
+        synth.speak(utterance);
+    }
+
+    btnRepeatAudio.addEventListener('click', playCurrentWord);
+
+    btnSubmit.addEventListener('click', submitSpellingAnswer);
+    userAttemptInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !btnSubmit.disabled) {
+            submitSpellingAnswer();
         }
+    });
 
-        btnRead.disabled = true;
-        btnSoundOut.disabled = true;
+    function submitSpellingAnswer() {
+        const userTyped = userAttemptInput.value.trim();
+        const targetWord = wordList[currentIndex];
 
-        try {
-            const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-                method: "POST",
-                headers: {
-                    "Accept": "audio/mpeg",
-                    "Content-Type": "application/json",
-                    "xi-api-key": ELEVENLABS_API_KEY
-                },
-                body: JSON.stringify({
-                    text: textToSay,
-                    model_id: "eleven_turbo_v2_5",
-                    voice_settings: {
-                        stability: 0.5,
-                        similarity_boost: 0.75
-                    }
-                })
+        if (!userTyped) return;
+
+        btnSubmit.disabled = true;
+        userAttemptInput.disabled = true;
+
+        const isCorrect = userTyped.toLowerCase() === targetWord.toLowerCase();
+
+        if (isCorrect) {
+            score++;
+            userAttemptInput.classList.add('correct');
+            showFeedback(spellingFeedback, true, `<i class="fa-solid fa-circle-check"></i> Correct!`);
+            
+            setTimeout(() => {
+                clearFeedback(spellingFeedback);
+                userAttemptInput.classList.remove('correct');
+                userAttemptInput.value = '';
+                btnSubmit.disabled = false;
+                userAttemptInput.disabled = false;
+                nextQuestion();
+            }, 1000);
+        } else {
+            userAttemptInput.classList.add('incorrect');
+            incorrectAttempts.push({
+                question: `Spelling Word #${currentIndex + 1}`,
+                userAnswer: userTyped,
+                correctAnswer: targetWord
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("ElevenLabs Detailed Error:", JSON.stringify(errorData, null, 2));
-                throw new Error(`API Request Failed with status: ${response.status}`);
+            let remaining = 3;
+            showFeedback(spellingFeedback, false, `<i class="fa-solid fa-circle-xmark"></i> Correct answer: <strong>${targetWord}</strong>`);
+
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    btnSubmit.textContent = `Wait ${remaining}s...`;
+                } else {
+                    clearInterval(interval);
+                    btnSubmit.textContent = "Submit Answer";
+                    clearFeedback(spellingFeedback);
+                    userAttemptInput.classList.remove('incorrect');
+                    userAttemptInput.value = '';
+                    btnSubmit.disabled = false;
+                    userAttemptInput.disabled = false;
+                    nextQuestion();
+                }
+            }, 1000);
+            btnSubmit.textContent = `Wait 3s...`;
+        }
+    }
+
+    async function fetchSentenceFromDictionaryApi(word) {
+        if (!word || !MW_API_KEY) return null;
+        const cleanWord = word.trim().toLowerCase();
+
+        try {
+            const response = await fetch(`https://www.dictionaryapi.com/api/v3/references/sd4/json/${encodeURIComponent(cleanWord)}?key=${MW_API_KEY}`);
+            if (!response.ok) return null;
+
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) return null;
+
+            const data = await response.json();
+            if (!Array.isArray(data) || data.length === 0 || typeof data[0] === 'string') return null;
+
+            for (const entry of data) {
+                if (!entry.def) continue;
+                for (const defObj of entry.def) {
+                    if (!defObj.sseq) continue;
+                    for (const sseqArr of defObj.sseq) {
+                        for (const item of sseqArr) {
+                            const sense = item[1];
+                            if (sense && sense.dt) {
+                                for (const dtItem of sense.dt) {
+                                    if (dtItem[0] === 'vis' && Array.isArray(dtItem[1])) {
+                                        let rawText = dtItem[1][0].t;
+                                        return rawText.replace(/\{[^}]+\}/g, '').trim();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            const audioBlob = await response.blob();
-            const audioUrl = URL.createObjectURL(audioBlob);
-            
-            activeAudio = new Audio(audioUrl);
-            activeAudio.play();
-
-            activeAudio.onended = () => {
-                btnRead.disabled = false;
-                btnSoundOut.disabled = false;
-            };
+            if (data[0].shortdef && data[0].shortdef.length > 0) {
+                return `Definition: ${data[0].shortdef[0]}`;
+            }
         } catch (error) {
-            console.error("ElevenLabs TTS Error:", error);
-            btnRead.disabled = false;
-            btnSoundOut.disabled = false;
-            alert("Failed to play API audio. Check browser console for full error output.");
+            console.warn("Merriam-Webster fetch failed:", error);
+        }
+        return null;
+    }
+
+    async function loadDefinitionQuestion() {
+        const correctWord = wordList[currentIndex];
+        if (!correctWord) return;
+
+        practiceSentenceText.textContent = "Fetching sentence from dictionary...";
+        optionsGrid.innerHTML = '';
+
+        let rawSentence = await fetchSentenceFromDictionaryApi(correctWord);
+
+        if (!rawSentence) {
+            rawSentence = `Fill in the blank: "__________"`;
+        } else {
+            const regex = new RegExp(`\\b${correctWord}(s|ed|ing|es)?\\b`, 'gi');
+            rawSentence = rawSentence.replace(regex, '__________');
+        }
+
+        practiceSentenceText.textContent = rawSentence;
+
+        const options = [correctWord];
+        const otherWords = wordList.filter(w => w.toLowerCase() !== correctWord.toLowerCase());
+
+        while (options.length < 4) {
+            if (otherWords.length > 0) {
+                const randIdx = Math.floor(Math.random() * otherWords.length);
+                const picked = otherWords.splice(randIdx, 1)[0];
+                if (!options.includes(picked)) options.push(picked);
+            } else {
+                options.push(correctWord + 'e');
+            }
+        }
+
+        options.sort(() => Math.random() - 0.5);
+
+        optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.textContent = opt;
+            btn.onclick = () => checkPracticeOption(btn, opt, correctWord, rawSentence);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function checkPracticeOption(selectedBtn, selectedValue, correctValue, sentenceText) {
+        const buttons = optionsGrid.querySelectorAll('.btn-option');
+        buttons.forEach(btn => btn.disabled = true);
+
+        const isCorrect = selectedValue.toLowerCase() === correctValue.toLowerCase();
+
+        if (isCorrect) {
+            selectedBtn.classList.add('opt-correct');
+            score++;
+            showFeedback(definitionFeedback, true, `<i class="fa-solid fa-circle-check"></i> Correct choice!`);
+            
+            setTimeout(() => {
+                clearFeedback(definitionFeedback);
+                nextQuestion();
+            }, 1000);
+        } else {
+            selectedBtn.classList.add('opt-incorrect');
+            buttons.forEach(btn => {
+                if (btn.textContent.toLowerCase() === correctValue.toLowerCase()) {
+                    btn.classList.add('opt-correct');
+                }
+            });
+
+            incorrectAttempts.push({
+                question: sentenceText.length > 50 ? sentenceText.substring(0, 50) + "..." : sentenceText,
+                userAnswer: selectedValue,
+                correctAnswer: correctValue
+            });
+
+            let remaining = 3;
+            showFeedback(definitionFeedback, false, `<i class="fa-solid fa-circle-xmark"></i> Correct answer is <strong>${correctValue}</strong>. Next in ${remaining}s...`);
+
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    definitionFeedback.querySelector('strong').nextSibling.textContent = `. Next in ${remaining}s...`;
+                } else {
+                    clearInterval(interval);
+                    clearFeedback(definitionFeedback);
+                    nextQuestion();
+                }
+            }, 1000);
         }
     }
 
-    function checkSpelling() {
-        const target = currentRawWord.trim().toLowerCase();
-        const userAttempt = userAttemptInput.value.trim().toLowerCase();
+    function showFeedback(element, isCorrect, htmlContent) {
+        element.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
+        element.innerHTML = htmlContent;
+        element.classList.remove('hidden');
+    }
 
-        if (userAttempt === "") {
-            userAttemptInput.className = "";
-            return;
-        }
+    function clearFeedback(element) {
+        element.innerHTML = '';
+        element.classList.add('hidden');
+    }
 
-        if (userAttempt === target) {
-            userAttemptInput.className = "correct";
-            playCustomAudio(true);
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < wordList.length) {
+            updateProgress();
+            if (currentMode === 'hearing') {
+                userAttemptInput.focus();
+                playCurrentWord();
+            } else {
+                loadDefinitionQuestion();
+            }
         } else {
-            userAttemptInput.className = "incorrect";
-            playCustomAudio(false);
+            showResults();
         }
     }
 
-    btnPeek.addEventListener('click', () => {
-        if (targetInput.type === "password") {
-            targetInput.type = "text";
-            peekIcon.className = "fa-solid fa-eye-slash";
+    function showResults() {
+        quizScreen.classList.add('hidden');
+        resultsScreen.classList.remove('hidden');
+
+        const percentage = Math.round((score / wordList.length) * 100) || 0;
+        finalScore.textContent = `${percentage}%`;
+        scoreDetails.textContent = `You got ${score} out of ${wordList.length} correct`;
+
+        if (percentage >= 80) {
+            triggerConfetti();
+        }
+
+        if (incorrectAttempts.length > 0) {
+            reviewSection.classList.remove('hidden');
+            reviewList.innerHTML = '';
+            
+            incorrectAttempts.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-prompt">${item.question}</div>
+                    <div class="review-details">
+                        <span>Your answer: <span class="wrong-text">${item.userAnswer}</span></span>
+                        <span>Correct answer: <span class="right-text">${item.correctAnswer}</span></span>
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
         } else {
-            targetInput.type = "password";
-            peekIcon.className = "fa-solid fa-eye";
+            reviewSection.classList.add('hidden');
         }
-    });
+    }
 
-    btnRead.addEventListener('click', () => speakWord(false));
-    btnSoundOut.addEventListener('click', () => speakWord(true));
-    btnSubmit.addEventListener('click', checkSpelling);
+    function resetToStartScreen() {
+        resultsScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        progressBar.style.width = '0%';
+    }
 
-    userAttemptInput.addEventListener('input', () => {
-        userAttemptInput.className = "";
-    });
-
-    userAttemptInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkSpelling();
+    function triggerConfetti() {
+        confettiContainer.innerHTML = '';
+        const colors = ['#6366f1', '#10b981', '#0ea5e9', '#f43f5e', '#a855f7'];
+        
+        for (let i = 0; i < 40; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${Math.random() * 100}vw`;
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDuration = `${2 + Math.random() * 2}s`;
+            confettiContainer.appendChild(confetti);
         }
-    });
 
-    btnNext.addEventListener('click', () => {
-        if (wordList.length === 0) return;
-        currentIndex = (currentIndex + 1) % wordList.length;
-        updateWordDisplay();
-    });
-
-    btnPrev.addEventListener('click', () => {
-        if (wordList.length === 0) return;
-        currentIndex = (currentIndex - 1 + wordList.length) % wordList.length;
-        updateWordDisplay();
-    });
-
-    btnRandom.addEventListener('click', () => {
-        if (wordList.length === 0) return;
-        let randomIndex;
-        do {
-            randomIndex = Math.floor(Math.random() * wordList.length);
-        } while (randomIndex === currentIndex && wordList.length > 1);
-        currentIndex = randomIndex;
-        updateWordDisplay();
-    });
-
-    loadWordsFromFirebase();
+        setTimeout(() => {
+            confettiContainer.innerHTML = '';
+        }, 4000);
+    }
 </script>
-
 </body>
 </html>
