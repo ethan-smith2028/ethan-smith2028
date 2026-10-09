@@ -1110,11 +1110,11 @@
         }
     }
 
-    function enableModeButtons(enabled) {
-        btnStartStory.disabled = !enabled;
-        btnStartHearing.disabled = !enabled;
-        btnStartDefinition.disabled = !enabled;
-    }
+   function enableModeButtons(enabled) {
+    btnStartStory.disabled = true; // Always stays disabled while in development
+    btnStartHearing.disabled = !enabled;
+    btnStartDefinition.disabled = !enabled;
+}
 
     unitSelect.addEventListener('change', () => {
         const selectedKey = unitSelect.value;
