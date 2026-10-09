@@ -864,9 +864,9 @@
     const MW_API_KEY = 'b481d051-fde2-44a3-bda6-4c3a85529c2d';
 
     // AUDIO SOUND EFFECTS
-    const completionAudio = new Audio('web/music/completion.mp3');
-    const correctAudio = new Audio('web/sounds/correct.mp3');
-    const incorrectAudio = new Audio('web/sounds/incorrect.mp3');
+    const completionAudio = new Audio('music/completion.mp3');
+    const correctAudio = new Audio('sounds/correct.mp3');
+    const incorrectAudio = new Audio('sounds/incorrect.mp3');
 
     function playAudioFeedback(type) {
         try {
@@ -1110,11 +1110,11 @@
         }
     }
 
-   function enableModeButtons(enabled) {
-    btnStartStory.disabled = true; // Always stays disabled while in development
-    btnStartHearing.disabled = !enabled;
-    btnStartDefinition.disabled = !enabled;
-}
+    function enableModeButtons(enabled) {
+        btnStartStory.disabled = !enabled;
+        btnStartHearing.disabled = !enabled;
+        btnStartDefinition.disabled = !enabled;
+    }
 
     unitSelect.addEventListener('change', () => {
         const selectedKey = unitSelect.value;
