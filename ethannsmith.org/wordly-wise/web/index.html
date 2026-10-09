@@ -59,10 +59,9 @@
             color: var(--text-main);
         }
 
-        /* TOP NAVIGATION HEADER */
         .top-navbar {
             width: 100%;
-            max-width: 720px;
+            max-width: 1000px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -70,11 +69,11 @@
             margin-bottom: 32px;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 0 0 var(--radius-lg) var(--radius-lg);
             box-shadow: var(--shadow-sm);
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-top: none;
+            transition: max-width 0.3s ease;
         }
 
         .brand-logo {
@@ -166,16 +165,20 @@
             border-color: var(--error-border);
         }
 
-        /* MAIN CONTAINER */
         .container {
             background: var(--surface-card);
             padding: 40px 36px;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             width: 100%;
-            max-width: 520px;
+            max-width: 580px;
             border: 1px solid var(--border);
             position: relative;
+            transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .container.wide-mode {
+            max-width: 1000px;
         }
 
         .hidden {
@@ -399,7 +402,108 @@
             border-color: var(--error) !important;
         }
 
-        /* INLINE FEEDBACK BANNER */
+        .word-bank-box {
+            background: #ffffff;
+            border: 1.5px solid var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .word-bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .word-bank-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .word-tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .story-container {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 32px 36px;
+            line-height: 2.3;
+            font-size: 18px;
+            color: var(--text-main);
+            text-align: left;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+        }
+
+        .story-input {
+            display: inline-block;
+            width: 150px;
+            padding: 4px 10px;
+            margin: 0 4px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .story-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .inline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 15px;
+            margin: 0 4px;
+        }
+
+        .inline-badge.correct {
+            background-color: var(--success-bg);
+            color: #047857;
+            border: 1px solid var(--success-border);
+        }
+
+        .inline-badge.incorrect-wrapper {
+            background-color: var(--error-bg);
+            border: 1px solid var(--error-border);
+            padding: 4px 8px;
+        }
+
+        .wrong-user-val {
+            color: var(--error);
+            text-decoration: line-through;
+            margin-right: 6px;
+            font-weight: 600;
+        }
+
+        .right-target-val {
+            color: #047857;
+            font-weight: 700;
+            background-color: #dcfce7;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
         .feedback-banner {
             margin-top: 14px;
             padding: 14px;
@@ -430,7 +534,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* RESULTS SCREEN & MISSED REVIEW */
         .results-container {
             text-align: center;
         }
@@ -522,7 +625,6 @@
             font-weight: 700;
         }
 
-        /* MODAL STYLES */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -573,9 +675,13 @@
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
             .container {
                 padding: 24px 20px;
+            }
+            .story-container {
+                padding: 20px;
+                font-size: 16px;
             }
             .options-grid {
                 grid-template-columns: 1fr;
@@ -585,8 +691,7 @@
 </head>
 <body>
 
-<!-- TOP HEADER -->
-<nav class="top-navbar">
+<nav class="top-navbar" id="topNavbar">
     <div class="brand-logo">
         <i class="fa-solid fa-graduation-cap"></i> Lexicon
     </div>
@@ -607,7 +712,6 @@
 
 <div class="confetti-container" id="confettiContainer"></div>
 
-<!-- CREATE UNIT MODAL -->
 <div id="createUnitModal" class="modal-overlay hidden">
     <div class="modal-card">
         <div class="header" style="margin-bottom: 20px; text-align: left;">
@@ -628,15 +732,13 @@
     </div>
 </div>
 
-<div class="container">
-    <!-- START SCREEN -->
+<div class="container" id="mainContainer">
     <div id="startScreen">
         <div class="header">
-            <h2>Spelling & Vocabulary</h2>
+            <h2>Wordly Wise Practice</h2>
             <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px;" id="startSubtitle">Loading units...</p>
         </div>
 
-        <!-- UNIT SELECTION DROPDOWN -->
         <div class="section hidden" id="unitSelectionSection">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <label for="unitSelect" style="margin: 0;">Select Word Unit</label>
@@ -650,16 +752,18 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
-            <button class="btn-primary" id="btnStartHearing" disabled>
+           <button class="btn-primary" id="btnStartStory" disabled style="opacity: 0.6; cursor: not-allowed;">
+    <i class="fa-solid fa-book-journal-whills"></i> Story Mode (Coming Soon)
+</button>
+            <button class="btn-secondary" id="btnStartHearing" disabled style="margin-bottom: 0;">
                 <i class="fa-solid fa-ear-listen"></i> Hearing Mode (Spelling)
             </button>
             <button class="btn-secondary" id="btnStartDefinition" disabled style="margin-bottom: 0;">
-                <i class="fa-solid fa-book-open"></i> Definition Mode
+                <i class="fa-solid fa-book-open"></i> Definition Mode (Multiple Choice)
             </button>
         </div>
     </div>
 
-    <!-- QUIZ SCREEN -->
     <div id="quizScreen" class="hidden">
         <div class="header">
             <h2 id="quizTitle">Spelling Quiz</h2>
@@ -668,7 +772,16 @@
             </div>
         </div>
 
-        <!-- HEARING / SPELLING MODE CONTROLS -->
+        <div class="word-bank-box" id="wordBankContainer">
+            <div class="word-bank-header">
+                <label style="margin: 0;">Randomized Word Bank</label>
+                <button type="button" class="btn-create-nav" id="btnReadWordBank" style="font-size: 11px; padding: 4px 10px;">
+                    <i class="fa-solid fa-volume-high"></i> Read Bank Aloud
+                </button>
+            </div>
+            <div class="word-bank-tags" id="wordBankTags"></div>
+        </div>
+
         <div id="hearingModeContainer">
             <div class="section">
                 <button type="button" class="btn-secondary" id="btnRepeatAudio" style="margin-bottom: 16px;">
@@ -690,7 +803,6 @@
             </div>
         </div>
 
-        <!-- DEFINITION / SENTENCE PRACTICE MODE CONTROLS -->
         <div id="definitionModeContainer" class="hidden">
             <div class="practice-box">
                 <div class="practice-sentence" id="practiceSentenceText">Loading sentence...</div>
@@ -698,16 +810,25 @@
             </div>
             <div id="definitionFeedback" class="hidden"></div>
         </div>
+
+        <div id="storyModeContainer" class="hidden">
+            <div class="story-container" id="storyContent">
+                Loading dynamic story...
+            </div>
+            <div id="storyControlBar" style="display: flex; gap: 12px; margin-top: 20px;">
+                <button class="btn-primary" id="btnSubmitStory">Check Story Answers</button>
+                <button class="btn-secondary hidden" id="btnProceedResults" style="margin: 0; background: var(--text-main); color: white;">View Score Summary <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <div id="storyFeedback" class="hidden"></div>
+        </div>
     </div>
 
-    <!-- RESULTS SCREEN -->
     <div id="resultsScreen" class="hidden">
         <div class="results-container">
             <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px;">Quiz Completed!</h2>
             <div class="score-circle" id="finalScore">0%</div>
             <p id="scoreDetails" style="color: var(--text-muted); font-weight: 500; font-size: 14px; margin-bottom: 12px;">You got 0 out of 0 correct</p>
             
-            <!-- REVIEW MISSED QUESTIONS SECTION -->
             <div id="reviewSection" class="review-section hidden">
                 <div class="review-title">
                     <i class="fa-solid fa-circle-xmark" style="color: var(--error);"></i> Missed Questions Review
@@ -742,6 +863,7 @@
 
     const MW_API_KEY = 'b481d051-fde2-44a3-bda6-4c3a85529c2d';
 
+    let originalWordList = [];
     let wordList = [];
     let unitsData = {};
     let currentIndex = 0;
@@ -772,13 +894,19 @@
     const startScreen = document.getElementById('startScreen');
     const quizScreen = document.getElementById('quizScreen');
     const resultsScreen = document.getElementById('resultsScreen');
+    const mainContainer = document.getElementById('mainContainer');
 
+    const btnStartStory = document.getElementById('btnStartStory');
     const btnStartHearing = document.getElementById('btnStartHearing');
     const btnStartDefinition = document.getElementById('btnStartDefinition');
     const btnRestart = document.getElementById('btnRestart');
     const startSubtitle = document.getElementById('startSubtitle');
     const progressBar = document.getElementById('progressBar');
     const quizTitle = document.getElementById('quizTitle');
+
+    const wordBankContainer = document.getElementById('wordBankContainer');
+    const wordBankTags = document.getElementById('wordBankTags');
+    const btnReadWordBank = document.getElementById('btnReadWordBank');
 
     const hearingModeContainer = document.getElementById('hearingModeContainer');
     const userAttemptInput = document.getElementById('userAttempt');
@@ -792,11 +920,26 @@
     const optionsGrid = document.getElementById('optionsGrid');
     const definitionFeedback = document.getElementById('definitionFeedback');
 
+    const storyModeContainer = document.getElementById('storyModeContainer');
+    const storyContent = document.getElementById('storyContent');
+    const btnSubmitStory = document.getElementById('btnSubmitStory');
+    const btnProceedResults = document.getElementById('btnProceedResults');
+    const storyFeedback = document.getElementById('storyFeedback');
+
     const finalScore = document.getElementById('finalScore');
     const scoreDetails = document.getElementById('scoreDetails');
     const confettiContainer = document.getElementById('confettiContainer');
     const reviewSection = document.getElementById('reviewSection');
     const reviewList = document.getElementById('reviewList');
+
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
 
     btnLogin.addEventListener('click', async () => {
         try {
@@ -913,8 +1056,7 @@
                 }
             } else {
                 startSubtitle.textContent = "No units found. Click '+ New Unit' to create one!";
-                btnStartHearing.disabled = true;
-                btnStartDefinition.disabled = true;
+                enableModeButtons(false);
             }
         } catch (err) {
             console.error("Error loading account units:", err);
@@ -934,10 +1076,9 @@
             });
 
             if (fetchedWords.length > 0) {
-                wordList = fetchedWords;
-                btnStartHearing.disabled = false;
-                btnStartDefinition.disabled = false;
-                startSubtitle.textContent = `${wordList.length} global words ready! Sign in to create custom units.`;
+                originalWordList = fetchedWords;
+                enableModeButtons(true);
+                startSubtitle.textContent = `${originalWordList.length} global words ready! Sign in to create custom units.`;
             } else {
                 startSubtitle.textContent = "No words available.";
             }
@@ -947,28 +1088,55 @@
         }
     }
 
+    function enableModeButtons(enabled) {
+    btnStartStory.disabled = true; // Always stays disabled while in development
+    btnStartHearing.disabled = !enabled;
+    btnStartDefinition.disabled = !enabled;
+}
+
     unitSelect.addEventListener('change', () => {
         const selectedKey = unitSelect.value;
         if (selectedKey && unitsData[selectedKey]) {
-            wordList = unitsData[selectedKey].words || [];
-            if (wordList.length > 0) {
-                btnStartHearing.disabled = false;
-                btnStartDefinition.disabled = false;
-                startSubtitle.textContent = `Loaded ${wordList.length} words from "${unitsData[selectedKey].name || selectedKey}"`;
+            originalWordList = unitsData[selectedKey].words || [];
+            if (originalWordList.length > 0) {
+                enableModeButtons(true);
+                startSubtitle.textContent = `Loaded ${originalWordList.length} words from "${unitsData[selectedKey].name || selectedKey}"`;
             } else {
-                btnStartHearing.disabled = true;
-                btnStartDefinition.disabled = true;
+                enableModeButtons(false);
                 startSubtitle.textContent = "This unit contains no words.";
             }
         } else {
-            btnStartHearing.disabled = true;
-            btnStartDefinition.disabled = true;
+            enableModeButtons(false);
         }
     });
 
     btnStartHearing.addEventListener('click', () => startQuiz('hearing'));
     btnStartDefinition.addEventListener('click', () => startQuiz('definition'));
+    btnStartStory.addEventListener('click', () => startQuiz('story'));
     btnRestart.addEventListener('click', resetToStartScreen);
+    btnProceedResults.addEventListener('click', showResults);
+
+    btnReadWordBank.addEventListener('click', () => readWordBankAloud());
+
+    function readWordBankAloud() {
+        if (!synth || wordList.length === 0) return;
+        synth.cancel();
+
+        const fullText = "Word Bank: " + wordList.join(", ");
+        const utterance = new SpeechSynthesisUtterance(fullText);
+        utterance.rate = 0.8;
+        synth.speak(utterance);
+    }
+
+    function renderWordBank() {
+        wordBankTags.innerHTML = '';
+        wordList.forEach(w => {
+            const tag = document.createElement('span');
+            tag.className = 'word-tag';
+            tag.textContent = w;
+            wordBankTags.appendChild(tag);
+        });
+    }
 
     function startQuiz(mode) {
         currentMode = mode;
@@ -976,22 +1144,44 @@
         score = 0;
         incorrectAttempts = [];
 
+        wordList = shuffleArray(originalWordList);
+
         startScreen.classList.add('hidden');
         resultsScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
 
+        hearingModeContainer.classList.add('hidden');
+        definitionModeContainer.classList.add('hidden');
+        storyModeContainer.classList.add('hidden');
+        btnProceedResults.classList.add('hidden');
+        btnSubmitStory.classList.remove('hidden');
+
+        if (mode === 'story') {
+            mainContainer.classList.add('wide-mode');
+        } else {
+            mainContainer.classList.remove('wide-mode');
+        }
+
         if (mode === 'hearing') {
+            wordBankContainer.classList.add('hidden');
             quizTitle.textContent = "Spelling Quiz";
             hearingModeContainer.classList.remove('hidden');
-            definitionModeContainer.classList.add('hidden');
             userAttemptInput.value = '';
             userAttemptInput.focus();
             playCurrentWord();
         } else {
-            quizTitle.textContent = "Definition Mode";
-            hearingModeContainer.classList.add('hidden');
-            definitionModeContainer.classList.remove('hidden');
-            loadDefinitionQuestion();
+            wordBankContainer.classList.remove('hidden');
+            renderWordBank();
+            
+            if (mode === 'definition') {
+                quizTitle.textContent = "Definition Mode";
+                definitionModeContainer.classList.remove('hidden');
+                loadDefinitionQuestion();
+            } else if (mode === 'story') {
+                quizTitle.textContent = "Story Fill-in-the-Blank";
+                storyModeContainer.classList.remove('hidden');
+                loadStoryQuiz();
+            }
         }
 
         updateProgress();
@@ -1117,6 +1307,98 @@
         return null;
     }
 
+    // DYNAMIC DICTIONARY-API INTEGRATED STORY GENERATOR
+    async function loadStoryQuiz() {
+        storyContent.innerHTML = "Fetching real context sentences and constructing dynamic story...";
+
+        const connectors = [
+            "In addition,",
+            "Furthermore,",
+            "Despite these initial challenges,",
+            "As the situation unfolded,",
+            "Consequently,",
+            "Meanwhile,"
+        ];
+
+        let constructedSentences = [];
+
+        for (let i = 0; i < wordList.length; i++) {
+            const targetWord = wordList[i];
+            let rawSentence = await fetchSentenceFromDictionaryApi(targetWord);
+
+            if (rawSentence) {
+                // Strip the target word and turn it into an input field
+                const regex = new RegExp(`\\b${targetWord}(s|ed|ing|es)?\\b`, 'gi');
+                rawSentence = rawSentence.replace(regex, `<input type="text" class="story-input" data-target="${targetWord}" autocomplete="off" />`);
+
+                // Prepend narrative connectors to every second or third sentence to make it flow like a passage
+                if (i > 0 && i % 2 === 0) {
+                    const connector = connectors[Math.floor(Math.random() * connectors.length)];
+                    rawSentence = `${connector} ${rawSentence.charAt(0).toLowerCase()}${rawSentence.slice(1)}`;
+                }
+
+                constructedSentences.push(rawSentence);
+            } else {
+                constructedSentences.push(`It was clear that we needed to <input type="text" class="story-input" data-target="${targetWord}" autocomplete="off" /> before proceeding further.`);
+            }
+        }
+
+        // Group sentences into dynamic paragraphs of 2-3 sentences each
+        let paragraphHTML = "";
+        for (let i = 0; i < constructedSentences.length; i += 3) {
+            const chunk = constructedSentences.slice(i, i + 3).join(" ");
+            paragraphHTML += `<p style="margin-bottom: 20px;">${chunk}</p>`;
+        }
+
+        storyContent.innerHTML = paragraphHTML;
+    }
+
+    btnSubmitStory.addEventListener('click', () => {
+        const inputs = storyContent.querySelectorAll('.story-input');
+        let correctCount = 0;
+        incorrectAttempts = [];
+
+        inputs.forEach((input, idx) => {
+            const userVal = input.value.trim();
+            const targetVal = input.getAttribute('data-target');
+
+            const isCorrect = userVal.toLowerCase() === targetVal.toLowerCase();
+
+            if (isCorrect) {
+                correctCount++;
+                const badge = document.createElement('span');
+                badge.className = 'inline-badge correct';
+                badge.innerHTML = `<i class="fa-solid fa-check"></i> ${targetVal}`;
+                input.parentNode.replaceChild(badge, input);
+            } else {
+                incorrectAttempts.push({
+                    question: `Story Blank #${idx + 1}`,
+                    userAnswer: userVal || "(Left Blank)",
+                    correctAnswer: targetVal
+                });
+
+                const badge = document.createElement('span');
+                badge.className = 'inline-badge incorrect-wrapper';
+                badge.innerHTML = `<span class="wrong-user-val">${userVal || '(blank)'}</span> <span class="right-target-val"><i class="fa-solid fa-check"></i> ${targetVal}</span>`;
+                input.parentNode.replaceChild(badge, input);
+            }
+        });
+
+        score = correctCount;
+        progressBar.style.width = '100%';
+
+        btnSubmitStory.classList.add('hidden');
+        btnProceedResults.classList.remove('hidden');
+
+        showFeedback(storyFeedback, correctCount === inputs.length, 
+            correctCount === inputs.length 
+                ? `<i class="fa-solid fa-circle-check"></i> Perfect score! Every word in the story is correct.` 
+                : `<i class="fa-solid fa-circle-info"></i> Reviewed! Missed blanks have been corrected in green above.`
+        );
+
+        storyContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
     async function loadDefinitionQuestion() {
         const correctWord = wordList[currentIndex];
         if (!correctWord) return;
@@ -1223,7 +1505,7 @@
             if (currentMode === 'hearing') {
                 userAttemptInput.focus();
                 playCurrentWord();
-            } else {
+            } else if (currentMode === 'definition') {
                 loadDefinitionQuestion();
             }
         } else {
@@ -1234,6 +1516,7 @@
     function showResults() {
         quizScreen.classList.add('hidden');
         resultsScreen.classList.remove('hidden');
+        mainContainer.classList.remove('wide-mode');
 
         const percentage = Math.round((score / wordList.length) * 100) || 0;
         finalScore.textContent = `${percentage}%`;
@@ -1267,6 +1550,7 @@
     function resetToStartScreen() {
         resultsScreen.classList.add('hidden');
         startScreen.classList.remove('hidden');
+        mainContainer.classList.remove('wide-mode');
         progressBar.style.width = '0%';
     }
 
