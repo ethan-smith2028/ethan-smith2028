@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond the Lens - Create New Gallery</title>
+
+  <!-- Google Fonts & Tailwind CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bgDark: '#0a0c10',
+            surface1: '#12161f',
+            surface2: '#1a202c',
+            surface3: '#242c3d',
+            accentGoogle: '#ea7511',
+            accentGreen: '#10b981',
+            textMain: '#f8fafc',
+            textMuted: '#cbd5e1',
+            textSubtle: '#94a3b8',
+            borderSubtle: 'rgba(255, 255, 255, 0.08)',
+            borderActive: 'rgba(255, 255, 255, 0.22)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0a0c10;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0c10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1a202c;
+      border-radius: 9999px;
+      border: 2px solid #0a0c10;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #242c3d;
+    }
+
+    .glass-nav {
+      background: rgba(10, 12, 16, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-bgDark text-textMain selection:bg-accentGoogle selection:text-white">
+
+  <!-- AUTHENTICATION OVERLAY / LOGIN FORM -->
+  <div id="loginView" class="fixed inset-0 z-[100] flex items-center justify-center bg-bgDark/95 backdrop-blur-md px-4">
+    <div class="w-full max-w-md p-8 rounded-2xl bg-surface1 border border-borderSubtle shadow-2xl space-y-6">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accentGoogle to-amber-600 flex items-center justify-center font-display font-extrabold text-white text-2xl shadow-lg shadow-amber-900/30 mx-auto">
+          B
+        </div>
+        <h2 class="font-display font-extrabold text-2xl text-white tracking-tight">Admin Authentication</h2>
+        <p class="text-xs text-textSubtle">Sign in with authorized administrator credentials to create galleries.</p>
+      </div>
+
+      <div id="authError" class="hidden p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium text-center"></div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Admin Email</label>
+          <input type="email" id="authEmail" required placeholder="etsmith2028@gmail.com" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Password</label>
+          <input type="password" id="authPassword" required placeholder="••••••••" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+        </div>
+
+        <button type="submit" id="btnLogin" class="w-full h-11 bg-accentGoogle hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2">
+          <span>Authenticate Admin</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="appContainer" class="hidden min-h-screen flex flex-col">
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-nav px-4 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accentGoogle to-amber-600 flex items-center justify-center font-display font-extrabold text-white text-xl shadow-lg shadow-amber-900/30">
+          B
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-extrabold text-xl sm:text-2xl tracking-tight text-white">BEYOND THE LENS</h1>
+            <span class="px-2 py-0.5 text-xs font-bold uppercase rounded-full bg-accentGoogle/20 border border-accentGoogle/40 text-amber-400">Creator Studio</span>
+          </div>
+          <p class="text-xs text-textSubtle">Add New Gallery Document to Firestore (`galleries` Collection)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="./index.html" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-surface2 hover:bg-surface3 border border-borderSubtle text-textMuted hover:text-white transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          Main Gallery
+        </a>
+        <button id="btnLogout" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-8 py-8 space-y-6">
+      
+      <!-- Notification Toast Container -->
+      <div id="toast" class="hidden p-4 rounded-xl border text-sm font-medium transition-all shadow-xl flex items-center justify-between">
+        <span id="toastMsg"></span>
+        <button onclick="document.getElementById('toast').classList.add('hidden')" class="ml-4 opacity-70 hover:opacity-100">&times;</button>
+      </div>
+
+      <!-- Gallery Form Container -->
+      <form id="galleryForm" class="space-y-6">
+        
+        <!-- Metadata Inputs Card -->
+        <div class="p-6 sm:p-8 rounded-2xl bg-surface1 border border-borderSubtle space-y-6">
+          <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
+            <div>
+              <h2 class="font-display font-extrabold text-lg text-white">Create New Gallery Document</h2>
+              <p class="text-xs text-textSubtle">Matches Firestore document schema structure precisely.</p>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded bg-surface2 text-textSubtle">Collection: galleries</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Name (`name`) <span class="text-accentGoogle">*</span></label>
+              <input type="text" id="galleryName" required placeholder="e.g. Linsly Football Game | 8/28" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle transition-colors">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Date String (`date`) <span class="text-accentGoogle">*</span></label>
+              <input type="text" id="galleryDateStr" required placeholder="e.g. 8/28/2026" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle">
+              <p class="text-[11px] text-textSubtle mt-1">Formatted string date (e.g. "8/28/2026")</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Order Index (`order`) <span class="text-accentGoogle">*</span></label>
+              <input type="number" id="galleryOrder" required value="1" step="1" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white focus:outline-none focus:border-accentGoogle">
+              <p class="text-[11px] text-textSubtle mt-1">Integer sorting order (int64)</p>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Folder ID (`folderId`) <span class="text-accentGoogle">*</span></label>
+              <input type="text" id="galleryFolderId" required placeholder="e.g. 1vG--BqBwjZKCh39SQ8qRNz3WqUxH7Kis" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle font-mono text-xs">
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-textSubtle uppercase tracking-wider mb-2">Hero Image URL (`hero`) <span class="text-accentGoogle">*</span></label>
+              <input type="url" id="galleryHero" required placeholder="e.g. https://i.postimg.cc/ZKVkv4ZV/Linsly-Football(1).png" class="w-full h-11 px-4 bg-surface2 border border-borderSubtle rounded-xl text-sm font-medium text-white placeholder-textSubtle focus:outline-none focus:border-accentGoogle font-mono text-xs">
+            </div>
+
+          </div>
+
+          <!-- Live Preview Card -->
+          <div class="pt-4 border-t border-borderSubtle space-y-3">
+            <h3 class="text-xs font-semibold text-textSubtle uppercase tracking-wider">Document JSON Preview</h3>
+            <pre id="jsonPreview" class="p-4 bg-surface2/60 border border-borderSubtle rounded-xl text-xs font-mono text-amber-400 overflow-x-auto"></pre>
+          </div>
+        </div>
+
+        <!-- Submit Bar -->
+        <div class="p-6 rounded-2xl bg-surface1 border border-borderSubtle flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="text-xs text-textSubtle flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accentGreen"></span>
+            <span>Document will be created in Firestore `galleries` collection.</span>
+          </div>
+
+          <div class="flex items-center gap-4 w-full sm:w-auto">
+            <button type="button" id="btnReset" class="w-full sm:w-auto h-11 px-6 rounded-xl bg-surface2 hover:bg-surface3 text-textMuted hover:text-white font-semibold text-xs transition-colors">
+              Reset Form
+            </button>
+            <button type="submit" id="btnPublish" class="w-full sm:w-auto h-11 px-8 rounded-xl bg-accentGoogle hover:bg-amber-600 text-white font-extrabold text-sm transition-all shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <span>Publish Gallery Document</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
+      authDomain: "beyond-the-lens-ed6ed.firebaseapp.com",
+      projectId: "beyond-the-lens-ed6ed",
+      storageBucket: "beyond-the-lens-ed6ed.firebasestorage.app",
+      messagingSenderId: "554251151085",
+      appId: "1:554251151085:web:549e78e910c1826ee9cee4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Elements
+    const loginView = document.getElementById('loginView');
+    const appContainer = document.getElementById('appContainer');
+    const loginForm = document.getElementById('loginForm');
+    const authError = document.getElementById('authError');
+    const btnLogout = document.getElementById('btnLogout');
+
+    const galleryForm = document.getElementById('galleryForm');
+    const inputName = document.getElementById('galleryName');
+    const inputDateStr = document.getElementById('galleryDateStr');
+    const inputOrder = document.getElementById('galleryOrder');
+    const inputFolderId = document.getElementById('galleryFolderId');
+    const inputHero = document.getElementById('galleryHero');
+    const jsonPreview = document.getElementById('jsonPreview');
+
+    const btnReset = document.getElementById('btnReset');
+    const btnPublish = document.getElementById('btnPublish');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // Auth State Observer
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        loginView.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+        await fetchNextOrder();
+        updatePreview();
+      } else {
+        appContainer.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      authError.classList.add('hidden');
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById('authEmail').value, document.getElementById('authPassword').value);
+      } catch (err) {
+        authError.innerText = err.message.replace("Firebase: ", "");
+        authError.classList.remove('hidden');
+      }
+    });
+
+    btnLogout.addEventListener('click', () => signOut(auth));
+
+    // Auto calculate next order integer
+    async function fetchNextOrder() {
+      try {
+        const q = query(collection(db, "galleries"), orderBy("order", "desc"), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const topDoc = snap.docs[0].data();
+          if (typeof topDoc.order === 'number') {
+            inputOrder.value = topDoc.order + 1;
+          }
+        }
+      } catch (e) {
+        console.log("Order auto-fetch fallback:", e);
+      }
+    }
+
+    // Live JSON Preview Updater
+    function updatePreview() {
+      const docObj = {
+        date: inputDateStr.value || "8/28/2026",
+        folderId: inputFolderId.value || "1vG--BqBwjZKCh39SQ8qRNz3WqUxH7Kis",
+        hero: inputHero.value || "https://i.postimg.cc/ZKVkv4ZV/Linsly-Football(1).png",
+        name: inputName.value || "Linsly Football Game | 8/28",
+        order: parseInt(inputOrder.value, 10) || 1
+      };
+      jsonPreview.innerText = JSON.stringify(docObj, null, 2);
+    }
+
+    [inputName, inputDateStr, inputOrder, inputFolderId, inputHero].forEach(el => {
+      el.addEventListener('input', updatePreview);
+    });
+
+    btnReset.addEventListener('click', () => {
+      galleryForm.reset();
+      fetchNextOrder();
+      updatePreview();
+      showToast('Form reset', 'info');
+    });
+
+    // Form Submission
+    galleryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nameVal = inputName.value.trim();
+      const dateVal = inputDateStr.value.trim();
+      const folderIdVal = inputFolderId.value.trim();
+      const heroVal = inputHero.value.trim();
+      const orderVal = parseInt(inputOrder.value, 10);
+
+      if (!nameVal || !dateVal || !folderIdVal || !heroVal || isNaN(orderVal)) {
+        showToast('Please fill out all fields correctly.', 'error');
+        return;
+      }
+
+      btnPublish.disabled = true;
+      btnPublish.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <span>Publishing...</span>
+      `;
+
+      try {
+        const galleryDoc = {
+          date: dateVal,
+          folderId: folderIdVal,
+          hero: heroVal,
+          name: nameVal,
+          order: orderVal
+        };
+
+        const docRef = await addDoc(collection(db, "galleries"), galleryDoc);
+        showToast(`Gallery document created successfully! Doc ID: ${docRef.id}`, 'success');
+
+        galleryForm.reset();
+        await fetchNextOrder();
+        updatePreview();
+
+      } catch (error) {
+        console.error("Firestore Publish Error:", error);
+        showToast(`Failed to publish document: ${error.message}`, 'error');
+      } finally {
+        btnPublish.disabled = false;
+        btnPublish.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span>Publish Gallery Document</span>
+        `;
+      }
+    });
+
+    function showToast(msg, type) {
+      toastMsg.innerText = msg;
+      toast.className = 'p-4 rounded-xl border text-sm font-medium transition-all shadow-xl flex items-center justify-between ';
+      
+      if (type === 'success') {
+        toast.classList.add('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400');
+      } else if (type === 'error') {
+        toast.classList.add('bg-red-500/10', 'border-red-500/20', 'text-red-400');
+      } else {
+        toast.classList.add('bg-surface2', 'border-borderSubtle', 'text-white');
+      }
+
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+  </script>
+</body>
+</html>
