@@ -1249,9 +1249,9 @@ const googleProvider = new GoogleAuthProvider();
 let currentUser = null;
 
 /*
- * null  = user has not made a decision
- * true  = user accepted telemetry
- * false = user opted out
+- null  = user has not made a decision
+- true  = user accepted telemetry
+- false = user opted out
  */
 let telemetryConsent = null;
 
@@ -1359,7 +1359,7 @@ function preloadImage(src) {
    ============================================================ */
 
 /*
- * Show the telemetry consent dialog.
+- Show the telemetry consent dialog.
  */
 function showTelemetryConsent() {
   if (!telemetryModal) {
@@ -1371,15 +1371,15 @@ function showTelemetryConsent() {
   telemetryModal.setAttribute("aria-hidden", "false");
 
   /*
-   * Prevent the user from interacting with the page
-   * while making the initial telemetry decision.
+- Prevent the user from interacting with the page
+- while making the initial telemetry decision.
    */
   document.body.style.overflow = "hidden";
 }
 
 
 /*
- * Hide the telemetry consent dialog.
+- Hide the telemetry consent dialog.
  */
 function hideTelemetryConsent() {
   if (!telemetryModal) return;
@@ -1392,10 +1392,10 @@ function hideTelemetryConsent() {
 
 
 /*
- * Start Google Analytics ONLY after the user
- * explicitly accepts telemetry.
+- Start Google Analytics ONLY after the user
+- explicitly accepts telemetry.
  *
- * We intentionally do NOT load gtag in the <head>.
+- We intentionally do NOT load gtag in the <head>.
  */
 function enableGoogleAnalytics() {
   if (window.__analyticsEnabled) {
@@ -1430,7 +1430,7 @@ function enableGoogleAnalytics() {
 
 
 /*
- * Read the telemetry preference from Firestore.
+- Read the telemetry preference from Firestore.
  */
 async function getTelemetryConsent(user) {
   if (!user) {
@@ -1448,8 +1448,8 @@ async function getTelemetryConsent(user) {
     const snapshot = await getDoc(userProfileRef);
 
     /*
-     * No user_logs document means this is a new
-     * telemetry decision.
+- No user_logs document means this is a new
+- telemetry decision.
      */
     if (!snapshot.exists()) {
       telemetryConsent = null;
@@ -1469,7 +1469,7 @@ async function getTelemetryConsent(user) {
     }
 
     /*
-     * Document exists, but no valid consent field.
+- Document exists, but no valid consent field.
      */
     telemetryConsent = null;
 
@@ -1482,10 +1482,10 @@ async function getTelemetryConsent(user) {
     );
 
     /*
-     * Fail closed.
+- Fail closed.
      *
-     * If we cannot determine the user's preference,
-     * do NOT collect telemetry.
+- If we cannot determine the user's preference,
+- do NOT collect telemetry.
      */
     telemetryConsent = false;
 
@@ -1495,7 +1495,7 @@ async function getTelemetryConsent(user) {
 
 
 /*
- * Save the user's telemetry choice.
+- Save the user's telemetry choice.
  */
 async function saveTelemetryConsent(user, accepted) {
   if (!user) return false;
@@ -1544,7 +1544,7 @@ async function saveTelemetryConsent(user, accepted) {
     );
 
     /*
-     * Fail closed.
+- Fail closed.
      */
     telemetryConsent = false;
 
@@ -1554,7 +1554,7 @@ async function saveTelemetryConsent(user, accepted) {
 
 
 /*
- * ACCEPT TELEMETRY
+- ACCEPT TELEMETRY
  */
 if (telemetryAccept) {
 
@@ -1584,14 +1584,14 @@ if (telemetryAccept) {
     }
 
     /*
-     * Only now do we initialize Google Analytics.
+- Only now do we initialize Google Analytics.
      */
     enableGoogleAnalytics();
 
     hideTelemetryConsent();
 
     /*
-     * Log the login event now that consent has been granted.
+- Log the login event now that consent has been granted.
      */
     await trackClientTelemetry(
       null,
@@ -1606,7 +1606,7 @@ if (telemetryAccept) {
 
 
 /*
- * OPT OUT OF TELEMETRY
+- OPT OUT OF TELEMETRY
  */
 if (telemetryOptOut) {
 
@@ -1623,9 +1623,9 @@ if (telemetryOptOut) {
     );
 
     /*
-     * Google Analytics is NOT initialized.
+- Google Analytics is NOT initialized.
      *
-     * No telemetry is sent.
+- No telemetry is sent.
      */
     hideTelemetryConsent();
 
@@ -1648,11 +1648,11 @@ async function trackClientTelemetry(
 ) {
 
   /*
-   * HARD PRIVACY CHECK
+- HARD PRIVACY CHECK
    *
-   * If the user has not explicitly opted in,
-   * absolutely nothing gets sent to Analytics
-   * or Firestore.
+- If the user has not explicitly opted in,
+- absolutely nothing gets sent to Analytics
+- or Firestore.
    */
   if (telemetryConsent !== true) {
 
@@ -1667,7 +1667,7 @@ async function trackClientTelemetry(
 
 
   /*
-   * Make sure a user exists.
+- Make sure a user exists.
    */
   if (!currentUser) {
 
@@ -1767,8 +1767,8 @@ async function trackClientTelemetry(
           currentUser.uid,
 
         /*
-         * This should always be true here because
-         * the function exits above otherwise.
+- This should always be true here because
+- the function exits above otherwise.
          */
         telemetryConsent: true,
 
@@ -1933,6 +1933,48 @@ function renderLockedAlbums() {
 
 
 /* ============================================================
+   SLUG GENERATOR & CLEAN URL ROUTING HELPERS
+   ============================================================ */
+
+function createSlug(text) {
+  if (!text) return "";
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters like '|' or '•'
+    .trim()
+    .replace(/\s+/g, '-');     // Replace spaces with hyphens
+}
+
+function getGalleryFromPath() {
+  const pathSegments = window.location.pathname.split('/').filter(Boolean);
+  const currentSlug = pathSegments[pathSegments.length - 1];
+
+  if (currentSlug && currentSlug !== 'photography' && GALLERIES.length > 0) {
+    const matchedIndex = GALLERIES.findIndex(g => {
+      const generatedSlug = g.slug || createSlug(g.name);
+      return generatedSlug === currentSlug;
+    });
+    if (matchedIndex !== -1) {
+      return matchedIndex;
+    }
+  }
+  return 0; // Default to first gallery if none matches
+}
+
+function updateGalleryURL(index, pushToHistory = true) {
+  const galleryData = GALLERIES[index];
+  if (!galleryData) return;
+
+  const slug = galleryData.slug || createSlug(galleryData.name);
+  const newPath = `/photography/${slug}`;
+  
+  if (pushToHistory) {
+    history.pushState({ galleryIndex: index }, '', newPath);
+  }
+}
+
+
+/* ============================================================
    FIRESTORE GALLERY FETCH
    ============================================================ */
 
@@ -1980,7 +2022,12 @@ async function fetchGalleriesFromFirestore() {
 
 
     if (GALLERIES.length > 0) {
+      // Check if a specific gallery path was requested in the URL
+      const initialIndex = getGalleryFromPath();
+      gallerySelect.value = initialIndex;
+      activeGallery = initialIndex;
       updateHero();
+      updateGalleryURL(initialIndex, false); // Update path without creating a duplicate history state
     }
 
   } catch (error) {
@@ -2040,17 +2087,17 @@ onAuthStateChanged(
     if (user) {
 
       /*
-       * IMPORTANT:
+- IMPORTANT:
        *
-       * Check consent BEFORE any telemetry
-       * can be generated.
+- Check consent BEFORE any telemetry
+- can be generated.
        */
       const consent =
         await getTelemetryConsent(user);
 
 
       /*
-       * Brand-new telemetry decision.
+- Brand-new telemetry decision.
        */
       if (consent === null) {
 
@@ -2060,7 +2107,7 @@ onAuthStateChanged(
 
 
       /*
-       * Existing opt-in.
+- Existing opt-in.
        */
       else if (consent === true) {
 
@@ -2070,9 +2117,9 @@ onAuthStateChanged(
 
 
       /*
-       * Existing opt-out.
+- Existing opt-out.
        *
-       * Do absolutely nothing.
+- Do absolutely nothing.
        */
 
 
@@ -2165,13 +2212,13 @@ onAuthStateChanged(
       telemetryConsent = null;
 
       /*
-       * Note:
-       * We don't remove the Google Analytics script from
-       * the page once it has already been loaded during
-       * an opted-in session.
+- Note:
+- We don't remove the Google Analytics script from
+- the page once it has already been loaded during
+- an opted-in session.
        *
-       * On a future sign-in, the user's Firestore consent
-       * determines whether telemetry is permitted.
+- On a future sign-in, the user's Firestore consent
+- determines whether telemetry is permitted.
        */
 
       hero.style.display =
@@ -2219,6 +2266,7 @@ gallerySelect.onchange =
       Number(gallerySelect.value);
 
     updateHero();
+    updateGalleryURL(activeGallery, true);
 
     await loadGallery(true);
   };
@@ -2283,7 +2331,7 @@ function updateHero() {
 
 
   heroTitle.textContent =
-    `${g.name} • ${g.date}`;
+    `${g.name}\n${g.date}`;
 }
 
 
@@ -2398,10 +2446,10 @@ async function loadGallery(
 
 
     /*
-     * This function itself checks consent.
+- This function itself checks consent.
      *
-     * If the user opted out, no telemetry is
-     * generated here.
+- If the user opted out, no telemetry is
+- generated here.
      */
     trackClientTelemetry(
       null,
@@ -2714,6 +2762,21 @@ closeDonation.onclick =
       "none";
 
   };
+
+
+/* ============================================================
+   BROWSER HISTORY & NAVIGATION (POPSTATE)
+   ============================================================ */
+
+window.addEventListener('popstate', () => {
+  if (currentUser && GALLERIES.length > 0) {
+    const targetIndex = getGalleryFromPath();
+    gallerySelect.value = targetIndex;
+    activeGallery = targetIndex;
+    updateHero();
+    loadGallery(true);
+  }
+});
 
 </script>
 </body>
