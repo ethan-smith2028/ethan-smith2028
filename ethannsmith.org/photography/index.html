@@ -2022,12 +2022,12 @@ async function fetchGalleriesFromFirestore() {
 
 
     if (GALLERIES.length > 0) {
-      // Check if a specific gallery path was requested in the URL
-      const initialIndex = getGalleryFromPath();
-      gallerySelect.value = initialIndex;
-      activeGallery = initialIndex;
+      // Check URL path and set active gallery index directly
+      const targetIndex = getGalleryFromPath();
+      gallerySelect.value = targetIndex;
+      activeGallery = targetIndex;
       updateHero();
-      updateGalleryURL(initialIndex, false); // Update path without creating a duplicate history state
+      updateGalleryURL(targetIndex, false);
     }
 
   } catch (error) {
@@ -2191,7 +2191,7 @@ onAuthStateChanged(
 
 
       /* ------------------------------------------------------
-         LOAD GALLERY
+         LOAD GALLERY (Directly loads based on activeGallery)
          ------------------------------------------------------ */
 
       if (GALLERIES.length > 0) {
