@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Veracross Grade Portal Sync",
+  "version": "1.0",
+  "description": "Syncs Veracross grades and recent updates to your custom dashboard.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://*.veracross.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.veracross.com/*"],
+      "js": ["veracross_scraper.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["file:///*", "http://localhost/*", "http://127.0.0.1/*", "https://*.github.io/*"],
+      "js": ["dashboard_bridge.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veracross Student Grade Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            slate: {
+              850: '#151e32',
+              950: '#090d16'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @keyframes slideOutRight {
+      0% { opacity: 1; transform: translateX(0); max-height: 120px; margin-bottom: 0.75rem; }
+      100% { opacity: 0; transform: translateX(36px); max-height: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; }
+    }
+    @keyframes fadeInSlide {
+      0% { opacity: 0; transform: translateY(-8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spinFast {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .dismissing {
+      animation: slideOutRight 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .update-enter {
+      animation: fadeInSlide 0.3s ease-out forwards;
+    }
+    .spinning {
+      animation: spinFast 0.8s linear infinite;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+
+  <!-- Firebase Auth Overlay (Initially Hidden until checked) -->
+  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md transition-opacity duration-300">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-8 shadow-2xl text-center space-y-6">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white text-2xl mx-auto shadow-lg shadow-indigo-500/30">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold tracking-tight">Veracross Portal Access</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Please authenticate with your authorized Google account to view your grades.</p>
+      </div>
+
+      <button onclick="loginWithGoogle()" class="w-full inline-flex items-center justify-center gap-3 py-3 px-4 rounded-xl text-sm font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 shadow-sm transition cursor-pointer">
+        <i class="fa-brands fa-google text-indigo-500 text-base"></i>
+        <span>Sign in with Google</span>
+      </button>
+
+      <p id="authErrorMsg" class="text-xs text-rose-500 font-medium hidden"></p>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base sm:text-lg tracking-tight">Veracross Portal</h1>
+            <span id="syncStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              Demo Mode
+            </span>
+          </div>
+          <p id="lastSyncedText" class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Waiting for Veracross Extension sync...</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="triggerManualSync()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:hover:bg-emerald-500/25 border border-emerald-200 dark:border-emerald-500/30 transition cursor-pointer" title="Request fresh data from Veracross extension">
+          <i id="syncIcon" class="fa-solid fa-rotate"></i>
+          <span>Sync Now</span>
+        </button>
+
+        <button onclick="simulateIncomingUpdate()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:hover:bg-indigo-500/25 border border-indigo-200 dark:border-indigo-500/30 transition cursor-pointer">
+          <i class="fa-solid fa-bolt"></i>
+          <span class="hidden md:inline">Simulate Update</span>
+        </button>
+
+        <button onclick="resetDemoData()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition cursor-pointer" title="Reset Demo Updates">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span class="hidden md:inline">Reset</span>
+        </button>
+
+        <button onclick="toggleTheme()" class="w-9 h-9 rounded-lg flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition cursor-pointer" aria-label="Toggle theme">
+          <i id="themeIcon" class="fa-solid fa-sun"></i>
+        </button>
+
+        <button onclick="logoutFirebase()" class="w-9 h-9 rounded-lg flex items-center justify-center bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 transition cursor-pointer" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Top Row: 5 Most Recent Updates Box + Academic Overview Stats -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- 5 Most Recent Updates Box (7 cols on lg) -->
+      <section class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/60 dark:bg-slate-850/60">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+            <div>
+              <h2 class="font-semibold text-sm sm:text-base">Recent Grade Updates</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Showing up to 5 most recent unacknowledged alerts</p>
+            </div>
+          </div>
+          <span id="updateCounterBadge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-600 text-white shadow-sm">
+            0 Active
+          </span>
+        </div>
+
+        <div id="updatesContainer" class="p-4 sm:p-5 space-y-3 min-h-[220px] flex flex-col justify-center">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- Academic Overview Stats (5 cols on lg) -->
+      <section class="lg:col-span-5 grid grid-cols-2 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Cumulative Avg</span>
+            <i class="fa-solid fa-chart-line text-emerald-500 text-base"></i>
+          </div>
+          <div>
+            <div id="statAvg" class="text-2xl sm:text-3xl font-extrabold tracking-tight">--%</div>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">
+              <i class="fa-solid fa-arrow-trend-up mr-1"></i>Current Term Standing
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Active Courses</span>
+            <i class="fa-solid fa-book-open text-blue-500 text-base"></i>
+          </div>
+          <div>
+            <div id="statCourses" class="text-2xl sm:text-3xl font-extrabold tracking-tight">0</div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Enrolled Classes</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Highest Grade</span>
+            <i class="fa-solid fa-trophy text-amber-500 text-base"></i>
+          </div>
+          <div>
+            <div id="statHighest" class="text-2xl sm:text-3xl font-extrabold tracking-tight">--%</div>
+            <p id="statHighestCourse" class="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">--</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Grade Watch</span>
+            <i class="fa-solid fa-shield-halved text-rose-500 text-base"></i>
+          </div>
+          <div>
+            <div id="statAtRisk" class="text-2xl sm:text-3xl font-extrabold tracking-tight">0</div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Near Cutoff (&lt;1.5%)</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Assignment Due-Date Countdown & Urgency Panel -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60 dark:bg-slate-850/60">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <h2 class="font-semibold text-sm sm:text-base">Upcoming Deadlines & Urgency Tracker</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Sorted automatically by time remaining</p>
+          </div>
+        </div>
+
+        <button onclick="toggleAddDeadlineForm()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer self-start sm:self-auto">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Deadline</span>
+        </button>
+      </div>
+
+      <form id="addDeadlineForm" onsubmit="handleAddDeadline(event)" class="hidden px-5 py-4 bg-slate-50 dark:bg-slate-850 border-b border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+        <div class="sm:col-span-4">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Assignment Title</label>
+          <input type="text" id="dlTitle" required placeholder="e.g., Chapter 6 Problem Set" class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div class="sm:col-span-3">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Course</label>
+          <select id="dlCourse" class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div class="sm:col-span-3">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Due Date & Time</label>
+          <input type="datetime-local" id="dlDue" required class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div class="sm:col-span-2 flex gap-2">
+          <button type="submit" class="w-full py-2 px-3 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer">
+            Save
+          </button>
+          <button type="button" onclick="toggleAddDeadlineForm()" class="py-2 px-3 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </form>
+
+      <div id="deadlinesContainer" class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-layer-group text-indigo-500 text-lg"></i>
+          <h2 class="text-lg font-bold tracking-tight">Enrolled Courses</h2>
+        </div>
+
+        <div class="relative w-full sm:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input
+            type="text"
+            id="courseSearch"
+            oninput="renderCourses()"
+            placeholder="Filter by course or teacher..."
+            class="w-full pl-9 pr-4 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition"
+          />
+        </div>
+      </div>
+
+      <div id="coursesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Course Detail Modal -->
+  <div id="courseModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden animate-[fadeInSlide_0.2s_ease-out]">
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div id="modalIconWrap" class="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-500 flex items-center justify-center">
+            <i id="modalIcon" class="fa-solid fa-book"></i>
+          </div>
+          <div>
+            <h3 id="modalCourseTitle" class="font-bold text-base">Course Name</h3>
+            <p id="modalCourseTeacher" class="text-xs text-slate-500 dark:text-slate-400">Instructor</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800">
+          <div>
+            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Current Course Grade</span>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <span id="modalGradePct" class="text-2xl font-extrabold">94.59%</span>
+              <span id="modalGradeLetter" class="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-500/15 text-emerald-500">A</span>
+            </div>
+          </div>
+          <a id="modalVeracrossLink" href="#" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition">
+            <span>Open in Veracross</span>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+
+        <div id="safetyMarginBox" class="p-4 rounded-xl border space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <i id="safetyIcon" class="fa-solid fa-shield-halved text-sm"></i>
+              <h4 class="text-xs font-bold uppercase tracking-wider">Grade Safety Margin</h4>
+            </div>
+            <span id="safetyBufferBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold">
+              +1.59% Buffer
+            </span>
+          </div>
+
+          <p id="safetySummaryText" class="text-xs leading-relaxed"></p>
+
+          <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+            <div class="flex items-center justify-between text-[11px] font-medium mb-1">
+              <span class="text-slate-500 dark:text-slate-400">Upcoming Assessment Weight:</span>
+              <span id="weightValueLabel" class="font-bold text-indigo-500">15% of Term</span>
+            </div>
+            <input
+              type="range"
+              id="examWeightSlider"
+              min="5"
+              max="40"
+              step="5"
+              value="15"
+              oninput="updateSafetyMarginDisplay()"
+              class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Recent Course Activity</h4>
+          <div id="modalAssignmentsList" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // TODO: Replace with your actual Firebase project configuration credentials
+   const firebaseConfig = {
+
+  apiKey: "AIzaSyDHTJPo_n2RC25QiuTygQZ497mVMM3ibGE",
+
+  authDomain: "writings-70414.firebaseapp.com",
+
+  projectId: "writings-70414",
+
+  storageBucket: "writings-70414.firebasestorage.app",
+
+  messagingSenderId: "192044363915",
+
+  appId: "1:192044363915:web:85b23cff658ebfc561e48e",
+
+  measurementId: "G-360T19R84J"
+
+};
+
+
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.loginWithGoogle = function() {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          document.getElementById("authOverlay").classList.add("hidden");
+        })
+        .catch((error) => {
+          const errEl = document.getElementById("authErrorMsg");
+          errEl.textContent = error.message;
+          errEl.classList.remove("hidden");
+        });
+    };
+
+    window.logoutFirebase = function() {
+      signOut(auth).then(() => {
+        document.getElementById("authOverlay").classList.remove("hidden");
+      });
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      const overlay = document.getElementById("authOverlay");
+      if (user) {
+        overlay.classList.add("hidden");
+      } else {
+        overlay.classList.remove("hidden");
+      }
+    });
+  </script>
+
+  <script>
+    const GRADE_CUTOFFS = [
+      { letter: "A",  min: 93.0 },
+      { letter: "A-", min: 90.0 },
+      { letter: "B+", min: 87.0 },
+      { letter: "B",  min: 83.0 },
+      { letter: "B-", min: 80.0 },
+      { letter: "C+", min: 77.0 },
+      { letter: "C",  min: 73.0 },
+      { letter: "C-", min: 70.0 },
+      { letter: "D",  min: 60.0 },
+      { letter: "F",  min: 0.0  }
+    ];
+
+    const defaultDemoCourses = [
+      {
+        id: "36304",
+        name: "Algebra II",
+        teacher: "Mrs. Allen",
+        letter: "A",
+        percentage: 94.59,
+        unreadCount: 2,
+        detailUrl: "https://portals.veracross.com/linsly/student/student/classes/36304/grade_detail",
+        assignments: [
+          { title: "Chapter 5 Quadratic Quiz", category: "Quizzes", score: "48 / 50 (96%)", date: "Nov 15" },
+          { title: "Polynomial Factoring Practice", category: "Homework", score: "20 / 20 (100%)", date: "Nov 12" },
+          { title: "Mid-Quarter Unit Exam", category: "Tests", score: "91 / 100 (91%)", date: "Nov 05" }
+        ]
+      },
+      {
+        id: "36305",
+        name: "AP English Literature",
+        teacher: "Ms. Zatezalo",
+        letter: "A-",
+        percentage: 91.20,
+        unreadCount: 1,
+        detailUrl: "https://portals.veracross.com",
+        assignments: [
+          { title: "Othello Act IV Analytical Essay", category: "Essays", score: "46 / 50 (92%)", date: "Nov 14" },
+          { title: "Southern Gothic Timed Write", category: "In-Class", score: "18 / 20 (90%)", date: "Nov 08" }
+        ]
+      },
+      {
+        id: "36306",
+        name: "AP Computer Science Principles",
+        teacher: "Mr. Vance",
+        letter: "A",
+        percentage: 98.40,
+        unreadCount: 0,
+        detailUrl: "https://portals.veracross.com",
+        assignments: [
+          { title: "App Lab Conditional Logic Project", category: "Projects", score: "100 / 100 (100%)", date: "Nov 13" },
+          { title: "Binary & Data Compression Check", category: "Quizzes", score: "24 / 25 (96%)", date: "Nov 07" }
+        ]
+      },
+      {
+        id: "36307",
+        name: "Spanish III",
+        teacher: "Sra. Morales",
+        letter: "B+",
+        percentage: 89.25,
+        unreadCount: 1,
+        detailUrl: "https://portals.veracross.com",
+        assignments: [
+          { title: "Subjunctive Mood Oral Presentation", category: "Speaking", score: "44 / 50 (88%)", date: "Nov 15" },
+          { title: "Unidad 3 Vocabulary Quiz", category: "Quizzes", score: "28 / 30 (93.3%)", date: "Nov 10" }
+        ]
+      },
+      {
+        id: "36308",
+        name: "Honors Chemistry",
+        teacher: "Dr. Miller",
+        letter: "A-",
+        percentage: 90.65,
+        unreadCount: 0,
+        detailUrl: "https://portals.veracross.com",
+        assignments: [
+          { title: "Stoichiometry Lab Report", category: "Labs", score: "45 / 50 (90%)", date: "Nov 11" },
+          { title: "Molarity Problem Set", category: "Homework", score: "19 / 20 (95%)", date: "Nov 06" }
+        ]
+      },
+      {
+        id: "36309",
+        name: "US History",
+        teacher: "Mr. Brooks",
+        letter: "A",
+        percentage: 95.10,
+        unreadCount: 0,
+        detailUrl: "https://portals.veracross.com",
+        assignments: [
+          { title: "Primary Source DBQ Analysis", category: "Essays", score: "48 / 50 (96%)", date: "Nov 12" },
+          { title: "Constitutional Convention Reading", category: "Homework", score: "15 / 15 (100%)", date: "Nov 04" }
+        ]
+      }
+    ];
+
+    const defaultDemoUpdates = [
+      {
+        id: "demo_1",
+        course: "Algebra II",
+        title: "Chapter 5 Quadratic Quiz",
+        score: "48 / 50 (96.0%)",
+        impact: "+0.42%",
+        timestamp: "Today, 2:15 PM",
+        acknowledged: false
+      },
+      {
+        id: "demo_2",
+        course: "Spanish III",
+        title: "Subjunctive Mood Oral Presentation",
+        score: "44 / 50 (88.0%)",
+        impact: "-0.35%",
+        timestamp: "Today, 11:40 AM",
+        acknowledged: false
+      },
+      {
+        id: "demo_3",
+        course: "AP English Literature",
+        title: "Othello Act IV Analytical Essay",
+        score: "46 / 50 (92.0%)",
+        impact: "+0.18%",
+        timestamp: "Yesterday, 4:05 PM",
+        acknowledged: false
+      },
+      {
+        id: "demo_4",
+        course: "AP Computer Science Principles",
+        title: "App Lab Conditional Logic Project",
+        score: "100 / 100 (100%)",
+        impact: "+0.65%",
+        timestamp: "Nov 13, 3:20 PM",
+        acknowledged: false
+      },
+      {
+        id: "demo_5",
+        course: "US History",
+        title: "Primary Source DBQ Analysis",
+        score: "48 / 50 (96.0%)",
+        impact: "+0.25%",
+        timestamp: "Nov 12, 1:50 PM",
+        acknowledged: false
+      },
+      {
+        id: "demo_6",
+        course: "Honors Chemistry",
+        title: "Stoichiometry Lab Report",
+        score: "45 / 50 (90.0%)",
+        impact: "-0.12%",
+        timestamp: "Nov 11, 5:10 PM",
+        acknowledged: false
+      }
+    ];
+
+    function getDefaultDeadlines() {
+      const now = Date.now();
+      const hour = 3600 * 1000;
+      return [
+        {
+          id: "dl_1",
+          title: "Rational Functions Worksheet",
+          course: "Algebra II",
+          dueAt: new Date(now + 5 * hour).toISOString(),
+          completed: false
+        },
+        {
+          id: "dl_2",
+          title: "Othello Motif Thesis Outline",
+          course: "AP English Literature",
+          dueAt: new Date(now + 22 * hour).toISOString(),
+          completed: false
+        },
+        {
+          id: "dl_3",
+          title: "Gas Laws Pre-Lab Questions",
+          course: "Honors Chemistry",
+          dueAt: new Date(now + 52 * hour).toISOString(),
+          completed: false
+        },
+        {
+          id: "dl_4",
+          title: "Subjunctive Dialogue Recording",
+          course: "Spanish III",
+          dueAt: new Date(now + 96 * hour).toISOString(),
+          completed: false
+        }
+      ];
+    }
+
+    let state = {
+      isLiveSynced: false,
+      lastSynced: null,
+      activeModalCourseId: null,
+      courses: JSON.parse(localStorage.getItem("vc_demo_courses")) || [...defaultDemoCourses],
+      updates: JSON.parse(localStorage.getItem("vc_demo_updates")) || [...defaultDemoUpdates],
+      deadlines: JSON.parse(localStorage.getItem("vc_deadlines")) || getDefaultDeadlines()
+    };
+
+    function triggerManualSync() {
+      const syncIcon = document.getElementById("syncIcon");
+      syncIcon.classList.add("spinning");
+
+      setTimeout(() => {
+        syncIcon.classList.remove("spinning");
+        window.postMessage({ type: "VERACROSS_MANUAL_REQUEST_SYNC" }, "*");
+
+        const d = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (!state.isLiveSynced) {
+          renderAll();
+          document.getElementById("lastSyncedText").textContent = `Manual check completed at ${d} (Demo Mode)`;
+        } else {
+          document.getElementById("lastSyncedText").textContent = `Successfully synced at ${d}`;
+        }
+      }, 750);
+    }
+
+    function calculateGradeSafety(percentage) {
+      if (percentage === null || isNaN(percentage)) return null;
+      let currentTierIndex = GRADE_CUTOFFS.findIndex((tier) => percentage >= tier.min);
+      if (currentTierIndex === -1) currentTierIndex = GRADE_CUTOFFS.length - 1;
+
+      const currentTier = GRADE_CUTOFFS[currentTierIndex];
+      const nextTierBelow = GRADE_CUTOFFS[currentTierIndex + 1] || null;
+      const buffer = +(percentage - currentTier.min).toFixed(2);
+      const isAtRisk = currentTier.min > 0 && buffer < 1.5;
+
+      return { currentTier, nextTierBelow, buffer, isAtRisk };
+    }
+
+    function getMinScoreToHoldTier(currentPct, cutoffMin, weightPct) {
+      const w = weightPct / 100;
+      const required = (cutoffMin - currentPct * (1 - w)) / w;
+      return Math.max(0, Math.round(required * 10) / 10);
+    }
+
+    function getCourseTheme(courseName) {
+      const name = courseName.toLowerCase();
+      if (name.includes("math") || name.includes("algebra") || name.includes("calc") || name.includes("geom") || name.includes("stat")) {
+        return { icon: "fa-square-root-variable", color: "text-blue-500", bg: "bg-blue-500/15", bar: "bg-blue-500" };
+      }
+      if (name.includes("english") || name.includes("lit") || name.includes("writing")) {
+        return { icon: "fa-feather-pointed", color: "text-purple-500", bg: "bg-purple-500/15", bar: "bg-purple-500" };
+      }
+      if (name.includes("computer") || name.includes("code") || name.includes("programming") || name.includes("tech")) {
+        return { icon: "fa-laptop-code", color: "text-indigo-500", bg: "bg-indigo-500/15", bar: "bg-indigo-500" };
+      }
+      if (name.includes("spanish") || name.includes("french") || name.includes("latin") || name.includes("german") || name.includes("chinese")) {
+        return { icon: "fa-earth-americas", color: "text-amber-500", bg: "bg-amber-500/15", bar: "bg-amber-500" };
+      }
+      if (name.includes("chem") || name.includes("bio") || name.includes("phys") || name.includes("science")) {
+        return { icon: "fa-flask-vial", color: "text-emerald-500", bg: "bg-emerald-500/15", bar: "bg-emerald-500" };
+      }
+      if (name.includes("hist") || name.includes("gov") || name.includes("econ")) {
+        return { icon: "fa-landmark", color: "text-rose-500", bg: "bg-rose-500/15", bar: "bg-rose-500" };
+      }
+      if (name.includes("art") || name.includes("music") || name.includes("band") || name.includes("photo")) {
+        return { icon: "fa-palette", color: "text-pink-500", bg: "bg-pink-500/15", bar: "bg-pink-500" };
+      }
+      return { icon: "fa-book-bookmark", color: "text-cyan-500", bg: "bg-cyan-500/15", bar: "bg-cyan-500" };
+    }
+
+    function getGradeBadgeStyle(pct) {
+      if (pct === null || isNaN(pct)) return "bg-slate-500/15 text-slate-400";
+      if (pct >= 90) return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+      if (pct >= 80) return "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20";
+      if (pct >= 70) return "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+      return "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.source !== window || !event.data) return;
+
+      if (event.data.type === "VERACROSS_SYNC_DATA" && event.data.payload) {
+        const { courses, updates, lastSynced } = event.data.payload;
+        if (courses && courses.length > 0) {
+          state.isLiveSynced = true;
+          state.courses = courses;
+          state.updates = updates || [];
+          state.lastSynced = lastSynced;
+
+          const badge = document.getElementById("syncStatusBadge");
+          badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Synced`;
+
+          if (lastSynced) {
+            const d = new Date(lastSynced);
+            document.getElementById("lastSyncedText").textContent = `Last synced from Veracross: ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          }
+
+          renderAll();
+        }
+      }
+    });
+
+    function acknowledgeUpdate(id, btnEl) {
+      const card = btnEl.closest(".update-card");
+      if (card) card.classList.add("dismissing");
+
+      setTimeout(() => {
+        state.updates = state.updates.map((u) =>
+          u.id === id ? { ...u, acknowledged: true } : u
+        );
+
+        if (state.isLiveSynced) {
+          window.postMessage({ type: "ACKNOWLEDGE_UPDATE", id }, "*");
+        } else {
+          localStorage.setItem("vc_demo_updates", JSON.stringify(state.updates));
+        }
+
+        renderUpdates();
+      }, 320);
+    }
+
+    function renderUpdates() {
+      const container = document.getElementById("updatesContainer");
+      const badge = document.getElementById("updateCounterBadge");
+      const unacknowledged = state.updates.filter((u) => !u.acknowledged);
+      const topFive = unacknowledged.slice(0, 5);
+
+      badge.textContent = `${unacknowledged.length} Active`;
+
+      if (topFive.length === 0) {
+        container.innerHTML = `
+          <div class="py-8 text-center space-y-2.5 update-enter">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center mx-auto text-xl">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="font-semibold text-sm">All caught up!</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+              You have acknowledged all recent Veracross grade updates.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = topFive.map((u) => {
+        const isPositive = u.impact && u.impact.startsWith("+");
+        const isNegative = u.impact && u.impact.startsWith("-");
+        const impactClass = isPositive
+          ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
+          : isNegative
+          ? "text-rose-600 dark:text-rose-400 bg-rose-500/10"
+          : "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10";
+
+        return `
+          <div class="update-card update-enter flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 hover:border-indigo-500/40 transition">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5">
+                <i class="fa-solid fa-file-signature text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">${u.course}</span>
+                  <span class="text-[11px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${u.timestamp}</span>
+                </div>
+                <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate mt-0.5">${u.title}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs font-bold text-slate-700 dark:text-slate-200">${u.score}</span>
+                  ${u.impact ? `<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold ${impactClass}">${u.impact}</span>` : ""}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onclick="acknowledgeUpdate('${u.id}', this)"
+              class="shrink-0 inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-emerald-600 shadow-sm transition cursor-pointer"
+            >
+              <i class="fa-solid fa-check"></i>
+              <span>I Acknowledge</span>
+            </button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderStats() {
+      const validGrades = state.courses.filter((c) => typeof c.percentage === "number" && !isNaN(c.percentage));
+      document.getElementById("statCourses").textContent = state.courses.length;
+
+      if (validGrades.length > 0) {
+        const sum = validGrades.reduce((acc, c) => acc + c.percentage, 0);
+        const avg = (sum / validGrades.length).toFixed(2);
+        document.getElementById("statAvg").textContent = `${avg}%`;
+
+        const highest = validGrades.reduce((max, c) => (c.percentage > max.percentage ? c : max), validGrades[0]);
+        document.getElementById("statHighest").textContent = `${highest.percentage.toFixed(1)}%`;
+        document.getElementById("statHighestCourse").textContent = highest.name;
+      }
+
+      const atRiskCount = validGrades.filter((c) => {
+        const safety = calculateGradeSafety(c.percentage);
+        return safety && safety.isAtRisk;
+      }).length;
+      document.getElementById("statAtRisk").textContent = atRiskCount;
+    }
+
+    function getUrgencyBadge(dueAtIso) {
+      const diffMs = new Date(dueAtIso).getTime() - Date.now();
+      const diffHours = diffMs / (1000 * 3600);
+
+      if (diffMs <= 0) {
+        return { label: "Overdue", icon: "fa-circle-exclamation", classes: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30" };
+      }
+      if (diffHours <= 12) {
+        return { label: `Due in ${Math.max(1, Math.round(diffHours))}h`, icon: "fa-fire", classes: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30" };
+      }
+      if (diffHours <= 36) {
+        return { label: `Due in ${Math.round(diffHours)}h`, icon: "fa-hourglass-half", classes: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30" };
+      }
+      const days = Math.ceil(diffHours / 24);
+      return { label: `Due in ${days}d`, icon: "fa-calendar-day", classes: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" };
+    }
+
+    function renderDeadlines() {
+      const container = document.getElementById("deadlinesContainer");
+      const courseSelect = document.getElementById("dlCourse");
+
+      courseSelect.innerHTML = state.courses
+        .map((c) => `<option value="${c.name}">${c.name}</option>`)
+        .join("");
+
+      const activeDeadlines = state.deadlines
+        .filter((d) => !d.completed)
+        .sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt));
+
+      if (activeDeadlines.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-calendar-check text-emerald-500 text-lg mb-1.5 block"></i>
+            No upcoming deadlines scheduled. Click <strong>Add Deadline</strong> to track an assignment.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = activeDeadlines.map((dl) => {
+        const urgency = getUrgencyBadge(dl.dueAt);
+        const formattedDue = new Date(dl.dueAt).toLocaleString([], {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+        return `
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between gap-3 hover:border-indigo-500/40 transition">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold ${urgency.classes}">
+                  <i class="fa-solid ${urgency.icon}"></i>${urgency.label}
+                </span>
+                <button onclick="completeDeadline('${dl.id}')" class="text-slate-400 hover:text-emerald-500 transition cursor-pointer" title="Mark Complete">
+                  <i class="fa-regular fa-circle-check text-sm"></i>
+                </button>
+              </div>
+              <h4 class="font-semibold text-xs sm:text-sm text-slate-800 dark:text-slate-100 line-clamp-1">${dl.title}</h4>
+              <p class="text-[11px] font-medium text-indigo-600 dark:text-indigo-400 mt-0.5">${dl.course}</p>
+            </div>
+
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5">
+              <i class="fa-regular fa-calendar"></i>
+              <span>${formattedDue}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleAddDeadlineForm() {
+      document.getElementById("addDeadlineForm").classList.toggle("hidden");
+    }
+
+    function handleAddDeadline(e) {
+      e.preventDefault();
+      const title = document.getElementById("dlTitle").value.trim();
+      const course = document.getElementById("dlCourse").value;
+      const dueVal = document.getElementById("dlDue").value;
+      if (!title || !dueVal) return;
+
+      state.deadlines.push({
+        id: `dl_${Date.now()}`,
+        title,
+        course,
+        dueAt: new Date(dueVal).toISOString(),
+        completed: false
+      });
+
+      localStorage.setItem("vc_deadlines", JSON.stringify(state.deadlines));
+      document.getElementById("addDeadlineForm").reset();
+      toggleAddDeadlineForm();
+      renderDeadlines();
+    }
+
+    function completeDeadline(id) {
+      state.deadlines = state.deadlines.map((d) =>
+        d.id === id ? { ...d, completed: true } : d
+      );
+      localStorage.setItem("vc_deadlines", JSON.stringify(state.deadlines));
+      renderDeadlines();
+    }
+
+    function renderCourses() {
+      const grid = document.getElementById("coursesGrid");
+      const query = document.getElementById("courseSearch").value.toLowerCase().trim();
+
+      const filtered = state.courses.filter(
+        (c) => c.name.toLowerCase().includes(query) || c.teacher.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-folder-open text-2xl mb-2 opacity-60"></i>
+            <p class="text-sm">No matching courses found.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((course) => {
+        const theme = getCourseTheme(course.name);
+        const badgeStyle = getGradeBadgeStyle(course.percentage);
+        const barWidth = course.percentage !== null ? Math.min(100, Math.max(0, course.percentage)) : 0;
+        const safety = calculateGradeSafety(course.percentage);
+
+        let safetyPillHtml = `<span class="text-slate-400"><i class="fa-solid fa-check-double mr-1"></i>Up to date</span>`;
+        if (safety) {
+          if (safety.isAtRisk) {
+            safetyPillHtml = `
+              <span class="inline-flex items-center gap-1 font-semibold text-rose-600 dark:text-rose-400">
+                <i class="fa-solid fa-triangle-exclamation"></i>+${safety.buffer}% above ${safety.currentTier.letter} cutoff
+              </span>
+            `;
+          } else {
+            safetyPillHtml = `
+              <span class="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+                <i class="fa-solid fa-shield-halved"></i>+${safety.buffer}% safety buffer
+              </span>
+            `;
+          }
+        }
+
+        return `
+          <div onclick="openCourseModal('${course.id}')" class="group bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-11 h-11 rounded-xl ${theme.bg} ${theme.color} flex items-center justify-center shrink-0 text-lg group-hover:scale-105 transition">
+                    <i class="fa-solid ${theme.icon}"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="font-bold text-base truncate group-hover:text-indigo-500 transition">${course.name}</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <i class="fa-solid fa-chalkboard-user mr-1 opacity-75"></i>${course.teacher}
+                    </p>
+                  </div>
+                </div>
+
+                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold shrink-0 ${badgeStyle}">
+                  ${course.letter || "--"}
+                </span>
+              </div>
+
+              <div class="mt-5">
+                <div class="flex items-baseline justify-between mb-1.5">
+                  <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Current Average</span>
+                  <span class="text-lg font-extrabold tracking-tight">
+                    ${course.percentage !== null ? course.percentage.toFixed(2) + "%" : "N/A"}
+                  </span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <div class="h-full rounded-full ${theme.bar} transition-all duration-500" style="width: ${barWidth}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+              ${safetyPillHtml}
+              <span class="font-semibold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition">
+                Details <i class="fa-solid fa-chevron-right text-[10px] ml-0.5"></i>
+              </span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function openCourseModal(courseId) {
+      const course = state.courses.find((c) => c.id === courseId);
+      if (!course) return;
+
+      state.activeModalCourseId = courseId;
+
+      const theme = getCourseTheme(course.name);
+      document.getElementById("modalIconWrap").className = `w-10 h-10 rounded-xl ${theme.bg} ${theme.color} flex items-center justify-center`;
+      document.getElementById("modalIcon").className = `fa-solid ${theme.icon}`;
+      document.getElementById("modalCourseTitle").textContent = course.name;
+      document.getElementById("modalCourseTeacher").textContent = course.teacher;
+      document.getElementById("modalGradePct").textContent = course.percentage !== null ? `${course.percentage.toFixed(2)}%` : "N/A";
+      document.getElementById("modalGradeLetter").textContent = course.letter || "--";
+      document.getElementById("modalVeracrossLink").href = course.detailUrl || "https://portals.veracross.com";
+
+      updateSafetyMarginDisplay();
+
+      const listEl = document.getElementById("modalAssignmentsList");
+      if (course.assignments && course.assignments.length > 0) {
+        listEl.innerHTML = course.assignments.map((a) => `
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/70 dark:border-slate-800">
+            <div>
+              <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">${a.title}</p>
+              <span class="text-[11px] text-slate-400">${a.category} • ${a.date}</span>
+            </div>
+            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">${a.score}</span>
+          </div>
+        `).join("");
+      } else {
+        listEl.innerHTML = `
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-850 text-center text-xs text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-up-right-from-square mb-1.5 text-sm block text-indigo-500"></i>
+            Click <strong>Open in Veracross</strong> above to inspect individual graded assignments for this course.
+          </div>
+        `;
+      }
+
+      const modal = document.getElementById("courseModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function updateSafetyMarginDisplay() {
+      const course = state.courses.find((c) => c.id === state.activeModalCourseId);
+      const box = document.getElementById("safetyMarginBox");
+      if (!course || course.percentage === null || isNaN(course.percentage)) {
+        box.classList.add("hidden");
+        return;
+      }
+      box.classList.remove("hidden");
+
+      const weight = parseInt(document.getElementById("examWeightSlider").value, 10);
+      document.getElementById("weightValueLabel").textContent = `${weight}% of Term`;
+
+      const safety = calculateGradeSafety(course.percentage);
+      const minRequired = getMinScoreToHoldTier(course.percentage, safety.currentTier.min, weight);
+
+      const badge = document.getElementById("safetyBufferBadge");
+      const summary = document.getElementById("safetySummaryText");
+      const icon = document.getElementById("safetyIcon");
+
+      if (safety.isAtRisk) {
+        box.className = "p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 space-y-3";
+        badge.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-600 dark:text-rose-300";
+        icon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-sm";
+      } else {
+        box.className = "p-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 space-y-3";
+        badge.className = "px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-300";
+        icon.className = "fa-solid fa-shield-halved text-emerald-500 text-sm";
+      }
+
+      badge.textContent = `+${safety.buffer}% Buffer`;
+
+      if (safety.nextTierBelow) {
+        summary.innerHTML = `
+          You are <strong>${safety.buffer}%</strong> above the <strong>${safety.currentTier.letter} (${safety.currentTier.min}%)</strong> cutoff.
+          On an upcoming assignment worth <strong>${weight}%</strong> of your term grade, you can score as low as
+          <strong>${minRequired}%</strong> before dropping to a <strong>${safety.nextTierBelow.letter}</strong>.
+        `;
+      } else {
+        summary.innerHTML = `Current grade is <strong>${course.percentage.toFixed(2)}%</strong>.`;
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("courseModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      state.activeModalCourseId = null;
+    }
+
+    document.getElementById("courseModal").addEventListener("click", (e) => {
+      if (e.target.id === "courseModal") closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    function simulateIncomingUpdate() {
+      const samples = [
+        { course: "Algebra II", title: "Rational Expressions Checkpoint", score: "29 / 30 (96.7%)", impact: "+0.21%" },
+        { course: "AP Computer Science Principles", title: "API Integration Lab", score: "50 / 50 (100%)", impact: "+0.15%" },
+        { course: "Honors Chemistry", title: "Gas Laws Quiz", score: "23 / 25 (92.0%)", impact: "+0.19%" }
+      ];
+      const pick = samples[Math.floor(Math.random() * samples.length)];
+      state.updates.unshift({
+        id: `sim_${Date.now()}`,
+        course: pick.course,
+        title: pick.title,
+        score: pick.score,
+        impact: pick.impact,
+        timestamp: "Just now",
+        acknowledged: false
+      });
+      renderUpdates();
+    }
+
+    function resetDemoData() {
+      localStorage.removeItem("vc_demo_courses");
+      localStorage.removeItem("vc_demo_updates");
+      localStorage.removeItem("vc_deadlines");
+      state.courses = [...defaultDemoCourses];
+      state.updates = [...defaultDemoUpdates];
+      state.deadlines = getDefaultDeadlines();
+      renderAll();
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById("themeIcon");
+      html.classList.toggle("dark");
+      icon.className = html.classList.contains("dark") ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    }
+
+    function renderAll() {
+      renderUpdates();
+      renderStats();
+      renderDeadlines();
+      renderCourses();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
