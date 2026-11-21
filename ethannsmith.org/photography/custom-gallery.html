@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Custom Galleries • Beyond the Lens</title>
+<link rel="icon" type="image/png" href="beyond-the-lens.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W10LYE96HV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-W10LYE96HV');
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+:root {
+  --bg-dark: #0a0c10;
+  --surface-1: #12161f;
+  --surface-2: #1a202c;
+  --surface-3: #242c3d;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(255, 255, 255, 0.22);
+
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-subtle: #94a3b8;
+
+  --accent-google: #ea7511;
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+
+  --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-dark);
+}
+
+body {
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button, select, input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 999px; border: 2px solid var(--bg-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--surface-3); }
+
+/* Announcement Banner */
+.announcement-banner {
+  width: 100%;
+  background: rgba(234, 117, 17, 0.15);
+  border-bottom: 1px solid rgba(234, 117, 17, 0.3);
+  color: #fca5a5;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 101;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 0;
+}
+
+.announcement-track {
+  display: inline-flex;
+  gap: 50px;
+  animation: marquee 25s linear infinite;
+}
+
+.announcement-banner:hover .announcement-track {
+  animation-play-state: paused;
+}
+
+.announcement-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.announcement-badge {
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: clamp(280px, 36vh, 430px);
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.62) contrast(1.06);
+  transform: scale(1.02);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 16, 0.2) 0%,
+    rgba(10, 12, 16, 0.65) 60%,
+    var(--bg-dark) 100%
+  );
+}
+
+.hero-content {
+  position: absolute;
+  bottom: clamp(24px, 4vw, 48px);
+  left: clamp(20px, 5vw, 80px);
+  right: clamp(20px, 5vw, 80px);
+  z-index: 2;
+  max-width: 1150px;
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-google);
+  margin-bottom: 8px;
+}
+
+.hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.hero-subtitle {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 15px;
+  max-width: 720px;
+}
+
+/* Topbar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(20px, 5vw, 80px);
+  background: rgba(10, 12, 16, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.select-wrapper {
+  position: relative;
+  min-width: 280px;
+}
+
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.custom-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 38px 0 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  appearance: none;
+  transition: var(--transition-smooth);
+}
+
+.custom-select:hover:not(:disabled) {
+  border-color: var(--border-active);
+  background: var(--surface-2);
+}
+
+.custom-select option {
+  background: var(--surface-2);
+  color: var(--text-main);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.btn-primary {
+  background: var(--accent-green);
+  color: #022c22;
+  font-weight: 700;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-green-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-google {
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-google:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--border-active);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-logout {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+/* Password / Access Gate Card */
+.notice-card {
+  width: min(520px, calc(100% - 32px));
+  margin: 56px auto;
+  padding: 40px clamp(24px, 4vw, 44px);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.lock-badge-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(234, 117, 17, 0.14);
+  border: 1px solid rgba(234, 117, 17, 0.35);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+
+.notice-card h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 25px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.notice-card p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.password-input-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 74px 0 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  transition: var(--transition-smooth);
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--accent-google);
+  background: var(--surface-3);
+}
+
+.toggle-pw-btn {
+  position: absolute;
+  right: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-subtle);
+  cursor: pointer;
+}
+
+.toggle-pw-btn:hover {
+  color: var(--text-main);
+}
+
+.password-error {
+  min-height: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f87171;
+  text-align: left;
+}
+
+/* Gallery Grid & Cards */
+.gallery {
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  padding: 40px clamp(20px, 5vw, 80px);
+}
+
+.card {
+  position: relative;
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-hover);
+}
+
+.img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--surface-2);
+  cursor: zoom-in;
+}
+
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+}
+
+.card:hover .img-wrapper img {
+  transform: scale(1.04);
+  filter: brightness(1.05);
+}
+
+.watermark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    -35deg,
+    transparent 0,
+    transparent 80px,
+    rgba(255,255,255,0.03) 80px,
+    rgba(255,255,255,0.03) 81px
+  );
+}
+
+.watermark::after {
+  content: "BEYOND THE LENS";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.16);
+  white-space: nowrap;
+}
+
+.card-meta {
+  padding: 12px 14px 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-actions {
+  padding: 10px 12px 12px;
+  background: var(--surface-1);
+}
+
+.btn-download {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-download:hover {
+  background: var(--surface-3);
+  border-color: var(--border-active);
+  color: #ffffff;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px 80px;
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background: rgba(6, 8, 12, 0.96);
+  backdrop-filter: blur(16px);
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 95vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-dark);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  width: min(360px, calc(100vw - 48px));
+  text-align: center;
+}
+
+.loading-brand {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  margin-bottom: 20px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--accent-google);
+  transition: width 0.2s ease;
+}
+
+.loading-percent {
+  font-size: 13px;
+  color: var(--text-subtle);
+  font-weight: 600;
+}
+
+@media (max-width: 1200px) {
+  .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 840px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .topbar { flex-direction: column; align-items: stretch; }
+  .topbar-actions { justify-content: space-between; }
+  .select-wrapper { flex: 1; }
+}
+
+@media (max-width: 520px) {
+  .gallery { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="announcement-banner">
+  <div class="announcement-track">
+    <div class="announcement-item">
+      <span class="announcement-badge">Private Galleries</span>
+      <span>Enter your unique gallery password to view and download full-resolution Google Drive photos.</span>
+    </div>
+    <div class="announcement-item">
+      <span class="announcement-badge">Private Galleries</span>
+      <span>Enter your unique gallery password to view and download full-resolution Google Drive photos.</span>
+    </div>
+  </div>
+</div>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="loading-brand">BEYOND THE LENS</div>
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="loading-percent" id="loadingPercent">0%</div>
+  </div>
+</div>
+
+<div class="hero" id="hero">
+  <img id="heroImg" class="hero-img" src="https://stadiumconnection.com/simages/2555.jpg" alt="Custom gallery hero banner">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">Private Client Collection</div>
+    <h1 class="hero-title" id="heroTitle">Custom Photo Galleries</h1>
+    <p class="hero-subtitle" id="heroSubtitle">Select a gallery and enter its unique password to unlock high-resolution downloads.</p>
+  </div>
+</div>
+
+<div class="topbar" id="topbar">
+  <div class="topbar-left">
+    <div class="select-wrapper">
+      <select id="gallerySelect" class="custom-select" aria-label="Choose custom gallery"></select>
+    </div>
+    <button class="btn btn-primary" id="openBtn" type="button">Load Gallery</button>
+    <button class="btn btn-secondary" id="copyLinkBtn" type="button">Copy Share Link</button>
+    <button class="btn btn-secondary" id="lockGalleryBtn" type="button" style="display: none;">Lock Gallery</button>
+  </div>
+
+  <div class="topbar-actions">
+    <a class="btn btn-secondary" href="index.html">Main Gallery</a>
+    <div id="userContainer"></div>
+  </div>
+</div>
+
+<!-- PASSWORD / ACCESS GATE -->
+<div class="notice-card" id="gateCard" style="display: none;">
+  <div class="lock-badge-icon" id="gateIcon">🔒</div>
+  <h2 id="gateTitle">Password Protected Gallery</h2>
+  <p id="gateMessage">Enter the unique password provided for this gallery to view and download its photos.</p>
+
+  <form class="password-form" id="passwordForm" autocomplete="off">
+    <div class="password-input-row">
+      <input
+        type="password"
+        id="passwordInput"
+        class="password-input"
+        placeholder="Enter gallery password"
+        required
+      />
+      <button type="button" class="toggle-pw-btn" id="togglePwBtn">Show</button>
+    </div>
+    <div class="password-error" id="passwordError" role="alert"></div>
+    <button type="submit" class="btn btn-primary" id="unlockSubmitBtn">Unlock Gallery</button>
+  </form>
+
+  <button class="btn btn-google" id="googleSignInBtn" type="button" style="display: none; width: 100%;">
+    Sign in with Google
+  </button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="load-more-container" id="loadMoreContainer" style="display: none;">
+  <button id="loadMoreBtn" class="btn btn-secondary" type="button">Load More Photos</button>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" alt="Enlarged gallery photo">
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYAX71RSpNC1t9ETQvHAt1tdKg_jzrkcw",
+  authDomain: "beyond-the-lens-ed6ed.firebaseapp.com",
+  projectId: "beyond-the-lens-ed6ed",
+  storageBucket: "beyond-the-lens-ed6ed.firebasestorage.app",
+  messagingSenderId: "554251151085",
+  appId: "1:554251151085:web:549e78e910c1826ee9cee4",
+  measurementId: "G-RP4NZG99ZZ"
+};
+
+// Optional: Add a Google Cloud API key (with Google Drive API enabled) to auto-list images from a gallery's `folderId`
+const DRIVE_API_KEY = "AIzaSyDsLv4fSrtWzohfpbuL0tVZHIhymmDyTPs";
+const DEFAULT_HERO_IMG = "https://stadiumconnection.com/simages/2555.jpg";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+
+const PAGE_SIZE = 24;
+const COLLECTION_NAME = "customGalleries";
+const STORAGE_PREFIX = "btl_unlocked_pw_";
+
+let currentUser = null;
+let galleries = [];
+let activeGalleryObj = null;
+let visiblePhotos = [];
+let currentIndex = 0;
+
+const el = (id) => document.getElementById(id);
+const gallerySelect = el("gallerySelect");
+const openBtn = el("openBtn");
+const copyLinkBtn = el("copyLinkBtn");
+const lockGalleryBtn = el("lockGalleryBtn");
+const heroImg = el("heroImg");
+const heroEyebrow = el("heroEyebrow");
+const heroTitle = el("heroTitle");
+const heroSubtitle = el("heroSubtitle");
+const gateCard = el("gateCard");
+const gateIcon = el("gateIcon");
+const gateTitle = el("gateTitle");
+const gateMessage = el("gateMessage");
+const passwordForm = el("passwordForm");
+const passwordInput = el("passwordInput");
+const togglePwBtn = el("togglePwBtn");
+const passwordError = el("passwordError");
+const unlockSubmitBtn = el("unlockSubmitBtn");
+const googleSignInBtn = el("googleSignInBtn");
+const userContainer = el("userContainer");
+const galleryEl = el("gallery");
+const loadMoreContainer = el("loadMoreContainer");
+const loadMoreBtn = el("loadMoreBtn");
+const lightbox = el("lightbox");
+const lightboxImg = el("lightboxImg");
+
+function extractDriveId(input = "") {
+  const str = String(input).trim();
+  if (!str) return "";
+  if (/^[a-zA-Z0-9_-]{15,}$/.test(str)) return str;
+  const folderMatch = str.match(/\/folders\/([a-zA-Z0-9_-]{15,})/);
+  if (folderMatch) return folderMatch[1];
+  const dMatch = str.match(/\/d\/([a-zA-Z0-9_-]{15,})/);
+  if (dMatch) return dMatch[1];
+  const idMatch = str.match(/[?&]id=([a-zA-Z0-9_-]{15,})/);
+  if (idMatch) return idMatch[1];
+  return "";
+}
+
+function driveViewUrl(fileIdOrUrl) {
+  const id = extractDriveId(fileIdOrUrl);
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w1600`;
+  return String(fileIdOrUrl || "");
+}
+
+function driveFallbackUrl(fileIdOrUrl) {
+  const id = extractDriveId(fileIdOrUrl);
+  if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+  return String(fileIdOrUrl || "");
+}
+
+function driveDownloadUrl(fileIdOrUrl) {
+  const id = extractDriveId(fileIdOrUrl);
+  if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
+  return String(fileIdOrUrl || "");
+}
+
+async function fetchDriveFolderPhotos(folderIdOrUrl, apiKeyOverride = "") {
+  const folderId = extractDriveId(folderIdOrUrl);
+  if (!folderId) return [];
+
+  const apiKey = (apiKeyOverride || DRIVE_API_KEY || "").trim();
+  if (!apiKey) {
+    throw new Error(
+      "This gallery uses a Google Drive folder ID. Set DRIVE_API_KEY in custom-gallery.html (or 'driveApiKey' on the Firestore document) to load folder images automatically."
+    );
+  }
+
+  const allItems = [];
+  let pageToken = "";
+
+  do {
+    const q = encodeURIComponent(
+      `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`
+    );
+    const fields = encodeURIComponent("nextPageToken,files(id,name)");
+    const tokenParam = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&pageSize=1000&orderBy=name${tokenParam}&key=${encodeURIComponent(apiKey)}`;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try {
+        const errJson = await res.json();
+        if (errJson?.error?.message) detail = errJson.error.message;
+      } catch (_) {}
+      throw new Error(`Unable to read Google Drive folder (${detail}). Ensure the folder is shared with 'Anyone with the link'.`);
+    }
+
+    const data = await res.json();
+    const files = Array.isArray(data.files) ? data.files : [];
+    files.forEach((f) => {
+      const cleanCaption = String(f.name || "").replace(/\.[^/.]+$/, "");
+      allItems.push({
+        fileId: f.id,
+        caption: cleanCaption || f.name || "Photo",
+        filename: f.name || `${f.id}.jpg`
+      });
+    });
+
+    pageToken = data.nextPageToken || "";
+  } while (pageToken);
+
+  return allItems;
+}
+
+const FALLBACK_GALLERIES = [
+  {
+    id: "demo-client-gallery",
+    slug: "demo-client-gallery",
+    title: "Sample Password-Protected Gallery",
+    eyebrow: "Client Showcase",
+    subtitle: "Add documents to Firestore 'customGalleries' with a Google Drive folderId (or photos array) and password.",
+    heroImage: DEFAULT_HERO_IMG,
+    password: "LENS2026",
+    requireGoogleSignIn: false,
+    watermark: true,
+    photos: [
+      {
+        fileId: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
+        caption: "Sample Photo 01 — Replace with Google Drive Folder ID or File ID",
+        filename: "sample-01.jpg"
+      }
+    ]
+  }
+];
+
+function setLoadingProgress(pct, hide = false) {
+  el("progressBar").style.width = `${pct}%`;
+  el("loadingPercent").textContent = `${pct}%`;
+  if (hide) {
+    setTimeout(() => el("loadingScreen").classList.add("hidden"), 250);
+  }
+}
+
+function getRequestedSlug() {
+  const params = new URLSearchParams(window.location.search);
+  const querySlug = params.get("g") || params.get("gallery");
+  if (querySlug) return querySlug.trim();
+  return window.location.hash.replace(/^#/, "").trim();
+}
+
+function getSavedPassword(galleryId) {
+  try {
+    return sessionStorage.getItem(STORAGE_PREFIX + galleryId) || "";
+  } catch (_) {
+    return "";
+  }
+}
+
+function savePassword(galleryId, pw) {
+  try {
+    sessionStorage.setItem(STORAGE_PREFIX + galleryId, pw);
+  } catch (_) {}
+}
+
+function clearSavedPassword(galleryId) {
+  try {
+    sessionStorage.removeItem(STORAGE_PREFIX + galleryId);
+  } catch (_) {}
+}
+
+function isGalleryPasswordProtected(g) {
+  return Boolean(
+    (typeof g.password === "string" && g.password.trim().length > 0) ||
+    g.passwordProtected === true
+  );
+}
+
+/**
+ * Verifies the entered password against:
+ * 1) Firestore subcollection `customGalleries/{id}/private/{enteredPassword}`
+ * 2) Direct `password` field on `customGalleries/{id}`
+ * Returns { valid: true, folderId, photos, driveApiKey } or null if invalid.
+ */
+async function verifyGalleryPassword(g, enteredPassword) {
+  const candidate = String(enteredPassword || "").trim();
+  if (!candidate) return null;
+
+  try {
+    const privateDocRef = doc(db, COLLECTION_NAME, g.id, "private", candidate);
+    const privateSnap = await getDoc(privateDocRef);
+    if (privateSnap.exists()) {
+      const data = privateSnap.data() || {};
+      return {
+        valid: true,
+        folderId: data.folderId || g.folderId || "",
+        driveApiKey: data.driveApiKey || g.driveApiKey || "",
+        photos: Array.isArray(data.photos) ? data.photos : (Array.isArray(g.photos) ? g.photos : [])
+      };
+    }
+  } catch (_) {
+    // Fall back to top-level document check
+  }
+
+  if (typeof g.password === "string" && g.password.trim() === candidate) {
+    return {
+      valid: true,
+      folderId: g.folderId || "",
+      driveApiKey: g.driveApiKey || "",
+      photos: Array.isArray(g.photos) ? g.photos : []
+    };
+  }
+
+  return null;
+}
+
+async function resolveGalleryMedia(sourceObj) {
+  if (sourceObj.folderId) {
+    return await fetchDriveFolderPhotos(sourceObj.folderId, sourceObj.driveApiKey);
+  }
+  return Array.isArray(sourceObj.photos) ? sourceObj.photos : [];
+}
+
+function renderAuthUI() {
+  if (currentUser) {
+    userContainer.innerHTML = `
+      <div class="user-profile">
+        ${currentUser.photoURL ? `<img class="user-avatar" src="${currentUser.photoURL}" alt="${currentUser.displayName || "User"}">` : ""}
+        <span class="user-name">${currentUser.displayName || currentUser.email || "Signed In"}</span>
+        <button class="btn-logout" id="logoutBtn" type="button">Sign out</button>
+      </div>
+    `;
+    el("logoutBtn").addEventListener("click", () => signOut(auth));
+  } else {
+    userContainer.innerHTML = `
+      <button class="btn btn-google" id="topSignInBtn" type="button">Sign in with Google</button>
+    `;
+    el("topSignInBtn").addEventListener("click", () => signInWithPopup(auth, googleProvider));
+  }
+}
+
+async function loadGalleriesFromFirestore() {
+  setLoadingProgress(25);
+  try {
+    const q = query(collection(db, COLLECTION_NAME), orderBy("order", "asc"));
+    const snap = await getDocs(q);
+    galleries = snap.docs.map((docSnap) => ({
+      id: docSnap.id,
+      slug: docSnap.data().slug || docSnap.id,
+      ...docSnap.data()
+    }));
+  } catch (err) {
+    if (err?.code === "permission-denied") {
+      console.warn("Firestore permission denied on customGalleries; using fallback.");
+      galleries = FALLBACK_GALLERIES;
+    } else {
+      try {
+        const snap = await getDocs(collection(db, COLLECTION_NAME));
+        galleries = snap.docs.map((docSnap) => ({
+          id: docSnap.id,
+          slug: docSnap.data().slug || docSnap.id,
+          ...docSnap.data()
+        }));
+      } catch (fallbackErr) {
+        console.warn("Firestore read failed:", fallbackErr?.code || fallbackErr?.message);
+        galleries = FALLBACK_GALLERIES;
+      }
+    }
+  }
+
+  if (!galleries.length) {
+    galleries = FALLBACK_GALLERIES;
+  }
+
+  setLoadingProgress(70);
+  populateSelect();
+
+  const requested = getRequestedSlug();
+  const matchedIndex = galleries.findIndex(
+    (g) => g.slug === requested || g.id === requested
+  );
+  const startIdx = matchedIndex >= 0 ? matchedIndex : 0;
+  gallerySelect.value = galleries[startIdx].id;
+  await openGalleryById(galleries[startIdx].id);
+  setLoadingProgress(100, true);
+}
+
+function populateSelect() {
+  gallerySelect.innerHTML = "";
+  galleries.forEach((g) => {
+    const opt = document.createElement("option");
+    opt.value = g.id;
+    const lockPrefix = isGalleryPasswordProtected(g) ? "🔒 " : "";
+    opt.textContent = `${lockPrefix}${g.title || g.id}`;
+    gallerySelect.appendChild(opt);
+  });
+}
+
+function showPasswordGate(g, errorMsg = "") {
+  gateIcon.textContent = "🔒";
+  gateTitle.textContent = "Password Protected Gallery";
+  gateMessage.textContent = `Enter the unique password for "${g.title || "this gallery"}" to view and download photos.`;
+  passwordForm.style.display = "flex";
+  googleSignInBtn.style.display = "none";
+  passwordInput.value = "";
+  passwordError.textContent = errorMsg;
+  lockGalleryBtn.style.display = "none";
+  gateCard.style.display = "block";
+  setTimeout(() => passwordInput.focus(), 50);
+}
+
+function showGoogleSignInGate(g) {
+  gateIcon.textContent = "👤";
+  gateTitle.textContent = "Google Sign-In Required";
+  gateMessage.textContent = `Sign in with your Google account before unlocking "${g.title || "this gallery"}".`;
+  passwordForm.style.display = "none";
+  googleSignInBtn.style.display = "inline-flex";
+  lockGalleryBtn.style.display = "none";
+  gateCard.style.display = "block";
+}
+
+function showNoticeGate(title, message) {
+  gateIcon.textContent = "⚠️";
+  gateTitle.textContent = title;
+  gateMessage.textContent = message;
+  passwordForm.style.display = "none";
+  googleSignInBtn.style.display = "none";
+  gateCard.style.display = "block";
+}
+
+async function openGalleryById(id) {
+  const found = galleries.find((g) => g.id === id) || galleries[0];
+  if (!found) return;
+  activeGalleryObj = found;
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("g", found.slug || found.id);
+  window.history.replaceState({}, "", url.toString());
+
+  heroEyebrow.textContent = found.eyebrow || "Private Client Collection";
+  heroTitle.textContent = found.title || "Custom Photo Gallery";
+  heroSubtitle.textContent = found.subtitle || "";
+
+  const heroSource = found.heroImage || found.heroFileId;
+  heroImg.src = heroSource ? driveViewUrl(heroSource) : DEFAULT_HERO_IMG;
+
+  galleryEl.innerHTML = "";
+  loadMoreContainer.style.display = "none";
+  visiblePhotos = [];
+  currentIndex = 0;
+
+  if (found.requireGoogleSignIn && !currentUser) {
+    showGoogleSignInGate(found);
+    return;
+  }
+
+  let resolvedSource = found;
+
+  if (isGalleryPasswordProtected(found)) {
+    const savedPw = getSavedPassword(found.id);
+    if (!savedPw) {
+      showPasswordGate(found);
+      return;
+    }
+
+    const verified = await verifyGalleryPassword(found, savedPw);
+    if (!verified) {
+      clearSavedPassword(found.id);
+      showPasswordGate(found);
+      return;
+    }
+
+    resolvedSource = verified;
+    lockGalleryBtn.style.display = "inline-flex";
+  } else {
+    lockGalleryBtn.style.display = "none";
+  }
+
+  try {
+    visiblePhotos = await resolveGalleryMedia(resolvedSource);
+    gateCard.style.display = "none";
+    renderNextBatch();
+  } catch (err) {
+    showNoticeGate("Gallery Load Notice", err.message || "Could not load photos for this gallery.");
+  }
+}
+
+function renderNextBatch() {
+  const batch = visiblePhotos.slice(currentIndex, currentIndex + PAGE_SIZE);
+  const showWatermark = activeGalleryObj?.watermark !== false;
+
+  batch.forEach((photo, idx) => {
+    const rawRef = photo.fileId || photo.url || photo.driveId || "";
+    const viewSrc = driveViewUrl(rawRef);
+    const fallbackSrc = driveFallbackUrl(rawRef);
+    const dlSrc = driveDownloadUrl(rawRef);
+    const caption = photo.caption || photo.name || `Photo ${currentIndex + idx + 1}`;
+    const filename = photo.filename || `${activeGalleryObj.slug || "photo"}-${currentIndex + idx + 1}.jpg`;
+
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="img-wrapper" data-full="${viewSrc}">
+        <img src="${viewSrc}" alt="${caption}" loading="lazy">
+        ${showWatermark ? '<div class="watermark"></div>' : ""}
+      </div>
+      <div class="card-meta" title="${caption}">${caption}</div>
+      <div class="card-actions">
+        <a class="btn-download" href="${dlSrc}" download="${filename}" target="_blank" rel="noopener">
+          Download Original
+        </a>
+      </div>
+    `;
+
+    const imgEl = card.querySelector("img");
+    imgEl.addEventListener("error", () => {
+      if (fallbackSrc && imgEl.src !== fallbackSrc) {
+        imgEl.src = fallbackSrc;
+      }
+    }, { once: true });
+
+    card.querySelector(".img-wrapper").addEventListener("click", () => {
+      lightboxImg.src = imgEl.currentSrc || viewSrc;
+      lightbox.style.display = "flex";
+    });
+
+    galleryEl.appendChild(card);
+  });
+
+  currentIndex += batch.length;
+  loadMoreContainer.style.display = currentIndex < visiblePhotos.length ? "flex" : "none";
+}
+
+passwordForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!activeGalleryObj) return;
+
+  const entered = passwordInput.value.trim();
+  if (!entered) {
+    passwordError.textContent = "Please enter a password.";
+    return;
+  }
+
+  unlockSubmitBtn.disabled = true;
+  unlockSubmitBtn.textContent = "Checking...";
+  passwordError.textContent = "";
+
+  const verified = await verifyGalleryPassword(activeGalleryObj, entered);
+
+  if (!verified) {
+    unlockSubmitBtn.disabled = false;
+    unlockSubmitBtn.textContent = "Unlock Gallery";
+    passwordError.textContent = "Incorrect password for this gallery. Please try again.";
+    passwordInput.select();
+    return;
+  }
+
+  try {
+    const media = await resolveGalleryMedia(verified);
+    savePassword(activeGalleryObj.id, entered);
+    gateCard.style.display = "none";
+    lockGalleryBtn.style.display = "inline-flex";
+    visiblePhotos = media;
+    currentIndex = 0;
+    galleryEl.innerHTML = "";
+    renderNextBatch();
+  } catch (err) {
+    passwordError.textContent = err.message || "Could not load gallery photos.";
+  } finally {
+    unlockSubmitBtn.disabled = false;
+    unlockSubmitBtn.textContent = "Unlock Gallery";
+  }
+});
+
+togglePwBtn.addEventListener("click", () => {
+  const isHidden = passwordInput.type === "password";
+  passwordInput.type = isHidden ? "text" : "password";
+  togglePwBtn.textContent = isHidden ? "Hide" : "Show";
+});
+
+lockGalleryBtn.addEventListener("click", async () => {
+  if (!activeGalleryObj) return;
+  clearSavedPassword(activeGalleryObj.id);
+  await openGalleryById(activeGalleryObj.id);
+});
+
+openBtn.addEventListener("click", () => openGalleryById(gallerySelect.value));
+gallerySelect.addEventListener("change", () => openGalleryById(gallerySelect.value));
+loadMoreBtn.addEventListener("click", renderNextBatch);
+googleSignInBtn.addEventListener("click", () => signInWithPopup(auth, googleProvider));
+
+copyLinkBtn.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    const prev = copyLinkBtn.textContent;
+    copyLinkBtn.textContent = "Link Copied";
+    setTimeout(() => (copyLinkBtn.textContent = prev), 1800);
+  } catch (_) {}
+});
+
+function closeLightbox() {
+  lightbox.style.display = "none";
+  lightboxImg.src = "";
+}
+
+lightbox.addEventListener("click", closeLightbox);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && lightbox.style.display === "flex") {
+    closeLightbox();
+  }
+});
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  renderAuthUI();
+  if (!galleries.length) {
+    await loadGalleriesFromFirestore();
+  } else if (activeGalleryObj) {
+    await openGalleryById(activeGalleryObj.id);
+  }
+});
+</script>
+</body>
+</html>
